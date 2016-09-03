@@ -1,5 +1,5 @@
 #include <Register_Access.h>
-#include <Wire.h>
+//#include <Wire.h>
 
 #define DEVICE_ADDRESS  0x53
 #define REG_ADDRESS     0x00
