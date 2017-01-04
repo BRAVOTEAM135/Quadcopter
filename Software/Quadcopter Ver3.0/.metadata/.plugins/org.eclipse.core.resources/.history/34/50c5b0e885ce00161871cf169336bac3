@@ -1,0 +1,43 @@
+/*
+ * Sensor.h
+ *
+ *  Created on: 14 Dec 2016
+ *      Author: Kevin
+ */
+#include <arduino.h>
+
+#ifndef SENSOR_H_
+#define SENSOR_H_
+
+// Calibration Offsets - These are aquired from running the Calibration program
+#define X_GRYRO_OFFSET 96 //Calibrated 19/12/16 KR Office
+#define Y_GRYRO_OFFSET 50 //Calibrated 19/12/16 KR Office
+#define Z_GRYRO_OFFSET 39 //Calibrated 19/12/16 KR Office
+
+#define X_ACCEL_OFFSET -5046 	//Calibrated 19/12/16 KR Office
+#define Y_ACCEL_OFFSET 2414 	//Calibrated 19/12/16 KR Office
+#define Z_ACCEL_OFFSET 893 		//Calibrated 19/12/16 KR Office
+
+
+#define SENSOR_DEBUG 1 // 1 = Active, 0 = Deactive
+//#define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
+
+
+//#define INTERRUPT_PIN 3  // use pin 2 on Arduino Uno & most boards
+#define MPU_INT_PIN 12 //A0
+
+//Global variables - Definition
+extern float angleYPR[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+extern int16_t gyroYPR[3];
+
+extern volatile bool mpuInterrupt;
+
+// Public Functions
+void init_sensor();
+void get_sensor();
+
+//Private Functions
+void mpuISR();
+
+
+#endif /* SENSOR_H_ */

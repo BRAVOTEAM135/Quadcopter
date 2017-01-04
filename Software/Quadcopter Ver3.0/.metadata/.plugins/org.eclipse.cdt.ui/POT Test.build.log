@@ -1,0 +1,5 @@
+makefile:55: warning: overriding recipe for target 'POT'
+makefile:52: warning: ignoring old recipe for target 'POT'
+makefile:70: warning: overriding recipe for target 'project/POT'
+makefile:67: warning: ignoring old recipe for target 'project/POT'
+make: *** No rule to make target '../../POT', needed by 'project/POT'.  Stop.

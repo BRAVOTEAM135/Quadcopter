@@ -1,0 +1,11 @@
+makefile:59: warning: overriding recipe for target 'MPU'
+makefile:56: warning: ignoring old recipe for target 'MPU'
+makefile:59: warning: overriding recipe for target '6050'
+makefile:56: warning: ignoring old recipe for target '6050'
+makefile:79: warning: overriding recipe for target '6050'
+makefile:59: warning: ignoring old recipe for target '6050'
+makefile:82: warning: overriding recipe for target 'project/MPU'
+makefile:79: warning: ignoring old recipe for target 'project/MPU'
+makefile:82: warning: overriding recipe for target '6050'
+makefile:79: warning: ignoring old recipe for target '6050'
+make: *** No rule to make target '../../MPU', needed by 'project/MPU'.  Stop.

@@ -1,0 +1,12 @@
+#include <Arduino.h>
+
+int sensorPin = A3;
+int sensorValue = 0;
+
+void setup() {
+//serial.begin(115200);
+}
+
+void loop() {
+
+}
