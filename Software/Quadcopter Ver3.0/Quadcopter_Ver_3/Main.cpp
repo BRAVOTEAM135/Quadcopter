@@ -50,6 +50,8 @@ volatile unsigned long task_2_count = 0;
 volatile unsigned long task_3_count = 0;
 	volatile unsigned long task_3a_count = 0;
 
+bool Error = 0;
+
 // ----- RADIO -----
 volatile static float thro_demand;
 volatile static float roll_demand;
@@ -59,13 +61,13 @@ volatile static float yaw_demand;
 volatile static uint8_t cut_off_flag = 0;
 
 // ----- SENSOR -----
-float yaw_angle;
-float roll_angle;
-float pitch_angle;
+float IMU_yaw_angle;
+float IMU_roll_angle;
+float IMU_pitch_angle;
 
-float yaw_rate;
-float roll_rate;
-float pitch_rate;
+float gyro_yaw_rate;
+float gyro_roll_rate;
+float gyro_pitch_rate;
 // ----- Analog Input -----
 // High when a value is ready to be read
 volatile int readFlag;
@@ -85,14 +87,15 @@ PID PosPitch;
 PID PosYaw;
 
 // ----- PID Gains -----
+// NOTE: Rate input +/-1000dps
 // These will be defines/const once the default gain values are know
-float ROLL_RATE_Kp = 0;//0.028; //0.037;
-float ROLL_RATE_Ki = 0;
-float ROLL_RATE_Kd = 0;
+float ROLL_RATE_Kp = 0; //0.025;
+float ROLL_RATE_Ki = 0; //0.440;
+float ROLL_RATE_Kd = 0; //0.010;
 
-float PITCH_RATE_Kp = 0;//0.028;//0.040; //0.018;
+float PITCH_RATE_Kp = 0.028;
 float PITCH_RATE_Ki = 0;
-float PITCH_RATE_Kd = 0; //0.109;
+float PITCH_RATE_Kd = 0;
 
 float YAW_RATE_Kp = 0;//0.001;
 float YAW_RATE_Ki = 0;
@@ -291,14 +294,19 @@ void loop() {
 	//Create an infinite loop - enables for "void loop" initialization
 	while(1) {
 
-
+		// ---------------------
 		// ----- Heartbeat -----
+		// ---------------------
+		// Called every 200ms and toggles the LED pin to show the system is alive and running
 		if (task_0_count >= 200){
 			task_0_count = 0;
-			toggle_led(LED_PIN);
+			if (Error) set_led(LED_PIN); // If there is an error set the LED PIN constant on
+			else toggle_led(LED_PIN); // Else flash the LED
 		}
 
+		// ------------------
 		// ----- Serial -----
+		// ------------------
 		// Every 100ms this function is called 10Hz
 		if (task_1_count >= 100) {
 			task_1_count = 0; // Reset Task Counter
@@ -381,10 +389,22 @@ void loop() {
 		Serial.println("");
 */
 
-/*
+
 			// Gain Debug
-			Serial.println(gain,3);
+			Serial.print(gain,3);
+			Serial.print(",");
+/*
+			Serial.print(gyro_pitch_rate,3);
+			Serial.print(",");
 */
+
+			/*
+			Serial.print(roll_demand,3);
+			Serial.print(",");
+*/
+			Serial.println();
+
+
 
 /*
 			// PID Debug
@@ -396,7 +416,7 @@ void loop() {
 			Serial.print(PID_Yaw_Rate);
 			Serial.println();
 */
-
+/*
 			// Motor Debug
 			Serial.print(M1_Val,2);
 			Serial.print(",");
@@ -406,12 +426,13 @@ void loop() {
 			Serial.print(",");
 			Serial.print(M4_Val,2);
 			Serial.println();
-
+*/
 
 		}
 
-
+		//------------------------------
 		// ----- Main Control Loop -----
+		// -----------------------------
 		// Called every 5ms. 200Hz
 		else if(task_2_count >= 5) {
 			task_2_count = 0; // Reset the task counter
@@ -419,21 +440,22 @@ void loop() {
 			// ----- Sensor -----
 			get_sensor();
 			// Assign to global variable to local variable
-			yaw_angle = angleYPR[0];
-			roll_angle = angleYPR[1];
-			pitch_angle = angleYPR[2];
+			IMU_yaw_angle = angleYPR[0];
+			IMU_roll_angle = angleYPR[1];
+			IMU_pitch_angle = angleYPR[2];
 
-			yaw_rate = gyroYPR[2];
-			roll_rate = gyroYPR[1];
-			pitch_rate = gyroYPR[0];
+
+			gyro_yaw_rate = gyroYPR[2];
+			gyro_roll_rate = gyroYPR[1];
+			gyro_pitch_rate = gyroYPR[0];
 
 			// ----- Radio -----
 			read_radio();
 
 			thro_demand = read_thro();
-			roll_demand = read_alie() * 12; // +/-540 dps this is for Rate mode
-			pitch_demand = read_elev() * 12; // +/-540 dps
-			yaw_demand = read_rudd() * 12; // +/-540 dps
+			roll_demand = read_alie() * 22; // +/-540 dps this is for Rate mode
+			pitch_demand = read_elev() * 22; // +/-540 dps
+			yaw_demand = read_rudd() * 1; // +/-540 dps
 
 			if (read_aux1()){
 				set_led(GPIO2);
@@ -450,28 +472,30 @@ void loop() {
 				clear_led(GPIO1);
 			}
 
-
+/*********************
+ * ----- TUNNING -----
+ ******************* */
 			// PID Debug/Tuning
-			YAW_RATE_Kp = gain;
+			PITCH_RATE_Kd = gain;
 
 			//----- PID -----
 			// Rate - Acro
 			// Roll
-			P_Roll_Rate = RateRoll.p_pid(roll_demand, gyroYPR[1]); // gyroYPR - Global Variable
-			I_Roll_Rate = RateRoll.i_pid(roll_demand, gyroYPR[1]);
-			D_Roll_Rate = RateRoll.d_pid(roll_demand, gyroYPR[1]);
+			P_Roll_Rate = RateRoll.p_pid(roll_demand, gyro_roll_rate); // gyroYPR - Global Variable
+			I_Roll_Rate = RateRoll.i_pid(roll_demand, gyro_roll_rate);
+			D_Roll_Rate = RateRoll.d_pid(roll_demand, gyro_roll_rate);
 			PID_Roll_Rate = (P_Roll_Rate * ROLL_RATE_Kp) + (I_Roll_Rate * ROLL_RATE_Ki) + (D_Roll_Rate * ROLL_RATE_Kd);
 
 			// Pitch
-			P_Pitch_Rate = RatePitch.p_pid(pitch_demand, gyroYPR[0]);
-			I_Pitch_Rate = RatePitch.i_pid(pitch_demand, gyroYPR[0]);
-			D_Pitch_Rate = RatePitch.d_pid(pitch_demand, gyroYPR[0]);
+			P_Pitch_Rate = RatePitch.p_pid(pitch_demand, gyro_pitch_rate);
+			I_Pitch_Rate = RatePitch.i_pid(pitch_demand, gyro_pitch_rate);
+			D_Pitch_Rate = RatePitch.d_pid(pitch_demand, gyro_pitch_rate);
 			PID_Pitch_Rate = (P_Pitch_Rate * PITCH_RATE_Kp) + (I_Pitch_Rate * PITCH_RATE_Ki) + (D_Pitch_Rate * PITCH_RATE_Kd);
 
 			// Yaw
-			P_Yaw_Rate = RateYaw.p_pid(yaw_demand, gyroYPR[2]);
-			I_Yaw_Rate = RateYaw.i_pid(yaw_demand, gyroYPR[2]);
-			D_Yaw_Rate = RateYaw.d_pid(yaw_demand, gyroYPR[2]);
+			P_Yaw_Rate = RateYaw.p_pid(yaw_demand, gyro_yaw_rate);
+			I_Yaw_Rate = RateYaw.i_pid(yaw_demand, gyro_yaw_rate);
+			D_Yaw_Rate = RateYaw.d_pid(yaw_demand, gyro_yaw_rate);
 			PID_Yaw_Rate = (P_Yaw_Rate * YAW_RATE_Kp) + (I_Yaw_Rate * YAW_RATE_Ki) + (D_Yaw_Rate * YAW_RATE_Kd);
 
 
@@ -532,7 +556,12 @@ void loop() {
 					//pitch_mixer(thro_demand, PID_Pitch_Rate); // Motors 1 and 4
 					//TODO: yaw_mixer(); // Will need a compass to complete this and possibly GPS
 
+					// TODO
+					// SEE NOTE BOOK FOR LATEST LOGIC
+
+					// If Thro demand above a sensible threshold begin control
 					if(thro_demand > 20){
+						// ----- Motor Mix -----
 						//Note: this is for X configuration motor mix
 						/*
 						M1_Val = thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate;
@@ -540,6 +569,7 @@ void loop() {
 						M3_Val = thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate;
 						M4_Val = thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate;
 
+						// This is just for printing purpose. as same logic is handled in the write_motors()
 						if(M1_Val < 0) M1_Val = 0;
 						if(M1_Val > 100) M1_Val = 100;
 
@@ -557,23 +587,29 @@ void loop() {
 						write_motor_3(M3_Val);
 						write_motor_4(M4_Val);
 */
-						/*
-						write_motor_1(thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate); // Yellow
-						write_motor_2(thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate); // RED
-						write_motor_3(thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate); // Green
-						write_motor_4(thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate); // Blue
-						*/
 
-						write_motor_2(thro_demand);
-						write_motor_3(thro_demand);
+						write_motor_1(thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate); // Yellow
+						M1_Val = thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate;
+
+						write_motor_2(thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate); // RED
+						M2_Val = thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate;
+
+						write_motor_3(thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate); // Green
+						M3_Val = thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate;
+
+						write_motor_4(thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate); // Blue
+						M4_Val = thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate;
+
+
+
 
 
 					}
-					else
-							//write_motor_1(thro_demand);
+					else	//Below the throttle Threshold command all motors to the same speed.
+							write_motor_1(thro_demand);
 							write_motor_2(thro_demand);
 							write_motor_3(thro_demand);
-							//write_motor_4(thro_demand);
+							write_motor_4(thro_demand);
 					/*
 					// Debug: Motors
 					// YELLOW
@@ -592,8 +628,9 @@ void loop() {
 			}
 		}
 
-
+		// ---------------------
 		// ----- GPIO Task -----
+		// ---------------------
 		else if(task_3_count >= 10) {
 			task_3_count = 0; // Reset the task counter
 			task_3a_count++;
@@ -623,8 +660,9 @@ void loop() {
 
 		}
 
-
-		//----- Things to Do on Every loop cycle -----
+		// --------------------------------------------
+		// ----- Things to Do on Every loop cycle -----
+		// --------------------------------------------
 		// Reset the watch dog timer. Needs a reset every 15ms
 		reset_watchdog();
 
@@ -636,6 +674,7 @@ void loop() {
 		//gain = smoothing() * 0.0005; // 1/920 - 0-1scale
 		//gain = smoothing() * 0.00027173913; // 0 - 0.25
 		gain = smoothing() * 0.00029296875;
+		//gain = smoothing() * 0.00271739130434782608695652173913; // 0 - 2.5
 
 
 

@@ -131,21 +131,29 @@ void config_motors(){
 
 void write_motor_1(int M1){
 	//PWM1 = M1;
+	if(M1 < 0) M1 = 0;		// Lower Limit for Motor 0%
+	if(M1 > 100) M1 = 100;	// Upper Limit for Motor 100%
 	PWM1 = perc2raw(M1);
 	}
 	
 void write_motor_2(int M2){
 	//PWM2 = M2;
+	if(M2 < 0) M2 = 0;		// Lower Limit for Motor 0%
+	if(M2 > 100) M2 = 100;	// Upper Limit for Motor 100%
 	PWM2 = (perc2raw(M2));
 	}
 	
 void write_motor_3(int M3){
 	//PWM3 = M3;
+	if(M3 < 0) M3 = 0;		// Lower Limit for Motor 0%
+	if(M3 > 100) M3 = 100;	// Upper Limit for Motor 100%
 	PWM3 = perc2raw(M3);
 	}
 	
 void write_motor_4(int M4){
 	//PWM4 = M4;
+	if(M4 < 0) M4 = 0;		// Lower Limit for Motor 0%
+	if(M4 > 100) M4 = 100;	// Upper Limit for Motor 100%
 	PWM4 = perc2raw(M4);
 	}
 

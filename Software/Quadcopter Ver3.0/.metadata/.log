@@ -12353,3 +12353,395 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-04 20:58:51.768
 !MESSAGE Unknown connection: Nano
+!SESSION 2017-01-04 21:08:58.882 -----------------------------------------------
+eclipse.buildId=4.6.1.M20160907-1200
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.launchbar.core 2 0 2017-01-04 21:09:04.225
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.arduino.core.descriptorType
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-04 21:09:09.185
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.egit.ui 2 0 2017-01-04 21:09:09.962
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Kevin'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+!SESSION 2017-01-04 21:10:35.534 -----------------------------------------------
+eclipse.buildId=4.6.1.M20160907-1200
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.launchbar.core 2 0 2017-01-04 21:10:41.767
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.arduino.core.descriptorType
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-04 21:10:47.731
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.egit.ui 2 0 2017-01-04 21:10:48.515
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Kevin'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-04 21:24:21.107
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:10:57.964
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:11:02.408
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:16:04.247
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:16:06.006
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:16:51.243
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:16:53.014
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:19:28.700
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:19:30.429
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:22:41.023
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:22:42.801
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:22:52.888
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:22:53.004
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:36:32.108
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:36:32.452
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:38:54.621
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:39:04.082
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:39:04.216
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:46:51.135
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:46:52.891
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:51:51.681
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 14:51:53.419
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:04:45.296
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:04:47.171
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:06:20.704
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:06:22.414
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:08:23.083
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:08:24.806
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:10:52.896
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:10:54.532
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.jobs 4 2 2017-01-06 15:12:38.707
+!MESSAGE An internal error occurred during: "Disconnecting".
+!STACK 0
+java.lang.NullPointerException
+	at org.eclipse.remote.internal.console.TerminalConsoleConnector$2.run(TerminalConsoleConnector.java:168)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:13:48.480
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-06 15:13:52.526
+!MESSAGE Unknown connection: Nano
+!SESSION 2017-01-08 15:03:32.485 -----------------------------------------------
+eclipse.buildId=4.6.1.M20160907-1200
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-01-08 15:03:40.906
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY org.eclipse.launchbar.core 2 0 2017-01-08 15:03:41.858
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.arduino.core.descriptorType
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:03:46.573
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.egit.ui 2 0 2017-01-08 15:03:47.374
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Kevin'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:05:36.706
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:05:41.727
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:12:40.664
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:12:42.289
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:12:54.291
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:12:54.420
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:21:04.430
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:21:06.165
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:24:08.158
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:24:09.807
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:24:27.654
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:24:27.795
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:26:30.147
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:26:31.706
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:28:24.290
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:28:25.789
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:32:48.938
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:32:50.395
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:38:52.855
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:38:54.337
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:39:17.090
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:39:17.211
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:40:35.008
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:40:35.134
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:56:53.522
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 15:56:55.092
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:02:06.143
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:02:07.717
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:04:11.517
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:04:11.634
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:24:19.258
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:24:24.039
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:28:18.964
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:28:20.610
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:29:34.635
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:29:36.106
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:35:51.939
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:35:53.406
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:37:14.292
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:37:15.811
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:37:20.309
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:37:20.453
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:43:16.376
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:43:18.022
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:46:27.779
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:46:29.501
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:49:19.715
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:49:21.378
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:51:55.866
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:51:57.554
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:52:05.499
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:52:05.598
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:53:18.121
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:53:19.721
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:55:55.135
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:55:56.664
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:58:04.387
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-08 16:58:05.970
+!MESSAGE Unknown connection: Nano
+!SESSION 2017-01-09 19:42:23.402 -----------------------------------------------
+eclipse.buildId=4.6.1.M20160907-1200
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.launchbar.core 2 0 2017-01-09 19:42:27.719
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.arduino.core.descriptorType
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-09 19:42:32.668
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.egit.ui 2 0 2017-01-09 19:42:33.545
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Kevin'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-09 19:43:30.334
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-09 19:44:03.947
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-09 19:44:11.124
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-09 19:46:27.411
+!MESSAGE Unknown connection: Nano
+!SESSION 2017-01-12 16:40:37.848 -----------------------------------------------
+eclipse.buildId=4.6.1.M20160907-1200
+java.version=1.8.0_111
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.launchbar.core 2 0 2017-01-12 16:40:43.945
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.arduino.core.descriptorType
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-01-12 16:40:49.291
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.egit.ui 2 0 2017-01-12 16:40:50.034
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Kevin'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.

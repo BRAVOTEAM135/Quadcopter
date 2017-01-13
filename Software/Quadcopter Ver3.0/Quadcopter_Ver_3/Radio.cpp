@@ -143,18 +143,18 @@ float scale_elev(float rawElev){
 	char range = 45;
 	
 	// Stick at rest
-	if ((rawElev  <= 1495) & (rawElev >=1485)){
+	if ((rawElev  <= 1500) & (rawElev >=1480)){
 	scaledElev = 0;
 	} 
 	
 	// Stick move Left 
-	else if ((rawElev > 1495) & (rawElev <= 1915)){
+	else if ((rawElev > 1500) & (rawElev <= 1915)){
 	//Range ==> 1915 - 1495 = 420
 	scaledElev = ((1495 - rawElev) * (range/420.00));
 	}
 	
 	// Stick moved Right
-	else if ((rawElev < 1485) & (rawElev >= 1075)){
+	else if ((rawElev < 1480) & (rawElev >= 1075)){
 	//Range ==> 1485 - 1075 = 410
 	scaledElev = ((1485 - rawElev) * (range/410.00));
 	}
@@ -177,18 +177,18 @@ float scale_alie(float rawAlie){
 	char range = 45;
 	
 	// Stick at rest
-	if ((rawAlie  <= 1495) & (rawAlie >=1485)){
+	if ((rawAlie  <= 1500) & (rawAlie >=1480)){
 	scaledAlie = 0;
 	} 
 	
 	// Stick moved Forward
-	else if ((rawAlie > 1495) & (rawAlie <= 1905)){
+	else if ((rawAlie > 1500) & (rawAlie <= 1905)){
 	//Range ==> 1905 - 1495 = 420
 	scaledAlie = ((1495 - rawAlie) * (range/420.00));
 	}
 	
 	// Stick moved Back
-	else if ((rawAlie < 1485) & (rawAlie >= 1070)){
+	else if ((rawAlie < 1480) & (rawAlie >= 1070)){
 	//Range ==> 1485 - 1070 = 415
 	scaledAlie = ((1485 - rawAlie) * (range/415.00));
 	}
