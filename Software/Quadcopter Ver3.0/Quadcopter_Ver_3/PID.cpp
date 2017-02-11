@@ -54,29 +54,42 @@ void init_pid(){
 	init_t1();
 	}
 
-PID::PID(){}
+// Constructor, function called as soon at the object is created
+// All variables are initialized by the constructor to 0
+// All variables are also private to the class
+PID::PID(){
+	volatile float error = 0;
+	volatile float previousTimeI = 0;
+	volatile float sumError = 0;
+	volatile float previousTimeD = 0;
+	volatile float previousErrorD = 0;
+	volatile float currentTime = 0;
+	volatile float dt = 0;
+	volatile float d = 0;
+
+}
 
 float PID::p_pid(float setPoint, float processVariable) {
-		float error = setPoint - processVariable;
+		error = setPoint - processVariable;
 		return error;
 	}
 
 float PID::i_pid(float setPoint, float processVariable) {
-	float error = setPoint - processVariable;
-	float currentTime = get_micros_t1();
-	float dt = currentTime - PID::previousTimeI;
-	PID::sumError =+ (error / dt);
-	PID::previousTimeI = currentTime;
+	error = setPoint - processVariable;
+	currentTime = get_micros_t1();
+	dt = currentTime - previousTimeI;
+	sumError =+ (error / dt);
+	previousTimeI = currentTime;
 	return sumError;
 }
 
 float PID::d_pid(float setPoint, float processVariable){
-	float error = setPoint - processVariable;
-	float currentTime = get_micros_t1();
-	float dt = currentTime - PID::previousTimeD;
-	float d = (PID::previousErrorD - error)/dt;
-	PID::previousErrorD = error;
-	PID::previousTimeD = currentTime;
+	error = setPoint - processVariable;
+	currentTime = get_micros_t1();
+	dt = currentTime - previousTimeD;
+	d = (previousErrorD - error)/dt;
+	previousErrorD = error;
+	previousTimeD = currentTime;
 	return d;
 }
 

@@ -1,0 +1,108 @@
+#include <Arduino.h>
+/*
+* ==============================================================
+* ===== Defines =====
+* ==============================================================
+
+// =============================================================
+/*
+* ==============================================================
+* ===== Variables =====
+* ==============================================================
+*/
+volatile uint32_t T1_overflow_count = 0;
+
+
+
+// =============================================================
+/*
+* ==============================================================
+* ===== Function =====
+* ==============================================================
+*/
+// ----- Init Timer 1 -----
+// Timer one is used as timer for system. GetMicros and delays
+void init_T1(){
+cli(); //Disable all interrupts
+
+// Initialize the Overflow counter variable
+T1_overflow_count = 0;
+
+// Clear Registers
+TCCR1A = 0;
+TCCR1B = 0;
+
+// TCCR1 - set WGM waveform generation mode
+// Fast PWM
+// TOP = OCR1A
+TCCR1A |= (1 << WGM10);
+TCCR1A |= (1 << WGM11);
+TCCR1B |= (1 << WGM12);
+TCCR1B |= (1 << WGM13);
+
+// set the prescaler. Clk/8
+TCCR1B |= (1 << CS11); // 0.5us tick
+
+// TIMSK - enable Output Compare A Match Interrupt
+TIMSK1 |= (1 << OCIE1A);
+
+// OCR1, Output Compare Register
+OCR1A = 1999; // This is to give an interrupt every 1ms 0 - 1999 = 2000 ticks. 2000ticks * 0.5us = 1ms
+
+sei(); // Enable all Interrupts
+}
+
+
+uint32_t ticks_T1(){
+	cli(); //Clear interrupts
+	uint32_t ticks = TCNT1 + (T1_overflow_count * 2000); // Returns the number of ticks.
+	sei(); // Set interrupts
+	return ticks;
+}
+
+
+// ----- Delay Milli Second -----
+void delay_T1(int ms){
+	uint32_t start = T1_overflow_count;
+
+	Serial.println("---> START <---");
+	Serial.print("Val: ");
+	Serial.println(start+ms);
+
+	// Do While True
+while (T1_overflow_count < (start+ms)){}
+
+Serial.println("---> FINISH <---");
+start = 0;
+}
+
+
+// ----- SETUP -----
+void setup() {
+	init_T1();
+	Serial.begin(115200);
+	pinMode(13, OUTPUT);
+
+	PORTB = PORTB & B11011111; //pin 13 LOW
+	//PORTB = PORTB | B00100000; //pin 13 HIGH
+}
+
+// ----- MAIN LOOP -----
+void loop() {
+	//PORTB = PORTB & B11011111; //pin 13 LOW
+	delay_T1(500);
+	//PORTB = PORTB | B00100000; //pin 13 HIGH
+	//delay_T1(10);
+	PORTB = PORTB ^ B00100000;
+	Serial.println("TEST");
+	}
+
+
+// ----- INTERUPT SERVICE ROUTINE -----
+// This is called every 1ms
+ISR(TIMER1_COMPA_vect){
+	//PORTB = PORTB ^ B00100000;
+	T1_overflow_count++;
+}
+
+

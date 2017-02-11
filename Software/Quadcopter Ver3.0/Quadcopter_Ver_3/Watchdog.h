@@ -41,7 +41,7 @@ void reset_watchdog();
  * WDTO_4S		4s
  * WDTO_8S		8s
  */
-#define WD_TIMEOUT WDTO_15MS
+#define WD_TIMEOUT WDTO_30MS
 
 /* Header protection close */
  #endif

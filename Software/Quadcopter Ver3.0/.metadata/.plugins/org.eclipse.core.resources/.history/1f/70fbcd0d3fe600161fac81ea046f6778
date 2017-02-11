@@ -1,0 +1,111 @@
+#include <Arduino.h>
+/*
+* ==============================================================
+* ===== Defines =====
+* ==============================================================
+
+// =============================================================
+/*
+* ==============================================================
+* ===== Variables =====
+* ==============================================================
+*/
+unsigned long T1_overflow_count = 0;
+bool iFlag = 0;
+uint16_t tCount = 0;
+// =============================================================
+/*
+* ==============================================================
+* ===== Function =====
+* ==============================================================
+*/
+// ----- Init Timer 1 -----
+// Timer one is used as timer for system. GetMicros and delays
+void init_T1(){
+cli(); //Disable all interrupts
+TCCR1A = 0;
+TCCR1B = 0;
+
+// TCCR1 - set WGM waveform generation mode
+// Fast PWM 8bit PWM
+TCCR1A |= (1 << WGM10);
+//TCCR1A |= (1 << WGM11);
+TCCR1B |= (1 << WGM12);
+//TCCR1B |= (1 << WGM13);
+
+// set the prescaler
+TCCR1B |= (1 << CS11); // 8 Bit Scaler
+
+// TIMSK - enable overflow interrupt
+TIMSK1 |= (1 << TOIE1);
+
+sei(); // Enable all Interrupts
+}
+
+// ----- Delay Micro Second -----
+void myDelay(int us){
+
+uint16_t start = (T1_overflow_count * 256) + TCNT1;
+while((((T1_overflow_count * 256) + TCNT1) - start) < (us*2)) {}
+}
+
+// ----- Get Micro Second -----
+int myMicro(){
+	cli();
+	if (iFlag == 1){
+		iFlag = 0;
+
+		tCount = (T1_overflow_count*256) + TCNT1;
+		T1_overflow_count = 0;
+	}
+	else
+		tCount = TCNT1;
+//unsigned long tCount = (T1_overflow_count * 256) + TCNT1;
+	//return ((T1_overflow_count * 256) + TCNT1) * 0.5;
+sei();
+return tCount;
+}
+
+// ----- SETUP -----
+uint16_t a,b,c;
+void setup() {
+  // put your setup code here, to run once:
+init_T1();
+Serial.begin(115200);
+pinMode(13, OUTPUT);
+PORTB = PORTB & B11011111; //pin 13 low
+}
+
+// ----- MAIN LOOP -----
+void loop() {
+
+//PORTB = PORTB | B00100000; //Pin 13 HIGH
+uint16_t a = myMicro();
+
+//myDelay(1000);
+delay(100);
+
+//PORTB = PORTB & B11011111; //pin 13 low
+uint16_t b = myMicro();
+Serial.print("a: ")
+Serial.print(a);
+Serial.print("b: ");
+Serial.print(b);
+Serial.print("b-a: ");
+Serial.print(b-a);
+Serial.println();
+
+
+	}
+
+
+
+ISR(TIMER1_OVF_vect)        // interrupt service routine
+{
+	T1_overflow_count++;
+	iFlag = 1;
+//TCNT1 = 235;
+PORTB = PORTB ^ B00100000; //Pin 13 HIGH
+
+}
+

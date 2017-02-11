@@ -31,16 +31,20 @@ class PID {
 
 
 public:
-	PID();
+	PID(); // Constructor initialises all variables to 0
 	float p_pid(float setPoint, float processVariable);
 	float i_pid(float setPoint, float processVariable);
 	float d_pid(float setPoint, float processVariable);
 
 private:
-	volatile float previousTimeI = 0;
-	volatile float sumError = 0;
-	volatile float previousTimeD = 0;
-	volatile float previousErrorD = 0;
+	volatile float error;
+	volatile float previousTimeI;
+	volatile float sumError;
+	volatile float previousTimeD;
+	volatile float previousErrorD;
+	volatile float currentTime;
+	volatile float dt;
+	volatile float d;
 };
 
 

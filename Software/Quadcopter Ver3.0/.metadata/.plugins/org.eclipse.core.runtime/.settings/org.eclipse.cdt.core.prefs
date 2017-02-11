@@ -33,5 +33,23 @@ config/Quadcopter_Ver_3/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt
 config/Quadcopter_Ver_3/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.id=Quadcopter_Ver_3\#org.eclipse.cdt.arduino.core.provider/Uno
 config/Quadcopter_Ver_3/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
 config/Quadcopter_Ver_3/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.version=
+config/Radio_Test_Harness/cdt.toolChain.id=Radio_Test_Harness\#
+config/Radio_Test_Harness/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/Radio_Test_Harness/cdt.toolChain.version=
+config/Radio_Test_Harness/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.id=Radio_Test_Harness\#org.eclipse.cdt.arduino.core.provider/Nano Optiboot
+config/Radio_Test_Harness/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/Radio_Test_Harness/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.version=
+config/Radio_Test_Harness/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.id=Radio_Test_Harness\#org.eclipse.cdt.arduino.core.provider/Uno
+config/Radio_Test_Harness/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/Radio_Test_Harness/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.version=
+config/Timer_Test/cdt.toolChain.id=Timer_Test\#
+config/Timer_Test/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/Timer_Test/cdt.toolChain.version=
+config/Timer_Test/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.id=Timer_Test\#org.eclipse.cdt.arduino.core.provider/Nano Optiboot
+config/Timer_Test/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/Timer_Test/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.version=
+config/Timer_Test/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.id=Timer_Test\#org.eclipse.cdt.arduino.core.provider/Uno
+config/Timer_Test/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/Timer_Test/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.version=
 eclipse.preferences.version=1
 macros/workspace=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<macros/>\r\n

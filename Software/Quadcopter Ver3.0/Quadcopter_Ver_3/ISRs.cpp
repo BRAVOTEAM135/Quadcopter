@@ -63,9 +63,8 @@ void calcThro() {
 };
 
 void calcAlie(){
-	 if ((PIND & _BV(PD4)) == _BV(PD4)) { //PD4
-  //if(digitalRead(ALIE_IN_PIN) == HIGH) {
-    ulAlieStart = get_count_t1();
+	if ((PIND & _BV(PD4)) == _BV(PD4)) { //PD4
+		ulAlieStart = get_count_t1();
 	}
   else {
     unAlieInShared = (uint16_t)(get_count_t1() - ulAlieStart);
@@ -75,7 +74,6 @@ void calcAlie(){
 
 void calcElev(){
 if ((PIND & _BV(PD7)) == _BV(PD7)){ //PD7
-  //if(digitalRead(ELEV_IN_PIN) == HIGH)	{
     ulElevStart = get_count_t1();
 	}
   else  {
@@ -86,7 +84,6 @@ if ((PIND & _BV(PD7)) == _BV(PD7)){ //PD7
 
 void calcRudd() {
  if((PINB & _BV(PB0)) == _BV(PB0)){ // PB0
-  //if(digitalRead(RUDD_IN_PIN) == HIGH) {
     ulRuddStart = get_count_t1();
 	}
   else {
@@ -97,7 +94,6 @@ void calcRudd() {
 
 void calcGear(){
 	 if ((PINB & _BV(PB1)) == _BV(PB1)) { //PB1
-  //if(digitalRead(ALIE_IN_PIN) == HIGH) {
     ulGearStart = get_count_t1();
 	}
   else {
@@ -108,7 +104,6 @@ void calcGear(){
 
 void calcAux1(){
 	 if ((PINB & _BV(PB2)) == _BV(PB2)) { //PB2
-  //if(digitalRead(ALIE_IN_PIN) == HIGH) {
     ulAux1Start = get_count_t1();
 	}
   else {
