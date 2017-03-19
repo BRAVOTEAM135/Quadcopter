@@ -16,13 +16,22 @@ public:
 	void init_channels();
 	uint16_t read_channel();
 
-	// Functions that handle the read of the channels
-	uint16_t read_THRO();	// PCINT18	PIN2	PD2
-	uint16_t read_ALIE();	// PCINT20	PIN4	PD4
-	uint16_t read_ELEV();	// PCINT23	PIN7	PD7
-	uint16_t read_RUDD();	// PCINT0	PIN8	PB0
-	uint16_t read_GEAR();	// PCINT1	PIN9	PB1
-	uint16_t read_AUX1();	// PCINT2	PIN10	PB2
+	// Functions that handle the read of the channels. Raw Values
+	uint16_t read_raw_THRO();	// PCINT18	PIN2	PD2
+	uint16_t read_raw_ALIE();	// PCINT20	PIN4	PD4
+	uint16_t read_raw_ELEV();	// PCINT23	PIN7	PD7
+	uint16_t read_raw_RUDD();	// PCINT0	PIN8	PB0
+	uint16_t read_raw_GEAR();	// PCINT1	PIN9	PB1
+	uint16_t read_raw_AUX1();	// PCINT2	PIN10	PB2
+
+	//Scaled values
+	float THRO(); // 0 - 100
+	float ALIE(); // -100 - 100
+	float ELEV(); // -100 - 100
+	float RUDD(); //-100 - 100
+	uint8_t GEAR(); // 0 to 1
+	uint8_t AUX1(); // 0 to 1
+	uint8_t TH_CUT();
 
 
 
@@ -61,6 +70,8 @@ private:
 	volatile uint16_t RUDD_pulse_width;
 	volatile uint16_t GEAR_pulse_width;
 	volatile uint16_t AUX1_pulse_width;
+
+
 
 
 

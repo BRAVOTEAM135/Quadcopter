@@ -825,7 +825,7 @@ uint8_t MPU6050::dmpReadAndProcessFIFOPacket(uint8_t numPackets, uint8_t *proces
     uint8_t buf[dmpPacketSize];
     for (uint8_t i = 0; i < numPackets; i++) {
         // read packet from FIFO
-        getFIFOBytes(buf, dmpPacketSize);
+        getFIFOBytes(buf*, dmpPacketSize);
 
         // process packet
         if ((status = dmpProcessFIFOPacket(buf)) > 0) return status;

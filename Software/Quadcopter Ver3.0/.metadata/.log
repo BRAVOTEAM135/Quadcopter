@@ -13287,3 +13287,144 @@ java.io.IOException:
 
 !ENTRY org.eclipse.cdt.core 1 0 2017-03-19 13:46:39.771
 !MESSAGE Indexed 'New_Radio_Test' (1 sources, 38 headers) in 0.794 sec: 1,575 declarations; 1,945 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:33:12.724
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:34:09.308
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:44:30.367
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:45:02.083
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:45:15.367
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:49:26.315
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:50:57.765
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 17:51:29.923
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:01:22.571
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:01:44.681
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:01:54.759
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:02:42.533
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:03:58.476
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:06:39.873
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:13:41.937
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:15:31.181
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:15:33.036
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:15:36.464
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:16:08.511
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:16:11.393
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:18:20.545
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:19:06.651
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:19:08.557
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:20:15.724
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:20:15.835
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:22:39.885
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 18:22:42.105
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:08:06.750
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:08:59.858
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:09:20.257
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:09:37.284
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:09:37.514
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:10:44.125
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:10:46.271
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:28:29.755
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:28:30.196
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:30:28.386
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:30:41.904
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:30:42.031
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:40:42.895
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:40:45.090
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:45:14.996
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:45:17.295
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:49:07.118
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:49:09.895
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:50:28.043
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2017-03-19 19:50:30.503
+!MESSAGE Unknown connection: Nano

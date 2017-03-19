@@ -1,459 +1,273 @@
 /*
- * Source File Rules:
- * ------------------
- * - Constants MUST be defined with capitals. E.g #define VALUE 10
- * - Functions MUST follow the following standard. E.g. adc_init(), adc_write()
- * - Variables Must follow the following standard. E.g. adcValueX, adcValueY
- * - Call by reference for variables. E.g.
+ * Radio.cpp
  *
- * int a = 100;
- * int b = 200;
- * 
- * swap(&a, &b); //pass variable address in
- * 
- * Where
- * void swap(int *x, int *y){ // using the address will point to value (*x)
- * 	int temp;
- * 	temp = *x;
- * 	*x = *y;
- * 	*y = temp;
- * }
- * }
- * 
- * Source File Comments:
- * ---------------------
- * WARNING!!! - Ensure safety fail safe is enabled on the Hardware 
- * in case of signal loss or corruption
- * 			Low		Middle	High
- * Thro 	1120	 - 		1950
- * 
- * 			Left	Middle	Right
- * Rudd  	1908	1490	1078
- *
- *			Top		Middle	Bottom
- * Elev		1940	1504	1116	
- *
- *			Left	Middle	Right
- * Alie	 	1912	1488	1080	
- 
+ *  Created on: 12 Feb 2017
+ *      Author: Kevin
  */
-
-/*----- #include -----*/
- #include "Arduino.h" /* Required to use the arduino libary */
-#include "Radio.h"
+#include "Arduino.h" /* Required to use the arduino libary */
 #include "T1.h"
-#include "ISRs.h"
+#include "Radio.h"
 
-
-/*----- (Module) Local Variables (Static) -----*/
-// create local variables to hold a local copies of the channel inputs
-  // these are declared static so that thier values will be retained
-  // between calls to loop.
-  static uint16_t unThroIn;
-  static uint16_t unRuddIn;
-  static uint16_t unElevIn;
-  static uint16_t unAlieIn;
-  static uint16_t unAux1In;
-  static uint16_t unGearIn;
-
-  // local copy of update flags
-  static uint8_t bUpdateFlags;
-  
- // ----- Global Variables -----
-  // holds the update flags defined above
-volatile uint8_t bUpdateFlagsShared;
-
-// shared variables are updated by the ISR and read by loop.
-// In loop we immediatley take local copies so that the ISR can keep ownership of the
-// shared ones. To access these in loop
-// we first turn interrupts off with noInterrupts
-// we take a copy to use in loop and the turn interrupts back on
-// as quickly as possible, this ensures that we are always able to receive new signals
- volatile uint16_t unThroInShared;
- volatile uint16_t unRuddInShared;
- volatile uint16_t unElevInShared;
- volatile uint16_t unAlieInShared;
- volatile uint16_t unAux1InShared;
- volatile uint16_t unGearInShared;
-
-// variable returned after a read
-static float throVal;
-static float ruddVal;
-static float elevVal;
-static float alieVal;
-static float aux1Val;
-static float gearVal;
-
-
-/*----- Local Function -----*/
-float scale_thro(float throVal) {
-    //float THRO_scaled = (throVal - 1070)*(100/830);  // Scale the raw throttle val to percentage
-    float THRO_scaled = (throVal - 1100)*(100.00/800.00);  // Scale the raw throttle val to percentage
-
-	
-	if (THRO_scaled >= 100){
-	THRO_scaled = 100;
-}
-else if (THRO_scaled <= 0){
-	THRO_scaled = 0;
-}
-  //return throVal;
- return THRO_scaled; 
- }
-
-
-float scale_rudd(float rawRudd){
-	float scaledRudd; // -45 to +45
-	uint8_t range = 45;
-
-	// 1850 <----- 1465 - 1460 -----> 1075
-
-	// Stick at rest
-	// Dead band of 5us
-		if ((rawRudd >= 1465) & (rawRudd <= 1460)){
-	scaledRudd = 0;
-	} 
-	
-	// Stick move Left 
-	else if ((rawRudd <= 1850) & (rawRudd > 1465)){
-	//Range ==> 1850 - 1465 = 385
-	//45 / 385 = 0.1169
-	scaledRudd = ((range/385.00) * (1465 - rawRudd));
-	}
-	
-	// Stick moved right
-	else if ((rawRudd < 1460) & (rawRudd >= 1075)){
-	//Range ==> 1460 - 1075 = 385
-	// 45 / 385 = 0.1169
-	scaledRudd = ((1460 - rawRudd) * (range/385.00));
-	}
-	
-	//Left Out of limits
-	else if (rawRudd > 1850){
-		scaledRudd = ((-1) * range);
-	}
-	//Right out of Limits
-	else if (rawRudd < 1075){
-		scaledRudd = range;
-	}
-	
-	
-	return scaledRudd;
-}
-
-// Controls Pitch
-float scale_elev(float rawElev){
-	float scaledElev; // -45 to +45
-	char range = 45;
-	
-	// Stick at rest
-	//5us dead band
-	if ((rawElev  <= 1511) & (rawElev >=1507)){
-	scaledElev = 0;
-	} 
-	
-	// Stick move Forward
-	else if ((rawElev > 1511) & (rawElev <= 1925)){
-	//Range ==> 1925 - 1511 = 414
-	scaledElev = ((1511 - rawElev) * (range/414.00));
-	}
-	
-	// Stick moved Backward
-	else if ((rawElev < 1507) & (rawElev >= 1093)){
-	//Range ==> 1507 - 1093 = 414
-	scaledElev = ((1507 - rawElev) * (range/414.00));
-	}
-	
-	///Forward Out of limits
-	else if (rawElev > 1925){
-		scaledElev = ((-1) * range);
-	}
-	//Backward out of Limits
-	else if (rawElev < 1093){
-		scaledElev = range;
-	}
-	
-	return scaledElev;
-}
-
-// Controls Roll
-float scale_alie(float rawAlie){
-	float scaledAlie; // -45 to +45
-	uint8_t range = 45;
-	
-	// Stick at rest
-	// 5us dead band
-	if ((rawAlie  <= 1497 ) & (rawAlie >= 1493)){
-	scaledAlie = 0;
-	} 
-	
-	// Stick moved Left
-	else if ((rawAlie > 1497) & (rawAlie <= 1910)){
-	//Range ==> 1910 - 1497 = 413
-	scaledAlie = ((1497 - rawAlie) * (range/413.00));
-	}
-	
-	// Stick moved Right
-	else if ((rawAlie < 1493) & (rawAlie >= 1072)){
-	//Range ==> 1493 - 1072 = 421
-	scaledAlie = ((1493 - rawAlie) * (range/421.00));
-	}
-	
-	//Left Out of limits
-	else if (rawAlie > 1910){
-		scaledAlie = ((-1) * range);
-	}
-	
-	//Right out of Limits
-	else if (rawAlie < 1072){
-		scaledAlie = range;
-	}
-	
-	return scaledAlie;
-}
-
-bool scale_gear(float rawGear){
-	bool GEAR_scaled;
-
-	// Gear Toggled ON
-	if (rawGear >= 1800){
-		GEAR_scaled = true;
-	}
-	// Gear Toggled Off
-	else {
-		GEAR_scaled = false;
-	}
-	return GEAR_scaled;
-}
-
-bool scale_aux1(float rawAux1){
-	bool AUX1_scaled;
-	
-	// AUX1 Toggled ON
-	if (rawAux1 >= 1800){
-		AUX1_scaled = true;
-	}
-	// AUX1 Toggled Off
-	else {
-		AUX1_scaled = false;
-	}
-	return AUX1_scaled;
+Radio::Radio() {
+	// This is called when the class is created
 
 }
 
+void Radio::init_channels(){
+	// Clear Interrupts
+	cli();
+
+	// Enable Pin Change Interrupts
+	// Pin Change Interrupt 0 [7:0]
+	// Pin Change Interrupt 1 [14:8]
+	// Pin Change Interrupt 2 [23:16]
+		PCICR |= (1 << PCIE0);
+		PCICR |= (0 << PCIE1);
+		PCICR |= (1 << PCIE2);
+
+		// Clear all PCINTs
+		PCMSK0 = 0;
+		PCMSK1 = 0;
+		PCMSK2 = 0;
+
+		//Enable Specific Pins
+		PCMSK2 |= (1 << PCINT18);	// THRO - PIN2
+		PCMSK2 |= (1 << PCINT20);	// ALIE - PIN4
+		PCMSK2 |= (1 << PCINT23);	// ELEV - PIN7
+		PCMSK0 |= (1 << PCINT0);	// RUDD - PIN8
+		PCMSK0 |= (1 << PCINT1);	// GEAR - PIN9
+		PCMSK0 |= (1 << PCINT2);	// AUX1 - PIN10
 
 
-void read_radio() {
-
-  // check shared update flags to see if any channels have a new signal
-  if(bUpdateFlagsShared)
-  {
-    noInterrupts(); // turn interrupts off quickly while we take local copies of the shared variables
-
-    // take a local copy of which channels were updated in case we need to use this in the rest of loop
-    bUpdateFlags = bUpdateFlagsShared;
-   
-    // in the current code, the shared values are always populated
-    // so we could copy them without testing the flags
-    // however in the future this could change, so lets
-    // only copy when the flags tell us we can.
-   
-    if(bUpdateFlags & THRO_FLAG)
-    {
-      unThroIn = unThroInShared;
-    }
-   
-    if(bUpdateFlags & RUDD_FLAG)
-    {
-      unRuddIn = unRuddInShared;
-    }
-   
-    if(bUpdateFlags & ELEV_FLAG)
-    {
-      unElevIn = unElevInShared;
-    }
-    
-    if(bUpdateFlags & ALIE_FLAG)
-    {
-      unAlieIn = unAlieInShared;
-    }
-    
-    if(bUpdateFlags & AUX1_FLAG)
-    {
-      unAux1In = unAux1InShared;
-    }
-
-    if(bUpdateFlags & GEAR_FLAG)
-    {
-      unGearIn = unGearInShared;
-    }
-
-    // clear shared copy of updated flags as we have already taken the updates
-    // we still have a local copy if we need to use it in bUpdateFlags
-    bUpdateFlagsShared = 0;
-   
-    interrupts(); // we have local copies of the inputs, so now we can turn interrupts back on
-    // as soon as interrupts are back on, we can no longer use the shared copies, the interrupt
-    // service routines own these and could update them at any time. During the update, the
-    // shared copies may contain junk. Luckily we have our local copies to work with :-)
-  }
- 
-  // do any processing from here onwards
-  // only use the local values unAuxIn, unThrottleIn and unSteeringIn, the shared
-  // variables unAuxInShared, unThrottleInShared, unSteeringInShared are always owned by
-  // the interrupt routines and should not be used in loop
- 
-  // the following code provides simple pass through
-  // this is a good initial test, the Arduino will pass through
-  // receiver input as if the Arduino is not there.
-  // This should be used to confirm the circuit and power
-  // before attempting any custom processing in a project.
- 
- 
-  // we are checking to see if the channel value has changed, this is indicated 
-  // by the flags. For the simple pass through we don't really need this check,
-  // but for a more complex project where a new signal requires significant processing
-  // this allows us to only calculate new values when we have new inputs, rather than
-  // on every cycle.
-  if(bUpdateFlags & THRO_FLAG)
-  {
-    //Serial.print("THRO: ");
-    //Serial.print(unThroIn);
-	//throVal = scale_thro(unThroIn);
-	throVal = unThroIn;
-
-  }
- 
-  if(bUpdateFlags & RUDD_FLAG)
-  {
-    //Serial.print("  RUDD: ");
-    //Serial.print(unRuddIn);
-	//ruddVal = scale_rx(unRuddIn);
-	ruddVal = unRuddIn;
-  }
- 
-  if(bUpdateFlags & ELEV_FLAG)
-  {
-    //Serial.print("  ELEV: ");
-    //Serial.print(unElevIn); 
-	//elevVal = scale_rx(unElevIn);
-	elevVal = unElevIn;
-
-  }
-  
-  if(bUpdateFlags & ALIE_FLAG)
-  {
-    //Serial.print("  ALIE: ");
-    //Serial.print(unAlieIn );  
-	//alieVal = scale_rx(unAlieIn);
-	alieVal = unAlieIn;
-  }
-
-  if(bUpdateFlags & AUX1_FLAG)
-  {
-    //Serial.print("  AUX1: ");
-    //Serial.print(unAux1In );
-	aux1Val = unAux1In;
-  }
 
 
-  if(bUpdateFlags & GEAR_FLAG)
-  {
-    //Serial.print("  GEAR: ");
-    //Serial.print(unGearIn );
-	gearVal = unGearIn;
-  }
- //Serial.println("");
-  bUpdateFlags = 0;
+
+		// Enable Interrupts
+		sei();
 
 }
 
-
-/*----- Global Functions -----*/
-void init_radio(){
-
-  //init_timer();
-  init_t1();
-
-  //initialise all the PCINTs for radio and configure the hardware
-  init_radio_isr();
+/* Raw Updated from ISR Called in ISR */
+// REturn is in ticks where tick period = 0.5us
+	// CHANNEL 1 : THROTTLE	==================================================
+	// PCINT18	PIN2	PD2
+	uint16_t Radio::read_raw_THRO(){
+		//Input changed from 0 to 1 (Rising Edge)
+		if(last_channel_value_THRO == 0 && (PIND & B00000100) ){
+			rise_time_THRO = get_count_t1();
+			last_channel_value_THRO = 1;        //Remember current input state
+			}
+		//Input changed from 1 to 0 (Falling Edge)
+		else if(last_channel_value_THRO == 1 && !(PIND & B00000100)){
+			fall_time_THRO = get_count_t1();
+			last_channel_value_THRO = 0; //Remember current input state
+			THRO_pulse_width = fall_time_THRO - rise_time_THRO;
+		}
+	return THRO_pulse_width;
 }
 
-float read_thro(){
-	read_radio(); //ensure the latest value is returned
-	//return average_thro(scale_thro(throVal/2));
-	//return throVal/2;
-	return scale_thro(throVal/2);
-	}
-	
-float read_rudd(){
-	read_radio();
-	//return average_rudd(scale_rudd(ruddVal/2));
-	//return ruddVal/2;
-	return scale_rudd(ruddVal/2);
-	}
-	
-float read_elev(){
-	read_radio();
-	//return average_elev(scale_elev(elevVal/2));
-	//return elevVal/2;
-	return scale_elev(elevVal/2);
-	}
-	
-float read_alie(){
-	read_radio();
-	//return average_alie(scale_alie(alieVal/2));
-	//return alieVal/2;
-	return scale_alie(alieVal/2);
+	// CHANNEL 2 : ALIERON	 ==================================================
+	// PCINT20	PIN4	PD4
+	uint16_t Radio::read_raw_ALIE(){
+		//Input changed from 0 to 1 (Rising Edge)
+		if(last_channel_value_ALIE == 0 && (PIND & B00010000) ){
+			rise_time_ALIE = get_count_t1();
+			last_channel_value_ALIE = 1;        //Remember current input state
+			}
+		//Input changed from 1 to 0 (Falling Edge)
+		else if(last_channel_value_ALIE == 1 && !(PIND & B00010000)){
+			fall_time_ALIE = get_count_t1();
+			last_channel_value_ALIE = 0; //Remember current input state
+			ALIE_pulse_width = fall_time_ALIE - rise_time_ALIE;
+			}
+		return ALIE_pulse_width;
 	}
 
-bool read_aux1(){
-	read_radio();
 
-	return scale_aux1(aux1Val/2);
+	// CHANNEL 3 : ELEVATOR	==================================================
+	// PCINT23	PIN7	PD7
+	uint16_t Radio::read_raw_ELEV(){
+		//Input changed from 0 to 1 (Rising Edge)
+		if(last_channel_value_ELEV == 0 && (PIND & B10000000) ){
+			rise_time_ELEV = get_count_t1();
+			last_channel_value_ELEV = 1;        //Remember current input state
+			}
+		//Input changed from 1 to 0 (Falling Edge)
+		else if(last_channel_value_ELEV == 1 && !(PIND & B10000000)){
+			fall_time_ELEV = get_count_t1();
+			last_channel_value_ELEV = 0; //Remember current input state
+			ELEV_pulse_width = fall_time_ELEV - rise_time_ELEV;
+			}
+		return ELEV_pulse_width;
 	}
 
-bool read_gear(){
-	read_radio();
-
-	return scale_gear(gearVal/2);
+	// CHANNEL 4 : RUDDER	==================================================
+	// PCINT0	PIN8	PB0
+	uint16_t Radio::read_raw_RUDD(){
+		//Input changed from 0 to 1 (Rising Edge)
+		if(last_channel_value_RUDD == 0 && (PINB & B00000001) ){
+			rise_time_RUDD = get_count_t1();
+			last_channel_value_RUDD = 1;        //Remember current input state
+			}
+		//Input changed from 1 to 0 (Falling Edge)
+		else if(last_channel_value_RUDD == 1 && !(PINB & B00000001)){
+			fall_time_RUDD = get_count_t1();
+			last_channel_value_RUDD = 0; //Remember current input state
+			RUDD_pulse_width = fall_time_RUDD - rise_time_RUDD;
+			}
+		return RUDD_pulse_width;
 	}
 
-bool thro_cut_off(){
-	read_radio();
-	bool THRO_cutoff;
 
-	if (throVal/2 <= 1000){
-		THRO_cutoff = true;
-	}
-	else {
-		THRO_cutoff = false;
-	}
-	return THRO_cutoff;
-}
-
-
-float read_raw_thro(){
-	return throVal/2;
-	}
-
-float read_raw_rudd(){
-	return ruddVal/2;
+	// CHANNEL 5 : GEAR	==================================================
+	// PCINT1	PIN9	PB1
+	uint16_t Radio::read_raw_GEAR(){
+		//Input changed from 0 to 1 (Rising Edge)
+			if(last_channel_value_GEAR == 0 && (PINB & B00000010) ){
+				rise_time_GEAR = get_count_t1();
+				last_channel_value_GEAR = 1;        //Remember current input state
+				}
+			//Input changed from 1 to 0 (Falling Edge)
+			else if(last_channel_value_GEAR == 1 && !(PINB & B00000010)){
+				fall_time_GEAR = get_count_t1();
+				last_channel_value_GEAR = 0; //Remember current input state
+				GEAR_pulse_width = fall_time_GEAR - rise_time_GEAR;
+				}
+			return GEAR_pulse_width;
 	}
 
-float read_raw_elev(){
-	return elevVal/2;
+
+	// CHANNEL 6 : AUX1	==================================================
+	// PCINT2	PIN10	PB2
+	uint16_t Radio::read_raw_AUX1(){
+		//Input changed from 0 to 1 (Rising Edge)
+			if(last_channel_value_AUX1 == 0 && (PINB & B00000100) ){
+				rise_time_AUX1 = get_count_t1();
+				last_channel_value_AUX1 = 1;        //Remember current input state
+				}
+			//Input changed from 1 to 0 (Falling Edge)
+			else if(last_channel_value_AUX1 == 1 && !(PINB & B00000100)){
+				fall_time_AUX1 = get_count_t1();
+				last_channel_value_AUX1 = 0; //Remember current input state
+				AUX1_pulse_width = fall_time_AUX1 - rise_time_AUX1;
+				}
+			return AUX1_pulse_width;
 	}
 
-float read_raw_alie(){
-	return alieVal/2;
+/* Scaled */
+// Scaled 0 to 100 for THRO, ALIE, ELEV and RUDD scaled -100 to 100, GEAR and AUX1 scaled 0 to 1
+// Assuming uniform pulse width 1000-2000ms
+// Trim can be handle on the Radio controller
+
+	// 0 - 100
+	float Radio::THRO(){
+		float val = THRO_pulse_width * 0.5; // Convert ticks to ms
+
+		// Scale to 0 - 100
+		val = (val - 1000) / 10;
+
+		// Ensure val cannot be less than 0
+		if (val <= 0){
+		return 	0;
+		}
+		// Ensure val cannot be greater than 100
+		else if (val >= 100){
+			return 100;
+		}
+		else
+			return val;
+
 	}
 
-float read_raw_aux1(){
-	return aux1Val/2;
+	// -100 - 100
+	float Radio::ALIE(){
+		float val = ALIE_pulse_width * 0.5;
+
+		// Note 10% deadband around centre
+		// Direction: Left (-tve)
+		if (val > 1510 && val < 2000){
+			val = (1510 - val) / 4.9;
+			return val;
+		}
+
+		// Directoin: Right (+tve)
+		else if (val < 1490 && val > 1000){
+			val = (1490 - val) / 4.9;
+			return val;
+		}
+		else
+
+		return 	0;
 	}
 
-float read_raw_gear(){
-	return gearVal/2;
+	// -100 - 100
+	float Radio::ELEV(){
+		float val = ELEV_pulse_width * 0.5;
+
+		// Direction: Forward (+tve)
+		if (val > 1510 && val < 2000){
+			val = (val - 1510) / 4.9;
+			return val;
+		}
+
+		// Direction: Backward (-tve)
+		else if (val < 1490 && val > 1000){
+			val = (val - 1490) / 4.9;
+			return val;
+		}
+		else
+
+		return 	0;
+
 	}
-/* END OF FILE */
+
+	//-100 - 100
+	float Radio::RUDD(){
+		float val = RUDD_pulse_width * 0.5;
+
+		// Direction: Left (-tve)
+		if (val > 1510 && val < 2000){
+			val = (1510 - val) / 4.9;
+			return val;
+		}
+
+		// Directoin: Right (+tve
+		else if (val < 1490 && val > 1000){
+			val = (1490 - val) / 4.9;
+			return val;
+		}
+		else
+
+		return 	0;
+	}
+
+	// 0 to 1
+	uint8_t Radio::GEAR(){
+		uint8_t val;
+		if(GEAR_pulse_width >3000){
+			return 	val = 1;
+		}
+		else
+			return val = 0;
+	}
+
+	// 0 to 1
+	uint8_t Radio::AUX1(){
+		uint8_t val;
+		if (AUX1_pulse_width > 3000){
+			return 	val = 1;
+			}
+		else
+			return val = 0;
+	}
+
+
+	uint8_t Radio::TH_CUT(){
+		float val = THRO_pulse_width * 0.5; // Convert ticks to ms
+		if (val < 900){
+			return 1;
+		}
+		else
+			return 0;
+
+	}

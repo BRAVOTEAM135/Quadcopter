@@ -26,6 +26,8 @@
  *	M3 = Green
  *	M4 = Blue
  *
+ *
+ * While tuning the header must be off and the TUNE must be set to 1, in LED.h ENABLE must be 0
  * */
 
 #include <Arduino.h>
@@ -40,27 +42,31 @@
 #include "Analog_Read.h"
 
 #define MAIN_DEBUG 1
-#define TUNE 0 //Ensure in the LED header to change the ENABLE const
+#define TUNE 0 //
 
 
 //----- TASKS -----
 volatile unsigned long task_0_count = 0; // Heart beat on pin 13
-volatile unsigned long task_1_count = 0;
-volatile unsigned long task_2_count = 0;
-volatile unsigned long task_3_count = 0;
+volatile unsigned long task_1_count = 0; // Serial
+volatile unsigned long task_2_count = 0; // Main Control loop
+volatile unsigned long task_3_count = 0; // GPIO
 	volatile unsigned long task_3a_count = 0;
+volatile unsigned long task_4_count = 0;
 
 bool Error = 0;
 
 // ----- RADIO -----
-static float thro_demand;
-static float roll_demand;
-static float pitch_demand;
-static float yaw_demand;
-static bool aux1_demand;
-static bool gear_demand;
+static float local_thro_demand;
+static float local_roll_demand;
+static float local_pitch_demand;
+static float local_yaw_demand;
+static bool local_aux1_demand;
+static bool local_gear_demand;
 
 volatile static uint8_t cut_off_flag = 0;
+
+// Initialise the Radio as an object
+Radio TX;
 
 // ----- SENSOR -----
 float IMU_yaw_angle;
@@ -70,6 +76,7 @@ float IMU_pitch_angle;
 float gyro_yaw_rate;
 float gyro_roll_rate;
 float gyro_pitch_rate;
+
 // ----- Analog Input -----
 // High when a value is ready to be read
 volatile int readFlag;
@@ -182,7 +189,7 @@ void setup() {
 
 	//Radio
 	if (MAIN_DEBUG) Serial.print("Initialising Radio...");
-	init_radio();
+	TX.init_channels();
 	if (MAIN_DEBUG) Serial.println("OK");
 
 	// Motors
@@ -203,7 +210,7 @@ void setup() {
 
 	// LEDs
 	if (MAIN_DEBUG) Serial.print("Initialising LEDs...");
-	if(!TUNE) init_a_leds(); //If we are tunning disable Analog Pins as Output
+	if(TUNE == 0) init_a_leds(); //If we are tunning disable Analog Pins as Output
 	init_d_leds();
 	if (MAIN_DEBUG) Serial.println("OK");
 
@@ -238,9 +245,6 @@ void loop() {
 
 	clear_led(LED_PIN);
 
-	read_radio();
-	read_aux1();
-
 	//delay_t1(5);
 	reset_watchdog(); // Reset the watchdog
 
@@ -255,17 +259,17 @@ void loop() {
 	 * 6. Connect the battery
 	 * 7. and go through the motor beep sequecne to calibrate
  */
-	if(read_aux1() == true){
+	if(TX.AUX1() == true){
 		set_led(GPIO0);
 		set_led(GPIO2);
 
-		while(read_aux1() == true){
-			read_radio();
-			write_motor_1(read_thro());
-			write_motor_2(read_thro());
-			write_motor_3(read_thro());
-			write_motor_4(read_thro());
-			read_aux1();
+		while(TX.AUX1() == true){
+
+			write_motor_1(TX.THRO());
+			write_motor_2(TX.THRO());
+			write_motor_3(TX.THRO());
+			write_motor_4(TX.THRO());
+
 			reset_watchdog(); // Reset the watchdog
 		}
 
@@ -279,9 +283,8 @@ void loop() {
 
 	while(init_thro > 0){
 		set_led(LED_PIN); // Light LED to show nothing happening
-		//delay_t1(5); // Delay to allow the radio to be read
-		read_radio();
-		init_thro = read_thro(); // Store read value locally
+
+		init_thro = TX.THRO(); // Store read value locally
 		reset_watchdog(); // Reset the watchdog
 	}
 
@@ -303,6 +306,7 @@ void loop() {
 		// Called every 500ms and toggles the LED pin to show the system is alive and running
 		if (task_0_count >= 500){
 			task_0_count = 0;
+
 			if (Error) set_led(LED_PIN); // If there is an error set the LED PIN constant on
 			else toggle_led(LED_PIN); // Else flash the LED
 		}
@@ -313,150 +317,66 @@ void loop() {
 		// Every 100ms this function is called 10Hz
 		if (task_1_count >= 100) {
 			task_1_count = 0; // Reset Task Counter
-/*
-			Serial.print(gyro_roll_rate,2); // Roll
-			Serial.print(",");
-			Serial.print(gyro_pitch_rate,2);
-			Serial.print(",");
-			Serial.print(gyro_yaw_rate,2);
-			Serial.print(",");
-			Serial.print(roll_demand,2);
-			Serial.print(",");
-			Serial.print(pitch_demand,2);
-			Serial.print(",");
-			Serial.print("0.00");
-			Serial.print(",");
-			Serial.print(PID_Roll_Rate,2);
-			Serial.print(",");
-			Serial.print(PID_Pitch_Rate,2);
-			Serial.print(",");
-			Serial.print(PID_Yaw_Rate,2);
-*/
 
-/*
-			// Sensor Debug
+
+
+			// ----- Sensor Debug -----
+			/*
+			// ANGLE
 			Serial.print("y-agl: ");
 			//Serial.print(angleYPR[0]); // Yaw
-			Serial.print(yaw_angle,2); // Yaw
+			Serial.print(IMU_yaw_angle,2); // Yaw
 			Serial.print("\t");
 
 			Serial.print("r-agl: ");
 			//Serial.print(angleYPR[1]); // Roll
-			Serial.print(roll_angle,2); // Roll
+			Serial.print(IMU_roll_angle,2); // Roll
 			Serial.print("\t");
 
 			Serial.print("p-agl: ");
 			//Serial.print(angleYPR[2]); // Pitch
-			Serial.print(pitch_angle,2);
+			Serial.print(IMU_pitch_angle,2);
 			Serial.print("\t");
 
-			Serial.println();
-
+			// RATE
 			Serial.print("y_rte: ");
 			//Serial.print(gyroYPR[2]); //Yaw
-			Serial.print(yaw_rate,2);
+			Serial.print(gyro_yaw_rate,2);
 			Serial.print("\t");
 
 			Serial.print("r_rte: ");
 			//Serial.print(gyroYPR[1]); // Roll
-			Serial.print(roll_rate,2);
+			Serial.print(gyro_roll_rate,2);
 			Serial.print("\t");
 
 			Serial.print("p_rte: ");
 			//Serial.print(gyroYPR[0]); // Pitch
-			Serial.print(pitch_rate,2);
-
-			Serial.println();
-			Serial.println();
-*/
-
-
-			// Radio Debug
-
-		//Serial.print("Th: ");
-		Serial.print(read_raw_thro()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(read_thro());
-		Serial.print("\t");
-
-		//Serial.print("Ru: "); // Yaw
-		Serial.print(read_raw_rudd()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(read_rudd());
-		Serial.print("\t");
-
-		//Serial.print("El: "); // Pitch
-		Serial.print(read_raw_elev()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(read_elev());
-		Serial.print("\t");
-
-		//Serial.print("Al: "); //Roll
-		Serial.print(read_raw_alie()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(read_alie());
-		Serial.print("\t");
-
-		//Serial.print("Au: ");
-		Serial.print(read_raw_aux1()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(read_aux1());
-		Serial.print("\t");
-
-		//Serial.print("Ge: ");
-		Serial.print(read_raw_gear()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(read_gear());
-		Serial.print("\t");
-
-		//Serial.print("TC: ");
-		Serial.print(thro_cut_off()); /// Reads the raw value from each axis
-		Serial.print("\t");
-		Serial.print(thro_cut_off());
-
-
-
-
-
-			// Gain Debug
-			/*
-
-			 Serial.print(gain,3);
-			Serial.print(",");
+			Serial.print(gyro_pitch_rate,2);
 			*/
-/*
-			Serial.print(gyro_pitch_rate,3);
-			Serial.print(",");
-*/
-
-			/*
-			Serial.print(roll_demand,3);
-			Serial.print(",");
-*/
 
 
 
-/*
-			// PID Debug
-			// P = SP - PV
-			Serial.print(PID_Roll_Rate);
+
+			// ----- Radio Debug -----
+
+			Serial.print(TX.THRO());
 			Serial.print("\t");
-			Serial.print(PID_Pitch_Rate);
+			Serial.print(TX.ALIE());
 			Serial.print("\t");
-			Serial.print(PID_Yaw_Rate);
-			Serial.println();
-*/
-/*
-			// Motor Debug
-			Serial.print(M1_Val,2);
-			Serial.print(",");
-			Serial.print(M2_Val,2);
-			Serial.print(",");
-			Serial.print(M3_Val,2);
-			Serial.print(",");
-			Serial.print(M4_Val,2);
-			Serial.println();
-*/
+			Serial.print(TX.ELEV());
+			Serial.print("\t");
+			Serial.print(TX.RUDD());
+			Serial.print("\t");
+			Serial.print(TX.GEAR());
+			Serial.print("\t");
+			Serial.print(TX.AUX1());
+			Serial.print("\t");
+			Serial.print(TX.TH_CUT());
+			Serial.print("\t");
+
+
+			// ----- Gain Debug -----
+
 
 		// Note: always end the print with a new line
 		Serial.println();
@@ -470,7 +390,7 @@ void loop() {
 		else if(task_2_count >= 5) {
 			task_2_count = 0; // Reset the task counter
 
-			// ----- Sensor -----
+			// ----- SENSOR -----
 			get_sensor();
 			// Assign to global variable to local variable
 			IMU_yaw_angle = angleYPR[0];
@@ -482,50 +402,48 @@ void loop() {
 			gyro_roll_rate = gyroYPR[1];
 			gyro_pitch_rate = gyroYPR[0];
 
-			// ----- Radio -----
-			read_radio();
-
+			// ----- RADIO -----
 			// Take a local copy of the latest value read from Radio
-			thro_demand = read_thro();
-			roll_demand = read_alie() * 22; // +/-540 dps this is for Rate mode
-			pitch_demand = read_elev() * 22; // +/-540 dps
-			yaw_demand = read_rudd() * 1; // +/-540 dps
-			aux1_demand = read_aux1();
-			gear_demand = read_gear();
+			local_thro_demand = TX.THRO();
+			local_roll_demand = TX.ALIE(); // +/-540 dps this is for Rate mode
+			local_pitch_demand = TX.ELEV(); // +/-540 dps
+			local_yaw_demand = TX.RUDD(); // +/-540 dps
+			local_aux1_demand = TX.AUX1();
+			local_gear_demand = TX.GEAR();
 
-			if (aux1_demand){
+			// Light LED if AUX Toggled
+			if (local_aux1_demand){
 				set_led(GPIO2);
 			}
 			else {
 				clear_led(GPIO2);
 			}
 
-
-			if (gear_demand){
+			// Light LED if Gear Demand Toggled
+			if (local_gear_demand){
 				set_led(GPIO1);
 			}
 			else {
 				clear_led(GPIO1);
 			}
 
-/*********************
- * ----- TUNNING -----
- ******************* */
-			// PID Debug/Tuning
-			if (TUNE == 1) { ROLL_RATE_Kd = gain; }
+
+
+			 // ----- TUNNING -----
+			 if (TUNE == 1) { ROLL_RATE_Kd = gain; }
 
 			//----- PID -----
-			// ----- Rate - Acro -----
+			// ----- Rate : Acro -----
 			// Roll
-			P_Roll_Rate = RateRoll.p_pid(roll_demand, gyro_roll_rate); // gyroYPR - Global Variable
-			I_Roll_Rate = RateRoll.i_pid(roll_demand, gyro_roll_rate);
-			D_Roll_Rate = RateRoll.d_pid(roll_demand, gyro_roll_rate);
+			P_Roll_Rate = RateRoll.p_pid(local_roll_demand, gyro_roll_rate); // gyroYPR - Global Variable
+			I_Roll_Rate = RateRoll.i_pid(local_roll_demand, gyro_roll_rate);
+			D_Roll_Rate = RateRoll.d_pid(local_roll_demand, gyro_roll_rate);
 			PID_Roll_Rate = (P_Roll_Rate * ROLL_RATE_Kp) + (I_Roll_Rate * ROLL_RATE_Ki) + (D_Roll_Rate * ROLL_RATE_Kd);
 
 			// Pitch
-			P_Pitch_Rate = RatePitch.p_pid(pitch_demand, gyro_pitch_rate);
-			I_Pitch_Rate = RatePitch.i_pid(pitch_demand, gyro_pitch_rate);
-			D_Pitch_Rate = RatePitch.d_pid(pitch_demand, gyro_pitch_rate);
+			P_Pitch_Rate = RatePitch.p_pid(local_pitch_demand, gyro_pitch_rate);
+			I_Pitch_Rate = RatePitch.i_pid(local_pitch_demand, gyro_pitch_rate);
+			D_Pitch_Rate = RatePitch.d_pid(local_pitch_demand, gyro_pitch_rate);
 			PID_Pitch_Rate = (P_Pitch_Rate * PITCH_RATE_Kp) + (I_Pitch_Rate * PITCH_RATE_Ki) + (D_Pitch_Rate * PITCH_RATE_Kd);
 
 			// Yaw
@@ -535,7 +453,7 @@ void loop() {
 			PID_Yaw_Rate = (P_Yaw_Rate * YAW_RATE_Kp) + (I_Yaw_Rate * YAW_RATE_Ki) + (D_Yaw_Rate * YAW_RATE_Kd);
 
 
-			//----- Position - Stab -----
+			//----- Position : Stab -----
 			// Roll
 			P_Roll_Pos = PosRoll.p_pid(0,0);
 			I_Roll_Pos = PosRoll.i_pid(0,0);
@@ -554,79 +472,33 @@ void loop() {
 			D_Yaw_Pos = PosYaw.d_pid(0,0);
 			PID_Yaw_Pos = (P_Yaw_Pos * YAW_POS_Kp) + (I_Yaw_Pos * YAW_POS_Ki) + (D_Yaw_Pos * YAW_POS_Kd);
 
-			// ----- Mixer - Motors -----
-			// Throttle cut off - if enabled kill motors
 
-			// ----- SAFETY -----
-			if(thro_cut_off() == true) {
+			// ----- MIXER -----
+			// If Thro demand above a sensible threshold begin control
+			if(local_thro_demand > 20){
+				// ----- Motor Mix -----
+				//Note: this is for X configuration motor mix
 
-				set_led(GPIO3);
+				write_motor_1(local_thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate); // Yellow
+				// M1_Val = thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate;
 
-				write_motor_1(0);
-				write_motor_2(0);
-				write_motor_3(0);
-				write_motor_4(0);
+				write_motor_2(local_thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate); // RED
+				// M2_Val = thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate;
 
-				cut_off_flag = 1; // Raise flag to say cut off occured
+				write_motor_3(local_thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate); // Green
+				// M3_Val = thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate;
+
+				write_motor_4(local_thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate); // Blue
+				// M4_Val = thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate;
+
 			}
-
-			// No Throttle cut off - proceed as normal
-			else {
-				//Ensure that after cut off the throttle needs to return to 0 before starting again
-				if (cut_off_flag == 1) { //has cut off occured
-					if (thro_demand == 0) { // has throttle zeroed
-						cut_off_flag = 0;
-					}
-					// Throttle in an unsafe position
-					else {
-						set_led(GPIO3);
-					}
-				}
-
-				// ----- MIXER -----
-				else { //cut off flag 0 Safe to proceed
-
-					// If Thro demand above a sensible threshold begin control
-					if(thro_demand > 20){
-						// ----- Motor Mix -----
-						//Note: this is for X configuration motor mix
-
-						write_motor_1(thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate); // Yellow
-						// M1_Val = thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate;
-
-						write_motor_2(thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate); // RED
-						// M2_Val = thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate;
-
-						write_motor_3(thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate); // Green
-						// M3_Val = thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate;
-
-						write_motor_4(thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate); // Blue
-						// M4_Val = thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate;
-
-
-					}
-					else	//Below the throttle Threshold command all motors to the same speed.
-							write_motor_1(thro_demand);
-							write_motor_2(thro_demand);
-							write_motor_3(thro_demand);
-							write_motor_4(thro_demand);
-					/*
-					// Debug: Motors
-					// YELLOW
-					write_motor_1(thro_demand); // Example:  Throttle_demand + PID_Roll_Rate
-
-					// RED
-					write_motor_2(thro_demand); // Throttle_demand - PID_Roll_Rate
-
-					// GREEN
-					write_motor_3(thro_demand); // Throttle_demand + PID_Pitch_Rate
-
-					// BLUE
-					write_motor_4(thro_demand); // Throttle_demand - PID_Pitch_Rate
-					*/
-				}
-			}
+			else	//Below the throttle Threshold command all motors to the same speed.
+					write_motor_1(local_thro_demand);
+					write_motor_2(local_thro_demand);
+					write_motor_3(local_thro_demand);
+					write_motor_4(local_thro_demand);
 		}
+
 
 		// ---------------------
 		// ----- GPIO Task -----
@@ -660,6 +532,40 @@ void loop() {
 
 		}
 
+
+		// -----------------------
+		// ----- SAFETY Task -----
+		// -----------------------
+		// Task always running as this is a saftey loop to kill the motors quick
+		if (task_4_count == 5){
+			task_4_count = 0;
+			if(TX.TH_CUT() == true) {
+
+				set_led(GPIO3);
+
+				write_motor_1(0);
+				write_motor_2(0);
+				write_motor_3(0);
+				write_motor_4(0);
+
+				cut_off_flag = 1; // Raise flag to say cut off occured
+			}
+
+			// No Throttle cut off - proceed as normal
+			else {
+				//Ensure that after cut off the throttle needs to return to 0 before starting again
+				if (cut_off_flag == 1) { //has cut off occured
+					if (local_thro_demand == 0) { // has throttle zeroed
+						cut_off_flag = 0;
+					}
+					// Throttle in an unsafe position
+					else {
+						set_led(GPIO3);
+					}
+				}
+			}
+		}
+
 		// --------------------------------------------
 		// ----- Things to Do on Every loop cycle -----
 		// --------------------------------------------
@@ -679,4 +585,33 @@ void loop() {
 
 
 	}
+}
+
+
+// --------------------------------------
+// ----- Interrupt Service Routines -----
+// --------------------------------------
+ISR(PCINT0_vect){
+
+	//Radio Signals
+	TX.read_raw_RUDD();	// PCINT0	PIN8	PB0
+	TX.read_raw_GEAR();	// PCINT1	PIN9	PB1
+	TX.read_raw_AUX1();	// PCINT2	PIN10	PB2
+
+	// For the Sensor
+	mpuInterrupt = true;
+}
+
+// PCINT[14:8]
+ISR(PCINT1_vect){
+
+}
+
+// PCINT[16:23]
+ISR(PCINT2_vect){
+
+	// Radio Signals
+	TX.read_raw_THRO();	// PCINT18	PIN2	PD2
+	TX.read_raw_ELEV();	// PCINT23	PIN7	PD7
+	TX.read_raw_ALIE();	// PCINT20	PIN4	PD4
 }

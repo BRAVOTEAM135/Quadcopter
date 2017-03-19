@@ -1,104 +1,81 @@
 /*
- * Header File Rules
- * -----------------
- * - DO included all function prototyes that are public. E.g. adc_init(), adc_config(), adc_read()
- * - DON'T  include private functions. E.g. adc_scale()
- * - DON'T include executable lines of code or variable declarations
- * - DON'T expose any variables in a header - pass variables by reference E.g. void swap(int *x, int *y);
- * - Comments in here are for the user of the libary
- * 
- * Header File Comments:
- * ---------------------
+ * Radio.h
  *
- *
- *
+ *  Created on: 12 Feb 2017
+ *      Author: Kevin
  */
+
+#ifndef RADIO_H_
+#define RADIO_H_
 #include <Arduino.h>
-/* Protect the header file from multiple inclusions */
- #ifndef RADIO_H_
- #define RADIO_H_
 
-/*----- #include ... -----*/
+class Radio {
 
-/*----- Constants (#define) -----*/
-// Assign your channel in pins
-#define THRO_IN_PIN 2	//(default: 2) PCINT18
-#define ALIE_IN_PIN 4	//(default: 4) PCINT20
-#define ELEV_IN_PIN 7	//(default: 7) PCINT23
-#define RUDD_IN_PIN 8	//(default: 8) PCINT0
-#define GEAR_IN_PIN 9	//(default: 9) PCINT1
-#define AUX1_IN_PIN 10	//(default: 10)PCINT2
+public:
+	Radio(); //Constructor
+	void init_channels();
 
 
+	// Functions that handle the read of the channels. Raw Values
+	uint16_t read_raw_THRO();	// PCINT18	PIN2	PD2
+	uint16_t read_raw_ALIE();	// PCINT20	PIN4	PD4
+	uint16_t read_raw_ELEV();	// PCINT23	PIN7	PD7
+	uint16_t read_raw_RUDD();	// PCINT0	PIN8	PB0
+	uint16_t read_raw_GEAR();	// PCINT1	PIN9	PB1
+	uint16_t read_raw_AUX1();	// PCINT2	PIN10	PB2
 
-// These bit flags are set in bUpdateFlagsShared to indicate which
-// channels have new signals
-#define THRO_FLAG 1  // Power
-#define ALIE_FLAG 2  // Roll
-#define ELEV_FLAG 4  // Pitch
-#define RUDD_FLAG 8  // Yaw
-#define GEAR_FLAG 16 // Gear
-#define AUX1_FLAG 32 // AUX
-
-/*----- Global Function Prototypes -----*/
-void init_radio(); // initializes the pin mode, registers the intterupts and sets up the timer
-
-float read_thro(); // indivual read of each axis and scaled
-float read_rudd();
-float read_elev();
-float read_alie();
-bool read_aux1();
-bool read_gear();
-bool thro_cut_off();
-
-void read_radio(); // Reads the current value from the radio
-
-float read_raw_thro(); /// Reads the raw value from each axis
-float read_raw_rudd();
-float read_raw_elev();
-float read_raw_alie();
-float read_raw_aux1();
-float read_raw_gear();
+	//Scaled values
+	float THRO(); // 0 - 100
+	float ALIE(); // -100 - 100
+	float ELEV(); // -100 - 100
+	float RUDD(); //-100 - 100
+	uint8_t GEAR(); // 0 to 1
+	uint8_t AUX1(); // 0 to 1
+	uint8_t TH_CUT();
 
 
-//----- ISR's -----
-void calcThro();
-void calcRudd();
-void calcElev();
-void calcAlie();
-void calcAux1();
-void calcGear();
-
-//----- LOCAL VARIABLES -----
-// These are used to record the rising edge of a pulse in the calcInput functions
-// They do not need to be volatile as they are only used in the ISR. If we wanted
-// to refer to these in loop and the ISR then they would need to be declared volatile
-static volatile uint32_t ulThroStart;
-static volatile uint32_t ulRuddStart;
-static volatile uint32_t ulElevStart;
-static volatile uint32_t ulAlieStart;
-static volatile uint32_t ulAux1Start;
-static volatile uint32_t ulGearStart;
-
-//----- GLOBAL VARIABLES -----
-// shared variables are updated by the ISR and read by loop.
-// In loop we immediatley take local copies so that the ISR can keep ownership of the
-// shared ones. To access these in loop
-// we first turn interrupts off with noInterrupts
-// we take a copy to use in loop and the turn interrupts back on
-// as quickly as possible, this ensures that we are always able to receive new signals
-extern volatile uint16_t unThroInShared;
-extern volatile uint16_t unRuddInShared;
-extern volatile uint16_t unElevInShared;
-extern volatile uint16_t unAlieInShared;
-extern volatile uint16_t unAux1InShared;
-extern volatile uint16_t unGearInShared;
-
-// holds the update flags defined above
-extern volatile uint8_t bUpdateFlagsShared;
 
 
-/* Header protection close */
- #endif
+private:
 
- /* END OF FILE */
+	// Holds the previous measured value
+	volatile uint16_t last_channel_value_THRO; // THRO
+	volatile uint16_t last_channel_value_ALIE; // ALIE
+	volatile uint16_t last_channel_value_ELEV; // ELEV
+	volatile uint16_t last_channel_value_RUDD; // RUDD
+	volatile uint16_t last_channel_value_GEAR; // GEAR
+	volatile uint16_t last_channel_value_AUX1; // AUX1
+
+
+	// Stores the rise time
+	volatile uint16_t rise_time_THRO; // THRO
+	volatile uint16_t rise_time_ALIE; // ALIE
+	volatile uint16_t rise_time_ELEV; // ELEV
+	volatile uint16_t rise_time_RUDD; // RUDD
+	volatile uint16_t rise_time_GEAR; // GEAR
+	volatile uint16_t rise_time_AUX1; // AUX1
+
+	// Stores the fall time
+	volatile uint16_t fall_time_THRO; // THRO
+	volatile uint16_t fall_time_ALIE; // ALIE
+	volatile uint16_t fall_time_ELEV; // ELEV
+	volatile uint16_t fall_time_RUDD; // RUDD
+	volatile uint16_t fall_time_GEAR; // GEAR
+	volatile uint16_t fall_time_AUX1; // AUX1
+
+	//Stores the measured pulse width
+	volatile uint16_t THRO_pulse_width;
+	volatile uint16_t ALIE_pulse_width;
+	volatile uint16_t ELEV_pulse_width;
+	volatile uint16_t RUDD_pulse_width;
+	volatile uint16_t GEAR_pulse_width;
+	volatile uint16_t AUX1_pulse_width;
+
+
+
+
+
+
+};
+
+#endif /* RADIO_H_ */

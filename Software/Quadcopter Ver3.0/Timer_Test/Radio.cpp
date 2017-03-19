@@ -5,7 +5,7 @@
  *      Author: Kevin
  */
  #include "Arduino.h" /* Required to use the arduino libary */
-#include "T1.h"
+
 #include "Radio.h"
 
 
@@ -64,7 +64,7 @@ uint16_t Radio::read_thro(){
 	return THRO_pulse_width;
 }
 
-
+/*
 // ----- Interrupts ----- //
 // PCINT[7:0]
 ISR(PCINT0_vect){
@@ -80,5 +80,5 @@ ISR(PCINT1_vect){
 ISR(PCINT2_vect){
 	//Channel 1: Throttle =========================================
 }
-
+*/
 

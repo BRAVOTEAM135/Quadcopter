@@ -44,9 +44,11 @@ void Radio::init_channels(){
 
 }
 
+/* Raw Updated from ISR Called in ISR */
+// REturn is in ticks where tick period = 0.5us
 	// CHANNEL 1 : THROTTLE	==================================================
 	// PCINT18	PIN2	PD2
-	uint16_t Radio::read_THRO(){
+	uint16_t Radio::read_raw_THRO(){
 		//Input changed from 0 to 1 (Rising Edge)
 		if(last_channel_value_THRO == 0 && (PIND & B00000100) ){
 			rise_time_THRO = get_count_t1();
@@ -57,13 +59,13 @@ void Radio::init_channels(){
 			fall_time_THRO = get_count_t1();
 			last_channel_value_THRO = 0; //Remember current input state
 			THRO_pulse_width = fall_time_THRO - rise_time_THRO;
-			}
+		}
 	return THRO_pulse_width;
 }
 
 	// CHANNEL 2 : ALIERON	 ==================================================
 	// PCINT20	PIN4	PD4
-	uint16_t Radio::read_ALIE(){
+	uint16_t Radio::read_raw_ALIE(){
 		//Input changed from 0 to 1 (Rising Edge)
 		if(last_channel_value_ALIE == 0 && (PIND & B00010000) ){
 			rise_time_ALIE = get_count_t1();
@@ -81,7 +83,7 @@ void Radio::init_channels(){
 
 	// CHANNEL 3 : ELEVATOR	==================================================
 	// PCINT23	PIN7	PD7
-	uint16_t Radio::read_ELEV(){
+	uint16_t Radio::read_raw_ELEV(){
 		//Input changed from 0 to 1 (Rising Edge)
 		if(last_channel_value_ELEV == 0 && (PIND & B10000000) ){
 			rise_time_ELEV = get_count_t1();
@@ -98,7 +100,7 @@ void Radio::init_channels(){
 
 	// CHANNEL 4 : RUDDER	==================================================
 	// PCINT0	PIN8	PB0
-	uint16_t Radio::read_RUDD(){
+	uint16_t Radio::read_raw_RUDD(){
 		//Input changed from 0 to 1 (Rising Edge)
 		if(last_channel_value_RUDD == 0 && (PINB & B00000001) ){
 			rise_time_RUDD = get_count_t1();
@@ -116,7 +118,7 @@ void Radio::init_channels(){
 
 	// CHANNEL 5 : GEAR	==================================================
 	// PCINT1	PIN9	PB1
-	uint16_t Radio::read_GEAR(){
+	uint16_t Radio::read_raw_GEAR(){
 		//Input changed from 0 to 1 (Rising Edge)
 			if(last_channel_value_GEAR == 0 && (PINB & B00000010) ){
 				rise_time_GEAR = get_count_t1();
@@ -134,7 +136,7 @@ void Radio::init_channels(){
 
 	// CHANNEL 6 : AUX1	==================================================
 	// PCINT2	PIN10	PB2
-	uint16_t Radio::read_AUX1(){
+	uint16_t Radio::read_raw_AUX1(){
 		//Input changed from 0 to 1 (Rising Edge)
 			if(last_channel_value_AUX1 == 0 && (PINB & B00000100) ){
 				rise_time_AUX1 = get_count_t1();
@@ -149,5 +151,120 @@ void Radio::init_channels(){
 			return AUX1_pulse_width;
 	}
 
+/* Scaled */
+// Scaled 0 to 100 for THRO, ALIE, ELEV and RUDD scaled -100 to 100, GEAR and AUX1 scaled 0 to 1
+// Assuming uniform pulse width 1000-2000ms
+// Trim can be handle on the Radio controller
+
+	// 0 - 100
+	float Radio::THRO(){
+		float val = THRO_pulse_width * 0.5; // Convert ticks to ms
+
+		// Scale to 0 - 100
+		val = (val - 1000) / 10;
+
+		// Ensure val cannot be less than 0
+		if (val <= 0){
+		return 	0;
+		}
+		// Ensure val cannot be greater than 100
+		else if (val >= 100){
+			return 100;
+		}
+		else
+			return val;
+
+	}
+
+	// -100 - 100
+	float Radio::ALIE(){
+		float val = ALIE_pulse_width * 0.5;
+
+		// Note 10% deadband around centre
+		// Direction: Left (-tve)
+		if (val > 1510 && val < 2000){
+			val = (1510 - val) / 4.9;
+			return val;
+		}
+
+		// Directoin: Right (+tve)
+		else if (val < 1490 && val > 1000){
+			val = (1490 - val) / 4.9;
+			return val;
+		}
+		else
+
+		return 	0;
+	}
+
+	// -100 - 100
+	float Radio::ELEV(){
+		float val = ELEV_pulse_width * 0.5;
+
+		// Direction: Forward (+tve)
+		if (val > 1510 && val < 2000){
+			val = (val - 1510) / 4.9;
+			return val;
+		}
+
+		// Direction: Backward (-tve)
+		else if (val < 1490 && val > 1000){
+			val = (val - 1490) / 4.9;
+			return val;
+		}
+		else
+
+		return 	0;
+
+	}
+
+	//-100 - 100
+	float Radio::RUDD(){
+		float val = RUDD_pulse_width * 0.5;
+
+		// Direction: Left (-tve)
+		if (val > 1510 && val < 2000){
+			val = (1510 - val) / 4.9;
+			return val;
+		}
+
+		// Directoin: Right (+tve
+		else if (val < 1490 && val > 1000){
+			val = (1490 - val) / 4.9;
+			return val;
+		}
+		else
+
+		return 	0;
+	}
+
+	// 0 to 1
+	uint8_t Radio::GEAR(){
+		uint8_t val;
+		if(GEAR_pulse_width >3000){
+			return 	val = 1;
+		}
+		else
+			return val = 0;
+	}
+
+	// 0 to 1
+	uint8_t Radio::AUX1(){
+		uint8_t val;
+		if (AUX1_pulse_width > 3000){
+			return 	val = 1;
+			}
+		else
+			return val = 0;
+	}
 
 
+	uint8_t Radio::TH_CUT(){
+		float val = THRO_pulse_width * 0.5; // Convert ticks to ms
+		if (val < 900){
+			return 1;
+		}
+		else
+			return 0;
+
+	}

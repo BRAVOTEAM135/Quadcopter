@@ -11,4 +11,4 @@ project/Radio.cpp.o: ../../Radio.cpp \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino/Arduino.h \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs/pins_arduino.h \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs/../standard/pins_arduino.h \
- ../../Radio.h ../../T1.h ../../ISRs.h
+ ../../T1.h ../../Radio.h

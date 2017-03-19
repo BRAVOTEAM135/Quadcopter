@@ -57,7 +57,11 @@ void init_sensor(){
 	// initialize device
 	if (SENSOR_DEBUG == 1) Serial.println(F("Initializing I2C devices..."));
 	mpu.initialize();
-	init_sensor_isr(); //Handles initializing the sensor PCINTs
+
+	//init_sensor_isr(); //Handles initializing the sensor PCINTs
+	PCICR |= (1 << PCIE0);
+	PCMSK0 |= (1 << PCINT4);	// MPU INT - Pin12
+
 
 	// verify connection
 	if (SENSOR_DEBUG == 1)Serial.println(F("Testing device connections..."));

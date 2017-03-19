@@ -9,7 +9,7 @@
 #define LEDS_H_
 
 #define LED_PIN 13 //Blue LED
-#define ENABLE 0
+#define ENABLE 1
 
 // Analog Pins used as GPIO
 #define GPIO0 A0

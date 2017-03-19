@@ -33,6 +33,7 @@ extern volatile unsigned long task_0_count; // Heart beat on pin 13
 extern volatile unsigned long task_1_count;
 extern volatile unsigned long task_2_count;
 extern volatile unsigned long task_3_count;
+extern volatile unsigned long task_4_count;
 
 /* Header protection close */
  #endif

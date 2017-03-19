@@ -55,6 +55,7 @@ ISR(TIMER1_COMPA_vect){
 	 task_1_count++;
 	 task_2_count++;
 	 task_3_count++;
+	 task_4_count++;
 
 }
 

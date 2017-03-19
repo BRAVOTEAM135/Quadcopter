@@ -89,7 +89,7 @@ float PID::d_pid(float setPoint, float processVariable){
 	PID::dt = PID::currentTime - PID::previousTimeD;
 	PID::d = (PID::previousErrorD - PID::error)/PID::dt;
 	PID::previousErrorD = PID::error;
-	PID::previousTimeD = cPID::urrentTime;
+	PID::previousTimeD = PID::currentTime;
 	return PID::d;
 }
 

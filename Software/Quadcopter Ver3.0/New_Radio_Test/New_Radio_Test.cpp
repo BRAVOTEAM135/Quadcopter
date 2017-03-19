@@ -21,18 +21,23 @@ void setup() {
 }
 
 void loop() {
-	Serial.print(local_THRO_pulse_width*0.5);
+	//Serial.print(local_THRO_pulse_width*0.5);
+	//Serial.print("\t");
+	Serial.print(TX.THRO());
 	Serial.print("\t");
-	Serial.print(local_ALIE_pulse_width*0.5);
+	Serial.print(TX.ALIE());
 	Serial.print("\t");
-	Serial.print(local_ELEV_pulse_width*0.5);
+	Serial.print(TX.ELEV());
 	Serial.print("\t");
-	Serial.print(local_RUDD_pulse_width*0.5);
+	Serial.print(TX.RUDD());
 	Serial.print("\t");
-	Serial.print(local_GEAR_pulse_width*0.5);
+	Serial.print(TX.GEAR());
 	Serial.print("\t");
-	Serial.print(local_AUX1_pulse_width*0.5);
+	Serial.print(TX.AUX1());
 	Serial.print("\t");
+	Serial.print(TX.TH_CUT());
+		Serial.print("\t");
+
 
 	Serial.println("");
 	delay_t1(100);
@@ -43,9 +48,9 @@ void loop() {
 // Pin Change Interrupts
 // PCINT[7:0]
 ISR(PCINT0_vect){
-	local_RUDD_pulse_width = TX.read_RUDD();	// PCINT0	PIN8	PB0
-	local_GEAR_pulse_width = TX.read_GEAR();	// PCINT1	PIN9	PB1
-	local_AUX1_pulse_width = TX.read_AUX1();	// PCINT2	PIN10	PB2
+	local_RUDD_pulse_width = TX.read_raw_RUDD();	// PCINT0	PIN8	PB0
+	local_GEAR_pulse_width = TX.read_raw_GEAR();	// PCINT1	PIN9	PB1
+	local_AUX1_pulse_width = TX.read_raw_AUX1();	// PCINT2	PIN10	PB2
 }
 
 // PCINT[14:8]
@@ -55,7 +60,7 @@ ISR(PCINT1_vect){
 
 // PCINT[16:23]
 ISR(PCINT2_vect){
-	local_THRO_pulse_width = TX.read_THRO();	// PCINT18	PIN2	PD2
-	local_ELEV_pulse_width = TX.read_ELEV();	// PCINT23	PIN7	PD7
-	local_ALIE_pulse_width = TX.read_ALIE();	// PCINT20	PIN4	PD4
+	local_THRO_pulse_width = TX.read_raw_THRO();	// PCINT18	PIN2	PD2
+	local_ELEV_pulse_width = TX.read_raw_ELEV();	// PCINT23	PIN7	PD7
+	local_ALIE_pulse_width = TX.read_raw_ALIE();	// PCINT20	PIN4	PD4
 }
