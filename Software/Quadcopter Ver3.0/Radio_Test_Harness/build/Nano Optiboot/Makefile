@@ -10,6 +10,7 @@ mymkdir = mkdir -p $1
 endif
 
 PROJECT_OBJS = \
+	project/New_Radio.cpp.o \
 	project/Radio_Test_Harness.cpp.o \
 	project/T1.cpp.o \
 
@@ -63,6 +64,14 @@ clean:
 
 size:
 	"C:\Users\Kevin\.arduinocdt\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2/bin/avr-size" -A "./Radio_Test_Harness.elf"
+
+project/New_Radio.cpp.o: ../../New_Radio.cpp project/New_Radio.cpp.d
+	@$(call mymkdir,$(dir $@))
+	"C:\Users\Kevin\.arduinocdt\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR   -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs" "$<" -o "$@"
+
+project/New_Radio.cpp.d: ;
+
+-include project/New_Radio.cpp.d 
 
 project/Radio_Test_Harness.cpp.o: ../../Radio_Test_Harness.cpp project/Radio_Test_Harness.cpp.d
 	@$(call mymkdir,$(dir $@))

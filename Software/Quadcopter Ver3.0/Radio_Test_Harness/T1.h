@@ -25,14 +25,16 @@
 
 /*----- Global Function Prototypes -----*/
 void init_t1();
-unsigned long get_count_t1();
+uint32_t get_count_t1();
 float get_micros_t1();
-void delay_t1(unsigned int ms);
+void delay_t1(uint16_t ms);
 
-extern volatile unsigned long task_0_count; // Heart beat on pin 13
-extern volatile unsigned long task_1_count;
-extern volatile unsigned long task_2_count;
-extern volatile unsigned long task_3_count;
+/*
+volatile unsigned long task_0_count; // Heart beat on pin 13
+volatile unsigned long task_1_count;
+volatile unsigned long task_2_count;
+volatile unsigned long task_3_count;
+*/
 
 /* Header protection close */
  #endif

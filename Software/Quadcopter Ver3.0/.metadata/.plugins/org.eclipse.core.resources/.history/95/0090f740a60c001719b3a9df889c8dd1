@@ -1,0 +1,53 @@
+/*
+ * Radio.h
+ *
+ *  Created on: 12 Feb 2017
+ *      Author: Kevin
+ */
+
+#ifndef RADIO_H_
+#define RADIO_H_
+#include <Arduino.h>
+class Radio {
+public:
+	Radio(); //Constructor
+	void init_channels();
+	uint16_t read_channel();
+private:
+	void process_channel();
+	// Data
+
+	volatile uint16_t channel_value_THRO; // THRO
+	volatile uint16_t channel_value_ALIE; // ALIE
+	volatile uint16_t channel_value_ELEV; // ELEV
+	volatile uint16_t channel_value_RUDD; // RUDD
+	volatile uint16_t channel_value_GEAR; // GEAR
+	volatile uint16_t channel_value_AUX1; // AUX1
+
+
+	volatile uint16_t last_channel_value_THRO; // THRO
+	volatile uint16_t last_channel_value_ALIE; // ALIE
+	volatile uint16_t last_channel_value_ELEV; // ELEV
+	volatile uint16_t last_channel_value_RUDD; // RUDD
+	volatile uint16_t last_channel_value_GEAR; // GEAR
+	volatile uint16_t last_channel_value_AUX1; // AUX1
+
+
+	volatile uint16_t rise_time_THRO; // THRO
+	volatile uint16_t rise_time_ALIE; // ALIE
+	volatile uint16_t rise_time_ELEV; // ELEV
+	volatile uint16_t rise_time_RUDD; // RUDD
+	volatile uint16_t rise_time_GEAR; // GEAR
+	volatile uint16_t rise_time_AUX1; // AUX1
+
+	volatile uint16_t fall_time_THRO; // THRO
+	volatile uint16_t fall_time_ALIE; // ALIE
+	volatile uint16_t fall_time_ELEV; // ELEV
+	volatile uint16_t fall_time_RUDD; // RUDD
+	volatile uint16_t fall_time_GEAR; // GEAR
+	volatile uint16_t fall_time_AUX1; // AUX1
+
+
+};
+
+#endif /* RADIO_H_ */

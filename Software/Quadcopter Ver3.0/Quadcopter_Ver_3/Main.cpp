@@ -372,38 +372,46 @@ void loop() {
 
 
 			// Radio Debug
-		Serial.print("Th: ");
+
+		//Serial.print("Th: ");
 		Serial.print(read_raw_thro()); /// Reads the raw value from each axis
-		//Serial.print(read_thro());
+		Serial.print("\t");
+		Serial.print(read_thro());
 		Serial.print("\t");
 
-		Serial.print("Ru: "); // Yaw
+		//Serial.print("Ru: "); // Yaw
 		Serial.print(read_raw_rudd()); /// Reads the raw value from each axis
-		//Serial.print(read_rudd());
+		Serial.print("\t");
+		Serial.print(read_rudd());
 		Serial.print("\t");
 
-		Serial.print("El: "); // Pitch
+		//Serial.print("El: "); // Pitch
 		Serial.print(read_raw_elev()); /// Reads the raw value from each axis
-		//Serial.print(read_elev());
+		Serial.print("\t");
+		Serial.print(read_elev());
 		Serial.print("\t");
 
-		Serial.print("Al: "); //Roll
+		//Serial.print("Al: "); //Roll
 		Serial.print(read_raw_alie()); /// Reads the raw value from each axis
-		//Serial.print(read_alie());
+		Serial.print("\t");
+		Serial.print(read_alie());
 		Serial.print("\t");
 
-		Serial.print("Au: ");
+		//Serial.print("Au: ");
 		Serial.print(read_raw_aux1()); /// Reads the raw value from each axis
-		//Serial.print(read_aux1());
+		Serial.print("\t");
+		Serial.print(read_aux1());
 		Serial.print("\t");
 
-		Serial.print("Ge: ");
+		//Serial.print("Ge: ");
 		Serial.print(read_raw_gear()); /// Reads the raw value from each axis
-		//Serial.print(read_gear());
+		Serial.print("\t");
+		Serial.print(read_gear());
 		Serial.print("\t");
 
-		Serial.print("TC: ");
-		//Serial.print(thro_cut_off()); /// Reads the raw value from each axis
+		//Serial.print("TC: ");
+		Serial.print(thro_cut_off()); /// Reads the raw value from each axis
+		Serial.print("\t");
 		Serial.print(thro_cut_off());
 
 
@@ -477,6 +485,7 @@ void loop() {
 			// ----- Radio -----
 			read_radio();
 
+			// Take a local copy of the latest value read from Radio
 			thro_demand = read_thro();
 			roll_demand = read_alie() * 22; // +/-540 dps this is for Rate mode
 			pitch_demand = read_elev() * 22; // +/-540 dps

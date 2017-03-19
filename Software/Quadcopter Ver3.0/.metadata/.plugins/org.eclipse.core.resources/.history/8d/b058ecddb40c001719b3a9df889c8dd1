@@ -1,0 +1,44 @@
+#include <Arduino.h>
+#include "T1.h"
+#include "Radio.h"
+
+// Initialise the Radio Class to handle what's coming back from the radio
+Radio TX;
+
+volatile uint16_t local_THRO_pulse_width = 0;
+volatile uint16_t local_ALIE_pulse_width = 0;
+volatile uint16_t local_ELEV_pulse_width = 0;
+volatile uint16_t local_RUDD_pulse_width = 0;
+volatile uint16_t local_GEAR_pulse_width = 0;
+volatile uint16_t local_AUX1_pulse_width = 0;
+
+void setup() {
+	init_t1();
+
+	TX.init_channels();
+
+	Serial.begin(115200);
+}
+
+void loop() {
+	Serial.println(THRO_pulse_width);
+	delay_t1(10);
+}
+
+
+// ----- Interrupts ----- //
+// PCINT[7:0]
+ISR(PCINT0_vect){
+
+}
+
+// PCINT[14:8]
+ISR(PCINT1_vect){
+
+}
+
+// PCINT[16:23]
+ISR(PCINT2_vect){
+	//Channel 1: Throttle =========================================
+	THRO_pulse_width = newRadio.read_THRO();
+}

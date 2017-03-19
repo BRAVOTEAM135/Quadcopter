@@ -37,72 +37,95 @@
 
 
 /*----- (Module) Local Variables (Static) -----*/
-volatile unsigned long overflow_count = 0;	//Holds the count for how many timers timer has overflowed
-volatile uint16_t count_load = 63535; //Start value of the timer
-/*
- *  count_load
- *  This is calculated from the following equation
- *  2^16 - 16MHz/Pre-Scaler/Desired Frequency
- *
- *  2^16 as Timer 1 is a 16bit timer
- */
+volatile uint32_t T1_overflow_count = 0;	//Holds the count for how many timers timer has overflowed
+volatile int32_t T1_timer = 0;
+
+
 
 /*----- Local Function -----*/
 /* Interrupt Service Routine */
-ISR(TIMER1_OVF_vect){ // Called every time the timer overflows - in this case 32.798ms (0.5us * 65536)
-	overflow_count++;
-	TCNT1 = count_load; //#KR
+// This is called every 1ms
+ISR(TIMER1_COMPA_vect){
+	//PORTB = PORTB ^ B00100000; // DEBUG
+	T1_overflow_count++;
 
+	// Increment Task Counters
+/*
 	 task_0_count++; // Heart beat on pin 13
 	 task_1_count++;
 	 task_2_count++;
 	 task_3_count++;
+*/
 }
+
+
 
 /*----- Global Functions -----*/
+// 16bit Counter. Ticks every 0.5us, Generate ISR every 1ms
 void init_t1(){
-	/* Configure Timer */
-	TCCR1B |= _BV(CS11); // Set the prescaler to 8 giving a derived clock of 2MHz (0.5us) tick period
-	TCCR1B &= ~(_BV(CS12) | _BV(CS10)); //Clear the other CS bits
+	cli(); //Disable all interrupts
 
-	TIMSK1 |= _BV(TOIE1); // Enable interreupts
+	// Initialize the Overflow counter variable
+	T1_overflow_count = 0;
 
-	TCCR1A &= ~(_BV(WGM11) | _BV(WGM10)); // Normal wave for generation - only count up
-	TCCR1B &= ~(_BV(WGM13) | _BV(WGM12)); // Clear all bits
+	// Clear Registers
+	TCCR1A = 0;
+	TCCR1B = 0;
 
-	//TCNT1 = 0x0000;
-	TCNT1 = count_load;
+	// TCCR1 - set WGM waveform generation mode
+	// Fast PWM
+	// TOP = OCR1A
+	TCCR1A |= (1 << WGM10);
+	TCCR1A |= (1 << WGM11);
+	TCCR1B |= (1 << WGM12);
+	TCCR1B |= (1 << WGM13);
+
+	// set the prescaler. Clk/8
+	TCCR1B |= (1 << CS11); // 0.5 us tick
+
+	// TIMSK - enable Output Compare A Match Interrupt
+	TIMSK1 |= (1 << OCIE1A);
+
+	// OCR1, Output Compare Register
+	OCR1A = 1999; // This is to give an interrupt every 1ms 0 - 1999 = 2000 ticks. 2000ticks * 0.5us = 1ms
+
+	sei(); // Enable all Interrupts
 }
-unsigned long get_count_t1(){
+
+
+uint32_t get_count_t1(){
 	uint8_t SREG_old = SREG; //take copy of AVR Status reg
-	cli(); //Critical section of code - disable interrupts
-	uint16_t tcnt1_save = TCNT1;
-	boolean flag_save = TOV1;
-  
-  if (flag_save){
-    tcnt1_save = TCNT1;
-    overflow_count++;
-    TIFR1 |= _BV(TOV1);
-  }
-  //unsigned long total_count = (overflow_count*65536) + tcnt1_save;
-  volatile unsigned long total_count = (overflow_count*2000) + tcnt1_save;
-  SREG = SREG_old;
-  
-  return total_count;
-}
-float get_micros_t1(){
-	return get_count_t1()/2.0;
-}
+	cli(); //Clear interrupts
+	uint16_t local_TCNT1 = TCNT1;
+	uint8_t local_TIFR = bitRead(TIFR1,1);
 
-void delay_t1(unsigned int ms){
-	static unsigned long startTime = get_micros_t1();
-	while (ms > 0){
-		if ((get_micros_t1() - startTime) >= 1000){ //ie 1ms of time has elapsed
-			startTime = get_micros_t1();			// set start time value
-			ms--;									// decrement the counter
-
-		}
+	if(local_TIFR){
+		local_TCNT1 = TCNT1;
+		T1_overflow_count++;
+		TIFR1 |= (1 << OCF1A);
 	}
+	uint32_t ticks = local_TCNT1 + (T1_overflow_count * 2000); // Returns the number of ticks.
+	sei(); // Set interrupts
+	SREG = SREG_old;
+
+	return ticks;
+}
+
+
+
+float get_micros_t1(){
+	return get_count_t1() * 0.5;
+}
+
+
+// NOTE: Not very accurate due to checking count and not isr
+// Useful for debug
+void delay_t1(uint16_t ms){
+	// Initial value
+	volatile uint32_t start = T1_overflow_count;
+
+	// Do While True
+	while (T1_overflow_count < (start+ms)){}
 }
 
 /* END OF FILE */

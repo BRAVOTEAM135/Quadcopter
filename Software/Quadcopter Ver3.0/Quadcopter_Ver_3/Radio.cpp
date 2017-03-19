@@ -104,28 +104,32 @@ else if (THRO_scaled <= 0){
 
 float scale_rudd(float rawRudd){
 	float scaledRudd; // -45 to +45
-	char range = 45;
+	uint8_t range = 45;
+
+	// 1850 <----- 1465 - 1460 -----> 1075
+
 	// Stick at rest
-	if ((rawRudd <= 1505) & (rawRudd >= 1485)){
+	// Dead band of 5us
+		if ((rawRudd >= 1465) & (rawRudd <= 1460)){
 	scaledRudd = 0;
 	} 
 	
 	// Stick move Left 
-	else if ((rawRudd <= 1905) & (rawRudd > 1505)){
-	//Range ==> 1905 - 1505 = 400
-	//45 / 400 = 0.1125
-	scaledRudd = ((range/400.00) * (1505 - rawRudd));
+	else if ((rawRudd <= 1850) & (rawRudd > 1465)){
+	//Range ==> 1850 - 1465 = 385
+	//45 / 385 = 0.1169
+	scaledRudd = ((range/385.00) * (1465 - rawRudd));
 	}
 	
 	// Stick moved right
-	else if ((rawRudd < 1485) & (rawRudd >= 1075)){
-	//Range ==> 1485 - 1075 = 410
-	// 45 / 410 = 0.10956
-	scaledRudd = ((1485 - rawRudd) * (range/410.00));
+	else if ((rawRudd < 1460) & (rawRudd >= 1075)){
+	//Range ==> 1460 - 1075 = 385
+	// 45 / 385 = 0.1169
+	scaledRudd = ((1460 - rawRudd) * (range/385.00));
 	}
 	
 	//Left Out of limits
-	else if (rawRudd > 1905){
+	else if (rawRudd > 1850){
 		scaledRudd = ((-1) * range);
 	}
 	//Right out of Limits
@@ -143,28 +147,29 @@ float scale_elev(float rawElev){
 	char range = 45;
 	
 	// Stick at rest
-	if ((rawElev  <= 1500) & (rawElev >=1480)){
+	//5us dead band
+	if ((rawElev  <= 1511) & (rawElev >=1507)){
 	scaledElev = 0;
 	} 
 	
-	// Stick move Left 
-	else if ((rawElev > 1500) & (rawElev <= 1915)){
-	//Range ==> 1915 - 1495 = 420
-	scaledElev = ((1495 - rawElev) * (range/420.00));
+	// Stick move Forward
+	else if ((rawElev > 1511) & (rawElev <= 1925)){
+	//Range ==> 1925 - 1511 = 414
+	scaledElev = ((1511 - rawElev) * (range/414.00));
 	}
 	
-	// Stick moved Right
-	else if ((rawElev < 1480) & (rawElev >= 1075)){
-	//Range ==> 1485 - 1075 = 410
-	scaledElev = ((1485 - rawElev) * (range/410.00));
+	// Stick moved Backward
+	else if ((rawElev < 1507) & (rawElev >= 1093)){
+	//Range ==> 1507 - 1093 = 414
+	scaledElev = ((1507 - rawElev) * (range/414.00));
 	}
 	
-	//Left Out of limits
-	else if (rawElev > 1915){
+	///Forward Out of limits
+	else if (rawElev > 1925){
 		scaledElev = ((-1) * range);
 	}
-	//Right out of Limits
-	else if (rawElev < 1075){
+	//Backward out of Limits
+	else if (rawElev < 1093){
 		scaledElev = range;
 	}
 	
@@ -174,32 +179,33 @@ float scale_elev(float rawElev){
 // Controls Roll
 float scale_alie(float rawAlie){
 	float scaledAlie; // -45 to +45
-	char range = 45;
+	uint8_t range = 45;
 	
 	// Stick at rest
-	if ((rawAlie  <= 1500) & (rawAlie >=1480)){
+	// 5us dead band
+	if ((rawAlie  <= 1497 ) & (rawAlie >= 1493)){
 	scaledAlie = 0;
 	} 
 	
-	// Stick moved Forward
-	else if ((rawAlie > 1500) & (rawAlie <= 1905)){
-	//Range ==> 1905 - 1495 = 420
-	scaledAlie = ((1495 - rawAlie) * (range/420.00));
+	// Stick moved Left
+	else if ((rawAlie > 1497) & (rawAlie <= 1910)){
+	//Range ==> 1910 - 1497 = 413
+	scaledAlie = ((1497 - rawAlie) * (range/413.00));
 	}
 	
-	// Stick moved Back
-	else if ((rawAlie < 1480) & (rawAlie >= 1070)){
-	//Range ==> 1485 - 1070 = 415
-	scaledAlie = ((1485 - rawAlie) * (range/415.00));
+	// Stick moved Right
+	else if ((rawAlie < 1493) & (rawAlie >= 1072)){
+	//Range ==> 1493 - 1072 = 421
+	scaledAlie = ((1493 - rawAlie) * (range/421.00));
 	}
 	
-	//Forward Out of limits
-	else if (rawAlie > 1905){
+	//Left Out of limits
+	else if (rawAlie > 1910){
 		scaledAlie = ((-1) * range);
 	}
 	
-	//Backward out of Limits
-	else if (rawAlie < 1070){
+	//Right out of Limits
+	else if (rawAlie < 1072){
 		scaledAlie = range;
 	}
 	

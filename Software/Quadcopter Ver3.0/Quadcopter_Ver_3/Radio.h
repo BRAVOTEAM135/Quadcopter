@@ -22,12 +22,12 @@
 
 /*----- Constants (#define) -----*/
 // Assign your channel in pins
-#define THRO_IN_PIN 2	//(default: 2)
-#define ALIE_IN_PIN 4	//(default: 4)
-#define ELEV_IN_PIN 7	//(default: 7)
-#define RUDD_IN_PIN 8	//(default: 8)
-#define GEAR_IN_PIN 9	//(default: 9)
-#define AUX1_IN_PIN 10	//(default: 10)
+#define THRO_IN_PIN 2	//(default: 2) PCINT18
+#define ALIE_IN_PIN 4	//(default: 4) PCINT20
+#define ELEV_IN_PIN 7	//(default: 7) PCINT23
+#define RUDD_IN_PIN 8	//(default: 8) PCINT0
+#define GEAR_IN_PIN 9	//(default: 9) PCINT1
+#define AUX1_IN_PIN 10	//(default: 10)PCINT2
 
 
 

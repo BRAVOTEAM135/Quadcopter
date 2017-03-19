@@ -43,6 +43,7 @@ volatile int32_t T1_timer = 0;
 
 
 /*----- Local Function -----*/
+// Timer 1 overflow to overflow every 2000 ticks tick period = 0.5us
 /* Interrupt Service Routine */
 // This is called every 1ms
 ISR(TIMER1_COMPA_vect){

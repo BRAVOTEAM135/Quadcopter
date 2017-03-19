@@ -10,6 +10,7 @@ mymkdir = mkdir -p $1
 endif
 
 PROJECT_OBJS = \
+	project/Radio.cpp.o \
 	project/Timer_Test.cpp.o \
 
 PLATFORM_CORE_OBJS = \
@@ -62,6 +63,14 @@ clean:
 
 size:
 	"C:\Users\Kevin\.arduinocdt\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2/bin/avr-size" -A "./Timer_Test.elf"
+
+project/Radio.cpp.o: ../../Radio.cpp project/Radio.cpp.d
+	@$(call mymkdir,$(dir $@))
+	"C:\Users\Kevin\.arduinocdt\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR   -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs" "$<" -o "$@"
+
+project/Radio.cpp.d: ;
+
+-include project/Radio.cpp.d 
 
 project/Timer_Test.cpp.o: ../../Timer_Test.cpp project/Timer_Test.cpp.d
 	@$(call mymkdir,$(dir $@))

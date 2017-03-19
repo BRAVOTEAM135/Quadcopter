@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "Radio.h"
 /*
 * ==============================================================
 * ===== Defines =====
@@ -54,19 +55,25 @@ void init_T1(){
 	// TIMSK - enable Output Compare A Match Interrupt
 	TIMSK1 |= (1 << OCIE1A);
 
-	// OCR1, Output Compare Register
+	// OCR1 - Output Compare Register
 	OCR1A = 1999; // This is to give an interrupt every 1ms 0 - 1999 = 2000 ticks. 2000ticks * 0.5us = 1ms
 
 	sei(); // Enable all Interrupts
 }
 
-// ----- Ticks 0.5us resoloution ----
+// ----- Ticks 0.5us resolution ----
 uint32_t ticks_T1(){
 	uint8_t SREG_old = SREG; //take copy of AVR Status reg
 	cli(); //Clear interrupts
-	uint16_t local_TCNT1 = TCNT1;
+
+	// TCNT1 - Timer/Counter Count Value. 16bit word
+	uint16_t local_TCNT1 = TCNT1; // Take a local copy of the Timer/Counter Count
+
+	// TIFR - Timer Interrupt Flag Register.
+	// Bit 1 = OCFA (Output Compare A Match Flag)
 	uint8_t local_TIFR = bitRead(TIFR1,1);
 
+	// Check to see if overflowed while in this function
 	if(local_TIFR){
 		local_TCNT1 = TCNT1;
 		T1_overflow_count++;
@@ -95,6 +102,7 @@ void delay_T1(int ms){
 	while (T1_overflow_count < (start+ms)){}
 }
 
+/*
 // Set up Pins for PinChange i.e. PWM Read
 void init_PWMREAD(){
 	// Clear interrupts
@@ -115,6 +123,8 @@ void init_PWMREAD(){
 	// Enable Interrupts
 	sei();
 }
+*/
+Radio myRadio;
 // ----- SETUP -----
 void setup() {
 
@@ -125,7 +135,8 @@ void setup() {
 	pinMode(13, OUTPUT);
 	pinMode(2, INPUT);
 
-	init_PWMREAD();
+	//init_PWMREAD();
+	myRadio.init_channels();
 
 	PORTB = PORTB & B11011111; //pin 13 LOW
 	//PORTB = PORTB | B00100000; //pin 13 HIGH
@@ -189,7 +200,7 @@ ISR(TIMER1_COMPA_vect){
 	T1_overflow_count++;
 	T1_timer++;
 }
-
+/*
 ISR(PCINT2_vect){
 
 	//Channel 1: Throttle =========================================
@@ -208,4 +219,4 @@ ISR(PCINT2_vect){
 		}
 	}
 
-
+*/
