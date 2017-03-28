@@ -42,7 +42,7 @@
 #include "Analog_Read.h"
 
 #define MAIN_DEBUG 1
-#define TUNE 0 //
+#define TUNE 0 // Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3
 
 
 //----- TASKS -----
@@ -50,7 +50,7 @@ volatile unsigned long task_0_count = 0; // Heart beat on pin 13
 volatile unsigned long task_1_count = 0; // Serial
 volatile unsigned long task_2_count = 0; // Main Control loop
 volatile unsigned long task_3_count = 0; // GPIO
-	volatile unsigned long task_3a_count = 0;
+	volatile unsigned long task_3a_count = 0; // Blink LED
 volatile unsigned long task_4_count = 0;
 
 bool Error = 0;
@@ -65,7 +65,7 @@ static bool local_gear_demand;
 
 volatile static uint8_t cut_off_flag = 0;
 
-// Initialise the Radio as an object
+// Initialise the Radio as an object called TX short for transmitter
 Radio TX;
 
 // ----- SENSOR -----
@@ -214,14 +214,14 @@ void setup() {
 	init_d_leds();
 	if (MAIN_DEBUG) Serial.println("OK");
 
-	if(TUNE){
+	if(TUNE == 1){
 		// Analog Read
 		if (MAIN_DEBUG) Serial.print("Initialising Analog Read...");
 		init_analog_read();
 		if (MAIN_DEBUG) Serial.println("OK");
 	}
 
-	interrupts(); // Enable interrupts once setup complete
+	//interrupts(); // Enable interrupts once setup complete
 	}
 
 
@@ -231,6 +231,7 @@ void setup() {
 // ================================================================
 
 void loop() {
+
 	// ----- INITIALIZATION ----
 	//Initialize the watchdog. Will only happen once
 	if (MAIN_DEBUG) Serial.print("Initialising Watchdog...");
@@ -238,6 +239,7 @@ void loop() {
 	reset_watchdog();
 	if (MAIN_DEBUG) Serial.println("OK");
 
+	// clear all LEDs
 	clear_led(GPIO0);
 	clear_led(GPIO1);
 	clear_led(GPIO2);
@@ -245,7 +247,7 @@ void loop() {
 
 	clear_led(LED_PIN);
 
-	//delay_t1(5);
+
 	reset_watchdog(); // Reset the watchdog
 
 // ----- Motor Calibration -----
@@ -254,7 +256,7 @@ void loop() {
 	 * 1. Connect USB cable
 	 * 2. Ensure Transmiter and and Rx are connected
 	 * 3. Set throttle stick to max
-	 * 4. Toggle AUX stick ON
+	 * 4. Toggle AUX to ON
 	 * 5. Restart the Arduino
 	 * 6. Connect the battery
 	 * 7. and go through the motor beep sequecne to calibrate
@@ -281,13 +283,17 @@ void loop() {
 	// Safety: Ensure software does not start until the motors are in a safe position
 	static uint8_t init_thro = 1; // Local to serve as the first reading from the radio
 
+	if (MAIN_DEBUG) Serial.println("Throttle Safety...");
+
 	while(init_thro > 0){
 		set_led(LED_PIN); // Light LED to show nothing happening
 
 		init_thro = TX.THRO(); // Store read value locally
 		reset_watchdog(); // Reset the watchdog
 	}
+	if (MAIN_DEBUG) Serial.println("OK");
 
+	// clear all LEDs
 	clear_led(GPIO3);
 	clear_led(GPIO2);
 	clear_led(GPIO1);
@@ -321,7 +327,7 @@ void loop() {
 
 
 			// ----- Sensor Debug -----
-			/*
+/*
 			// ANGLE
 			Serial.print("y-agl: ");
 			//Serial.print(angleYPR[0]); // Yaw
@@ -352,9 +358,7 @@ void loop() {
 			Serial.print("p_rte: ");
 			//Serial.print(gyroYPR[0]); // Pitch
 			Serial.print(gyro_pitch_rate,2);
-			*/
-
-
+*/
 
 
 			// ----- Radio Debug -----
@@ -392,15 +396,15 @@ void loop() {
 
 			// ----- SENSOR -----
 			get_sensor();
-			// Assign to global variable to local variable
+			// Assign to global variable to local variable to ensure using same instance of data.
 			IMU_yaw_angle = angleYPR[0];
 			IMU_roll_angle = angleYPR[1];
 			IMU_pitch_angle = angleYPR[2];
 
-
 			gyro_yaw_rate = gyroYPR[2];
 			gyro_roll_rate = gyroYPR[1];
 			gyro_pitch_rate = gyroYPR[0];
+
 
 			// ----- RADIO -----
 			// Take a local copy of the latest value read from Radio
@@ -430,7 +434,7 @@ void loop() {
 
 
 			 // ----- TUNNING -----
-			 if (TUNE == 1) { ROLL_RATE_Kd = gain; }
+			 if (TUNE == 1) { ROLL_RATE_Kp = gain; }
 
 			//----- PID -----
 			// ----- Rate : Acro -----
@@ -536,7 +540,7 @@ void loop() {
 		// -----------------------
 		// ----- SAFETY Task -----
 		// -----------------------
-		// Task always running as this is a saftey loop to kill the motors quick
+		// Task always running as this is a safety loop to kill the motors quick
 		if (task_4_count == 5){
 			task_4_count = 0;
 			if(TX.TH_CUT() == true) {

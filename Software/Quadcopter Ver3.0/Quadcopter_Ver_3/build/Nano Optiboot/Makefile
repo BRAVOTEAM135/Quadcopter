@@ -12,7 +12,6 @@ endif
 PROJECT_OBJS = \
 	project/Analog_Read.cpp.o \
 	project/I2Cdev.cpp.o \
-	project/ISRs.cpp.o \
 	project/LEDs.cpp.o \
 	project/MPU6050.cpp.o \
 	project/Main.cpp.o \
@@ -92,14 +91,6 @@ project/I2Cdev.cpp.o: ../../I2Cdev.cpp project/I2Cdev.cpp.d
 project/I2Cdev.cpp.d: ;
 
 -include project/I2Cdev.cpp.d 
-
-project/ISRs.cpp.o: ../../ISRs.cpp project/ISRs.cpp.d
-	@$(call mymkdir,$(dir $@))
-	"C:\Users\Kevin\.arduinocdt\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR   -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/libraries/Wire/src" "$<" -o "$@"
-
-project/ISRs.cpp.d: ;
-
--include project/ISRs.cpp.d 
 
 project/LEDs.cpp.o: ../../LEDs.cpp project/LEDs.cpp.d
 	@$(call mymkdir,$(dir $@))

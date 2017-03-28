@@ -11,6 +11,6 @@ project/Sensor.cpp.o: ../../Sensor.cpp ../../Sensor.h \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino/Arduino.h \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs/pins_arduino.h \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/eightanaloginputs/../standard/pins_arduino.h \
- ../../ISRs.h ../../I2Cdev.h \
+ ../../I2Cdev.h \
  C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino/Arduino.h \
  ../../MPU6050_6Axis_MotionApps20.h ../../helper_3dmath.h ../../MPU6050.h

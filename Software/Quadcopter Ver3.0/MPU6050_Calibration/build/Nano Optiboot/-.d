@@ -1,2 +1,2 @@
-.sc3970444745286487417.o: \
- C:\Users\Kevin\OneDrive\Documents\Eclipse\ Workspace\MPU6050_Calibration\.sc3970444745286487417.cpp
+.sc243289597808175939.o: \
+ C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter\ Ver3.0\MPU6050_Calibration\.sc243289597808175939.cpp

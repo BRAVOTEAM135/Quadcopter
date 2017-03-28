@@ -11,6 +11,15 @@
 
 // Calibration Offsets - These are aquired from running the Calibration program
 
+#define X_GRYRO_OFFSET 89 //Calibrated 28/03/17 KR Office
+#define Y_GRYRO_OFFSET 56 //Calibrated 28/03/17 KR Office
+#define Z_GRYRO_OFFSET 38 //Calibrated 28/03/17 KR Office
+
+#define X_ACCEL_OFFSET -5193 	//Calibrated 28/03/17 KR Office
+#define Y_ACCEL_OFFSET 2336 	//Calibrated 28/03/17 KR Office
+#define Z_ACCEL_OFFSET 811 		//Calibrated 28/03/17 KR Office
+
+/*
 #define X_GRYRO_OFFSET 96 //Calibrated 30/12/16 KR Office
 #define Y_GRYRO_OFFSET 46 //Calibrated 30/12/16 KR Office
 #define Z_GRYRO_OFFSET 41 //Calibrated 30/12/16 KR Office
@@ -18,7 +27,7 @@
 #define X_ACCEL_OFFSET -5219 	//Calibrated 30/12/16 KR Office
 #define Y_ACCEL_OFFSET 2354 	//Calibrated 30/12/16 KR Office
 #define Z_ACCEL_OFFSET 899 		//Calibrated 30/12/16 KR Office
-
+*/
 #define SENSOR_DEBUG 1 // 1 = Active, 0 = Deactive
 
 

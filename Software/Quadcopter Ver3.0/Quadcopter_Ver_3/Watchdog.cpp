@@ -78,6 +78,7 @@ void reset_watchdog(){
 	wdt_reset();
 }
 
+// Interrupt Routine that is run when the watchdog is missed
 ISR(WDT_Vect){
 }
 
