@@ -3,15 +3,19 @@
  *
  *  Created on: 28 Dec 2016
  *      Author: Kevin
+ *      Descriotion: Analog Read library handles reading from a single anlog channel performing some smoothing to filter out
+ *      noise from the signal to ensure a relatively smooth signal.
  */
 #include "Analog_Read.h"
-const int numReadings = 35;
+
+const int numReadings = 35;	// Number of values to uses in the smoothing algorithm
+
 int readings[numReadings];      // the readings from the analog input
 int readIndex = 0;              // the index of the current reading
 int total = 0;                  // the running total
 float average = 0;                // the average
 
-
+// Initialise the Analog Read hardware ADC ready for reading
 void init_analog_read(){
 	 // ----- ADMUX -----
 	  // ADC Multiplexer Selection Register
@@ -86,6 +90,7 @@ void init_analog_read(){
 	  ADCSRA |=B01000000;
 }
 
+// Smoothing function to filter out noise.
 float smoothing(){
 	// Smoothing - take 20us to execute
 	// Check to see if the value has been updated

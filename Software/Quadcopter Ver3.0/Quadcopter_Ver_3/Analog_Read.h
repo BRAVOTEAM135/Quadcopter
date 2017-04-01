@@ -15,8 +15,8 @@ extern volatile int readFlag;
 extern volatile int analogVal;
 
 
-void init_analog_read();
-float smoothing();
+void init_analog_read(); // Initialise the ADC for analog read
+float smoothing(); // Filters the analog read singal to minamise the noise
 
 
 

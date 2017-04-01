@@ -27,6 +27,9 @@
  *
  */
 
+/*
+ * Timer 0 and 2 are used to generate PWM signals which are then fed to the motors.
+ * */
 /*----- #include -----*/
  #include "Arduino.h" /* Required to use the arduino libary */
  #include "Motors.h"
@@ -62,6 +65,7 @@ const int  T2_PS1024	=   _BV(CS22) | _BV(CS21) | _BV(CS20);
 
 
 /*----- Local Function -----*/
+// Converts Percentage to Raw 0-255 value that is required
 float perc2raw(int perc) {
 	float raw = 0;
 	raw = ((perc * 1.03) + 135.00); // Raw min = 135, Raw max = 238;
@@ -71,6 +75,7 @@ float perc2raw(int perc) {
 	}
 
 /*----- Global Functions -----*/
+// Initialise the pin for output and configure the timers for desired output aprox 500hz signal
 void init_motors(){
 	pinMode(3, OUTPUT);    // OCR2B
 	pinMode(11, OUTPUT);   // OCR2A
@@ -121,6 +126,7 @@ void init_motors(){
 	TCCR2B = T2_PS64;
   	}
 
+// Arms the ESC so they are ready to run
 void config_motors(){
 	/* Arms the ESC 135 is the raw value */
 	PWM1 = 125;
@@ -129,6 +135,7 @@ void config_motors(){
 	PWM4 = 125;
 	}
 
+// Function to write a percentage value to each motor
 void write_motor_1(int M1){
 	//PWM1 = M1;
 	if(M1 < 0) M1 = 0;		// Lower Limit for Motor 0%

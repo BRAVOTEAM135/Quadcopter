@@ -3,10 +3,12 @@
  *
  *  Created on: 21 Dec 2016
  *      Author: Kevin
+ *      Descriotion: handles the initialiasation, seting and clearing of LED pins
+ *      The LED pins are used for debug and status
  */
 #include "LEDs.h"
 
-
+// Initialise the analog pins to be used for digital Output. Note: Pins can not be used if analog read is taking place
 void init_a_leds(){
 
 	// Using Analog Pins as Digital genral purpose
@@ -16,11 +18,13 @@ void init_a_leds(){
 	//pinMode(GPIO3, OUTPUT);
 }
 
+// Initialise the relavant digital pin to be outputs
 void init_d_leds(){
 	// DEBUG: configure Pin13 LED
 	pinMode(LED_PIN, OUTPUT);
 }
 
+// Sets an LED Pin HIGH
 void set_led(uint8_t pin){
 	if (pin == 13) PORTB = PORTB | B00100000; // Set Pin 13
 	if (ENABLE){
@@ -31,6 +35,7 @@ void set_led(uint8_t pin){
 	}
 }
 
+// Clears an LED pin by setting it low
 void clear_led(uint8_t pin){
 	if (pin == 13) PORTB = PORTB & B11011111; // Clear Pin 13
 	if (ENABLE){
@@ -41,6 +46,7 @@ void clear_led(uint8_t pin){
 	}
 }
 
+// Performs a toggle on an LED pin inverting the current value
 void toggle_led(uint8_t pin){
 	if (pin == 13) PORTB = PORTB ^ B00100000; // Toggle Pin 13
 	if (ENABLE) {

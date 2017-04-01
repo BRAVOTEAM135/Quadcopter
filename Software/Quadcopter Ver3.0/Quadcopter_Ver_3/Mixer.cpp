@@ -61,10 +61,18 @@ static volatile int qConfig; // Hold the configuration of the quadcopter either 
 
 /*----- Global Functions -----*/
 /* Can change the motor mix configuration this is set up for +(1) not X(2) */
+// Configures the mix to either be for X or + type quads
 void config_mixer(int config){
 	qConfig = config;
 	
 }
+
+
+/***********************************************************************************
+ * *********************************************************************************
+ * NOTE: THIS NEEDS WORK TO IMPLEMENT WHAT IS CURRENTLY IN THE MAIN INTO A LIBRARY *
+ * *********************************************************************************
+ * ********************************************************************************/
 void pitch_mixer(float throVal, float mixVal){
 
 	/* PLUS configuration */

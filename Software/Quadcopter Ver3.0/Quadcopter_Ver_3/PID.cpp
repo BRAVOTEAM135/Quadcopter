@@ -33,23 +33,15 @@
  #include "T1.h"
 
 /*----- Constants (#define) -----*/
-#define KP 10
-#define KI 0
-#define KD 0
 
 
 /*----- (Module) Local Variables (Static) -----*/
-/*
-static float previousTimeI = 0;
-static float sumError = 0;
-static float previousTimeD = 0;
-static float previousErrorD = 0;
-*/
 
 /*----- Local Function -----*/
 
 
 /*----- Global Functions -----*/
+// Ensure the timer is initialized as this is need for D and I
 void init_pid(){
 	init_t1();
 	}
@@ -69,11 +61,13 @@ PID::PID(){
 
 }
 
+// Proportional Function
 float PID::p_pid(float setPoint, float processVariable) {
 		PID::error = setPoint - processVariable;
 		return PID::error;
 	}
 
+// Integral Function
 float PID::i_pid(float setPoint, float processVariable) {
 	PID::error = setPoint - processVariable;
 	PID::currentTime = get_micros_t1();
@@ -83,6 +77,7 @@ float PID::i_pid(float setPoint, float processVariable) {
 	return PID::sumError;
 }
 
+// Derivative Function
 float PID::d_pid(float setPoint, float processVariable){
 	PID::error = setPoint - processVariable;
 	PID::currentTime = get_micros_t1();

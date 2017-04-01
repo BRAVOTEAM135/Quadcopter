@@ -8,6 +8,7 @@
 #include "T1.h"
 #include "Radio.h"
 
+// Called when the class is created
 Radio::Radio() {
 	// This is called when the class is created
 

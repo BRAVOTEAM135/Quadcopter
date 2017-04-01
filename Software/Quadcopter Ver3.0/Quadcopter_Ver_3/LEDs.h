@@ -20,9 +20,9 @@
 void init_a_leds(); // Initialise analog leds
 void init_d_leds(); // Initialise digital leds
 
-void set_led(uint8_t pin);
-void clear_led(uint8_t pin);
-void toggle_led(uint8_t pin);
+void set_led(uint8_t pin); // Sets LED pin HIGH
+void clear_led(uint8_t pin); // Set LED pin LOW
+void toggle_led(uint8_t pin); // Toggle LED Pin
 
 
 #endif /* LEDS_H_ */

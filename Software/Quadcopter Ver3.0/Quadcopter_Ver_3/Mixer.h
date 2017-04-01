@@ -1,5 +1,7 @@
 /*
  * Header File Rules
+
+
  * -----------------
  * - DO included all function prototyes that are public. E.g. adc_init(), adc_config(), adc_read()
  * - DON'T  include private functions. E.g. adc_scale()
@@ -13,6 +15,12 @@
  *
  *
  */
+/***********************************************************************************
+ * *********************************************************************************
+ * NOTE: THIS NEEDS WORK TO IMPLEMENT WHAT IS CURRENTLY IN THE MAIN INTO A LIBRARY *
+ * *********************************************************************************
+ * ********************************************************************************/
+
 
 /* Protect the header file from multiple inclusions */
  #ifndef MIXER_H_
