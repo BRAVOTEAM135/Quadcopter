@@ -42,7 +42,7 @@
 #include "Analog_Read.h"
 
 #define MAIN_DEBUG 1
-#define TUNE 0 // Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3
+#define TUNE 1 // Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3
 
 
 //----- TASKS -----
@@ -100,16 +100,16 @@ PID PosYaw;
 // NOTE: Rate input +/-1000dps
 // These will be defines/const once the default gain values are know
 float ROLL_RATE_Kp = 0.030;
-float ROLL_RATE_Ki = 0.020;
-float ROLL_RATE_Kd = 0.040;
+float ROLL_RATE_Ki = 0;
+float ROLL_RATE_Kd = 0.008;
 
-float PITCH_RATE_Kp = 0.025;
-float PITCH_RATE_Ki = 0.020;
-float PITCH_RATE_Kd = 0.042;
+float PITCH_RATE_Kp = 0.036;
+float PITCH_RATE_Ki = 0.075;
+float PITCH_RATE_Kd = 0.028;
 
-float YAW_RATE_Kp = 0.025;
-float YAW_RATE_Ki = 0.0;
-float YAW_RATE_Kd = 0.0;
+float YAW_RATE_Kp = 0;
+float YAW_RATE_Ki = 0;
+float YAW_RATE_Kd = 0;
 
 
 float ROLL_POS_Kp = 0;
@@ -125,7 +125,7 @@ float YAW_POS_Ki = 0;
 float YAW_POS_Kd = 0;
 
 // PID Variables
-float P_Roll_Rate ;
+float P_Roll_Rate;
 float I_Roll_Rate;
 float D_Roll_Rate;
 float PID_Roll_Rate;
@@ -362,7 +362,7 @@ void loop() {
 
 
 			// ----- Radio Debug -----
-
+/*
 			Serial.print(TX.THRO());
 			Serial.print("\t");
 			Serial.print(TX.ALIE());
@@ -377,10 +377,11 @@ void loop() {
 			Serial.print("\t");
 			Serial.print(TX.TH_CUT());
 			Serial.print("\t");
-
+*/
 
 			// ----- Gain Debug -----
 
+			Serial.print(gain,3);
 
 		// Note: always end the print with a new line
 		Serial.println();
@@ -409,9 +410,9 @@ void loop() {
 			// ----- RADIO -----
 			// Take a local copy of the latest value read from Radio
 			local_thro_demand = TX.THRO();
-			local_roll_demand = TX.ALIE(); // +/-540 dps this is for Rate mode
-			local_pitch_demand = TX.ELEV(); // +/-540 dps
-			local_yaw_demand = TX.RUDD(); // +/-540 dps
+			local_roll_demand = TX.ALIE() * 10;
+			local_pitch_demand = TX.ELEV() * 10; // Multiply by 10 for rate (acro) -1000 -> 1000 dps
+			local_yaw_demand = TX.RUDD() * 10;
 			local_aux1_demand = TX.AUX1();
 			local_gear_demand = TX.GEAR();
 
@@ -434,7 +435,7 @@ void loop() {
 
 
 			 // ----- TUNNING -----
-			 if (TUNE == 1) { ROLL_RATE_Kp = gain; }
+			if (TUNE == 1) { YAW_RATE_Kp = gain; }
 
 			//----- PID -----
 			// ----- Rate : Acro -----
@@ -576,15 +577,27 @@ void loop() {
 		// Reset the watch dog timer. Needs a reset every 15ms
 		reset_watchdog();
 
-		// Compute smoothing of analog read to reduce noise
-		//gain = smoothing() * 0.0009765625; // 1/1024 - To give 0-1 scale
-		//gain = smoothing() * 0.00048828125; // 0.5/1024 - Scale: 0 - 0.5
+		// ----- GAIN TUNING -----
+		// Get the gain value and scale for desired range
+		// Out of the smoothing function we see 0 - 900
 
-		//note 920 = 4.5 v
-		//gain = smoothing() * 0.0005; // 1/920 - 0-1scale
-		//gain = smoothing() * 0.00027173913; // 0 - 0.25
-		gain = smoothing() * 0.00029296875;
-		//gain = smoothing() * 0.00271739130434782608695652173913; // 0 - 2.5
+		// Gain Range 0.000 -> 0.001
+		//gain = smoothing() / 900000;
+
+		// Gain Range 0.000 - > 0.01
+		//gain = smoothing() / 90000;
+
+		// Gain Range 0.000 -> 0.100
+		//gain = smoothing() / 9000;
+
+		// Gain Range 0.000 -> 1.000
+		//gain = smoothing() / 900;
+
+		// Gain Range 0.000 -> 0.250
+		gain = smoothing() / 3600;
+
+		// Gain Range 0.000 -> 0.500
+		 //gain = smoothing() / 1800;
 
 
 
