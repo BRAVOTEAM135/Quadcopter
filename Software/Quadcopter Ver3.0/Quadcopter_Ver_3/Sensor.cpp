@@ -36,10 +36,14 @@ Quaternion q;           // [w, x, y, z]         quaternion container
 VectorFloat gravity;    // [x, y, z]            gravity vector
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 int16_t gx, gy, gz;		// Gyro Rate variables
+float angleYawBuffer = 0;
+float angleYawOffset = 0;
+bool flag;
 
 // Global variable initialisation
 float angleYPR[3];
 int16_t gyroYPR[3];
+
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 
 
@@ -170,6 +174,13 @@ void get_sensor() {
 			// (this lets us immediately read more without waiting for an interrupt)
 			fifoCount -= packetSize;
 
+
+			mpu.getRotation(&gx, &gy, &gz);
+			// Raw Gyro Value, Rate of rotation Deg/Sec or dps or Degrees per second
+			gyroYPR[0] = gz / 16.4; // Divide by 16.4 as this is 16bit 65536 / Full Scale (4000) = 16.4 scales to dpss
+			gyroYPR[1] = gy / 16.4;
+			gyroYPR[2] = gx / 16.4;
+
 			// display Euler angles in degrees
 			//Get MPU Values
 			mpu.dmpGetQuaternion(&q, fifoBuffer);
@@ -183,11 +194,28 @@ void get_sensor() {
 			angleYPR[2] = ypr[2] * 180/M_PI;
 
 
-			mpu.getRotation(&gx, &gy, &gz);
-			// Raw Gyro Value, Rate of rotation Deg/Sec or dps or Degrees per second
-			gyroYPR[0] = gx / 131.0; // Divide by 131 as this is 16bit 65536 / Full Scale (500) = 131 scales to dpss
-			gyroYPR[1] = gy / 131.0;
-			gyroYPR[2] = gz / 131.0;
+/*
+ * Code in progress to fix the yaw drift
+ *
+			// If not moving in Yaw then return the last known yaw angle thats in the buffer
+			if (gyroYPR[0] <= 0.009 & gyroYPR[0] >= -0.009){
+				if (flag == true){
+				angleYawBuffer = angleYPR[0];
+				flag = false;
+				}
+				angleYPR[0] = angleYawBuffer;
+				}
+
+			// Else is moving return the yaw
+			else {
+				angleYawOffset = angleYPR[0] - angleYawBuffer;
+				angleYPR[0] = angleYPR[0] + angleYawOffset;
+				flag == true;
+
+			}
+*/
+
+
 		}
 	}
 }

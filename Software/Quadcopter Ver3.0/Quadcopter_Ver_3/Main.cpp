@@ -41,19 +41,27 @@
 #include "LEDs.h"
 #include "Analog_Read.h"
 
-#define MAIN_DEBUG 1 //Enables debugging of the main.1 will print to serial port.
-#define TUNE 0 // Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3.
-// also jumper off for tuning jumper on for normal operation
+#define MAIN_DEBUG 1 	//Enables debugging of the main.1 will print to serial port.
+#define TUNE 0 			// Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3.
+						// also jumper off for tuning jumper on for normal operation
+
+
+ #define SENSOR_DEBUG_PRINT // Uncomment what is needed. This is purley for debug
+// #define RADIO_DEBUG_PRINT
+// #define GAIN_DEBUG_PRINT
+// #define MOTORS_DEBUG_PRINT
 
 
 //----- TASKS -----
 // Configure all the task counts and initialize them to 0
+// See initT1() - currently count will increment every 1ms
 volatile unsigned long task_0_count = 0; // Heart beat Task on pin 13
 volatile unsigned long task_1_count = 0; // Serial Task
 volatile unsigned long task_2_count = 0; // Main Control loop Task
 volatile unsigned long task_3_count = 0; // GPIO Task
-	volatile unsigned long task_3a_count = 0; // Blink LED Task
+volatile unsigned long task_3a_count = 0; // Blink LED Task
 volatile unsigned long task_4_count = 0; // Safety Task
+volatile unsigned long task_5_count = 0; // Sensor Settling time
 
 bool Error = 0;
 
@@ -286,16 +294,61 @@ void loop() {
 	clear_led(GPIO0);
 	clear_led(GPIO2);
 
+	// ----- SENSOR STABLISATION ----
+	// Gives the sensors a chance to stablize. Take 10s to do this
+	if (MAIN_DEBUG) Serial.print("Initialising IMU takes 12s...");
+	set_led(GPIO0);
+	set_led(GPIO1);
+	while (task_5_count <= 12000) {
+		get_sensor();
+		reset_watchdog(); // Reset the watchdog
+		if(task_5_count < 3000){
+			set_led(GPIO0);
+			set_led(GPIO1);
+			set_led(GPIO2);
+			set_led(GPIO3);
+			set_led(LED_PIN);
+		}
+		else if (task_5_count >= 3000 & task_5_count < 6000 ){
+			clear_led(GPIO0);
+			set_led(GPIO1);
+			set_led(GPIO2);
+			set_led(GPIO3);
+			set_led(LED_PIN);
+		}
+		else if (task_5_count >= 6000 & task_5_count < 9000){
+			clear_led(GPIO0);
+			clear_led(GPIO1);
+			set_led(GPIO2);
+			set_led(GPIO3);
+			set_led(LED_PIN);
+		}
+		else if (task_5_count >= 9000 & task_5_count < 12000){
+			clear_led(GPIO0);
+			clear_led(GPIO1);
+			clear_led(GPIO2);
+			set_led(GPIO3);
+			set_led(LED_PIN);
+		}
+	}
+	clear_led(GPIO0);
+	clear_led(GPIO1);
+	clear_led(GPIO2);
+	clear_led(GPIO3);
+	clear_led(LED_PIN);
+	if (MAIN_DEBUG) Serial.println("OK");
+
 	// ----- THROTTLE SAFETY -----
 	// Safety: Ensure software does not start until the motors are in a safe position
 	static uint8_t init_thro = 1; // Local to serve as the first reading from the radio
 
 	if (MAIN_DEBUG) Serial.println("Throttle Safety...");
 
-	while(init_thro > 0){
+	while(init_thro > 1000){
 		set_led(LED_PIN); // Light LED to show nothing happening
 
 		init_thro = TX.THRO(); // Store read value locally
+		if (MAIN_DEBUG) Serial.println(init_thro);
 		reset_watchdog(); // Reset the watchdog
 	}
 	if (MAIN_DEBUG) Serial.println("OK");
@@ -334,7 +387,7 @@ void loop() {
 
 
 			// ----- Sensor Debug -----
-
+#ifdef SENSOR_DEBUG_PRINT
 			// ANGLE
 			Serial.print("y-agl: ");
 			//Serial.print(angleYPR[0]); // Yaw Global Variable
@@ -366,10 +419,12 @@ void loop() {
 			//Serial.print(gyroYPR[0]); // Pitch Global Variable
 			Serial.print(gyro_pitch_rate,2);
 
+			Serial.println();
+#endif
 
-
+#ifdef RADIO_DEBUG_PRINT
 			// ----- Radio Debug -----
-/*
+
 			Serial.print(TX.THRO());
 			Serial.print("\t");
 			Serial.print(TX.ALIE());
@@ -383,16 +438,17 @@ void loop() {
 			Serial.print(TX.AUX1());
 			Serial.print("\t");
 			Serial.print(TX.TH_CUT());
-			Serial.print("\t");
-*/
+			Serial.println();
+#endif
 
 			// ----- Gain Debug -----
-/*
+#ifdef GAIN_DEBUG_PRINT
 			Serial.print(gain,3);
-*/
+			Serial.println();
+#endif
 
 			// ----- Motors Debug -----
-			/*
+#ifdef MOTORS_DEBUG_PRINT
 			Serial.print(M1_Val);
 			Serial.print("\t");
 			Serial.print(M2_Val);
@@ -400,11 +456,8 @@ void loop() {
 			Serial.print(M3_Val);
 			Serial.print("\t");
 			Serial.print(M4_Val);
-			Serial.print("\t");
-			*/
-		// Note: always end the print with a new line
-		Serial.println();
-
+			Serial.println();
+#endif
 		}
 
 		//------------------------------
@@ -417,23 +470,23 @@ void loop() {
 			// ----- SENSOR -----
 			get_sensor();
 			// Assign to global variable to local variable to ensure using same instance of data.
-			IMU_yaw_angle = angleYPR[0];
+			IMU_yaw_angle = angleYPR[0];	// Units: Degrees
 			IMU_roll_angle = angleYPR[1];
 			IMU_pitch_angle = angleYPR[2];
 
-			gyro_yaw_rate = gyroYPR[2];
+			gyro_yaw_rate = gyroYPR[0];	// Units: dps (Degrees per Second)
 			gyro_roll_rate = gyroYPR[1];
-			gyro_pitch_rate = gyroYPR[0];
+			gyro_pitch_rate = gyroYPR[2];
 
 
 			// ----- RADIO -----
 			// Take a local copy of the latest value read from Radio
-			local_thro_demand = TX.THRO();
-			local_roll_demand = TX.ALIE() * 10;
-			local_pitch_demand = TX.ELEV() * 10; // Multiply by 10 for rate (acro) -1000 -> 1000 dps
-			local_yaw_demand = TX.RUDD();
-			local_aux1_demand = TX.AUX1();
-			local_gear_demand = TX.GEAR();
+			local_thro_demand = TX.THRO();	// Min = 1071, Max = 1943 - Units: us
+			local_roll_demand = TX.ALIE(); 	// Left = -1, Right = 1
+			local_pitch_demand = TX.ELEV();	// Up/Forward = 1, Down/Backward = -1
+			local_yaw_demand = TX.RUDD();	// Left = -1, Right = 1
+			local_aux1_demand = TX.AUX1();	// Off = 0, On = 1
+			local_gear_demand = TX.GEAR();	// Off = 0, On = 1
 
 			// Light LED if AUX Toggled
 			if (local_aux1_demand){
@@ -457,7 +510,9 @@ void loop() {
 			if (TUNE == 1) { YAW_RATE_Kp = gain; }
 
 			//----- PID -----
+			// -----------------------
 			// ----- Rate : Acro -----
+			// -----------------------
 			// Roll
 			P_Roll_Rate = RateRoll.p_pid(local_roll_demand, gyro_roll_rate); // gyroYPR - Global Variable
 			I_Roll_Rate = RateRoll.i_pid(local_roll_demand, gyro_roll_rate);

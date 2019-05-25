@@ -15,7 +15,7 @@ void init_a_leds(){
 	pinMode(GPIO0, OUTPUT);
 	pinMode(GPIO1, OUTPUT);
 	pinMode(GPIO2, OUTPUT);
-	//pinMode(GPIO3, OUTPUT);
+	pinMode(GPIO3, OUTPUT);
 }
 
 // Initialise the relavant digital pin to be outputs

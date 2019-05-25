@@ -34,6 +34,7 @@ extern volatile unsigned long task_1_count;
 extern volatile unsigned long task_2_count;
 extern volatile unsigned long task_3_count;
 extern volatile unsigned long task_4_count;
+extern volatile unsigned long task_5_count;
 
 /* Header protection close */
  #endif

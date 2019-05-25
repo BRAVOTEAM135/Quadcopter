@@ -13,17 +13,14 @@
 /* ============================================
 I2Cdev device library code is placed under the MIT license
 Copyright (c) 2012 Jeff Rowberg
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -435,8 +432,7 @@ THE SOFTWARE.
 
 class MPU6050 {
     public:
-        MPU6050();
-        MPU6050(uint8_t address);
+        MPU6050(uint8_t address=MPU6050_DEFAULT_ADDRESS);
 
         void initialize();
         bool testConnection();
@@ -459,15 +455,15 @@ class MPU6050 {
         uint8_t getFullScaleGyroRange();
         void setFullScaleGyroRange(uint8_t range);
 
-		// SELF_TEST registers
-		uint8_t getAccelXSelfTestFactoryTrim();
-		uint8_t getAccelYSelfTestFactoryTrim();
-		uint8_t getAccelZSelfTestFactoryTrim();
+        // SELF_TEST registers
+        uint8_t getAccelXSelfTestFactoryTrim();
+        uint8_t getAccelYSelfTestFactoryTrim();
+        uint8_t getAccelZSelfTestFactoryTrim();
 
-		uint8_t getGyroXSelfTestFactoryTrim();
-		uint8_t getGyroYSelfTestFactoryTrim();
-		uint8_t getGyroZSelfTestFactoryTrim();
-		
+        uint8_t getGyroXSelfTestFactoryTrim();
+        uint8_t getGyroYSelfTestFactoryTrim();
+        uint8_t getGyroZSelfTestFactoryTrim();
+
         // ACCEL_CONFIG register
         bool getAccelXSelfTest();
         void setAccelXSelfTest(bool enabled);
@@ -823,8 +819,6 @@ class MPU6050 {
 
         // special methods for MotionApps 2.0 implementation
         #ifdef MPU6050_INCLUDE_DMP_MOTIONAPPS20
-            uint8_t *dmpPacketBuffer;
-            uint16_t dmpPacketSize;
 
             uint8_t dmpInitialize();
             bool dmpPacketAvailable();
@@ -924,8 +918,6 @@ class MPU6050 {
 
         // special methods for MotionApps 4.1 implementation
         #ifdef MPU6050_INCLUDE_DMP_MOTIONAPPS41
-            uint8_t *dmpPacketBuffer;
-            uint16_t dmpPacketSize;
 
             uint8_t dmpInitialize();
             bool dmpPacketAvailable();
@@ -1027,6 +1019,10 @@ class MPU6050 {
     private:
         uint8_t devAddr;
         uint8_t buffer[14];
+    #if defined(MPU6050_INCLUDE_DMP_MOTIONAPPS20) or defined(MPU6050_INCLUDE_DMP_MOTIONAPPS41)
+        uint8_t *dmpPacketBuffer;
+        uint16_t dmpPacketSize;
+    #endif
 };
 
 #endif /* _MPU6050_H_ */

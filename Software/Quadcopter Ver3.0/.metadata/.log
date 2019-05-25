@@ -16112,3 +16112,878 @@ java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Soft
 
 !ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 05:54:40.215
 !MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 05:56:49.830
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:00:47.985
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:01:03.227
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:01:03.431
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:03:32.052
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:03:34.308
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:04:43.781
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:10:22.422
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:15:47.338
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:18:10.090
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:18:11.080
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:20:31.971
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:20:34.390
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:21:12.242
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:21:20.586
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:21:24.948
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:21:25.212
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:23:40.812
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:23:42.380
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:26:20.881
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:29:21.395
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:29:43.925
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:29:51.132
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:29:51.377
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:31:35.505
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:31:52.638
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:31:57.406
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:31:57.656
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:34:16.088
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:35:22.890
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:35:26.633
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:35:26.887
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:39:09.762
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:40:20.980
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:41:23.328
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:42:18.326
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 06:42:18.593
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 06:46:06.828
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 07:09:42.636
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:12:06.566
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:12:39.621
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:13:29.512
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:15:05.915
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:15:14.971
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:16:10.544
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:16:12.227
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 07:17:06.620
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:18:08.048
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:18:24.261
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:18:56.404
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:18:58.213
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 07:23:08.066
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:23:20.187
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:23:21.905
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:23:33.970
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:24:15.479
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:24:15.884
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 07:28:21.921
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:37:45.545
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:38:14.032
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:38:14.376
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 07:39:30.343
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:40:24.370
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:40:35.243
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 07:40:35.571
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 07:44:56.754
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:28:27.284
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:28:29.031
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:29:02.768
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:29:03.090
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:31:55.031
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:31:59.419
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:31:59.736
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 08:33:12.980
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:36:43.664
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:36:45.402
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:36:50.352
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:36:50.665
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 08:40:32.702
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:47:45.867
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:47:50.952
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 08:47:51.280
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 08:51:29.388
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 09:02:21.595
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 09:02:26.146
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 09:02:26.445
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 09:03:28.203
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:25:56.008
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:25:58.069
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 11:27:16.098
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:31:34.291
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:32:40.548
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:32:48.353
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:33:34.035
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:33:36.359
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:33:39.062
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:33:39.380
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 11:34:00.275
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:40:57.858
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:41:02.047
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 11:41:02.361
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 11:45:52.763
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:22:08.186
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:22:09.847
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:25:29.078
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 12:27:05.330
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:29:19.915
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:29:21.645
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:29:35.535
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:29:35.856
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:29:51.195
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:29:51.763
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 12:34:19.894
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:38:54.151
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:38:54.753
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:38:57.405
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:39:22.994
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:39:27.951
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:39:28.279
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 12:42:17.479
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:42:20.893
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:42:22.505
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:44:42.389
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:44:43.959
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 12:47:22.570
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:59:09.306
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 12:59:10.928
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:02:00.434
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:02:02.124
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 13:04:06.241
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:06:39.581
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:06:41.209
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 13:11:23.000
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 13:16:35.248
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:21:30.728
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:21:32.356
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 13:23:37.656
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:33:15.100
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.cdt.arduino.core 4 0 2019-05-25 13:33:16.900
+!MESSAGE Unknown connection: Nano
+
+!ENTRY org.eclipse.core.resources 4 568 2019-05-25 13:38:02.308
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers.snap (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:45)
+	at org.eclipse.core.internal.localstore.SafeChunkyOutputStream.<init>(SafeChunkyOutputStream.java:41)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1768)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSnap(SaveManager.java:1852)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1224)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1165)
+	at org.eclipse.core.internal.resources.DelayedSnapshotJob.run(DelayedSnapshotJob.java:52)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.ui.ide 4 4 2019-05-25 13:39:24.158
+!MESSAGE Problems saving workspace
+
+!ENTRY org.eclipse.ui.ide 4 1 2019-05-25 13:39:24.159
+!MESSAGE Problems occurred while trying to save the state of the workbench.
+!SUBENTRY 1 org.eclipse.core.resources 4 568 2019-05-25 13:39:24.159
+!MESSAGE Could not write metadata for '/RemoteSystemsTempFiles'.
+!STACK 0
+java.io.FileNotFoundException: C:\Users\Kevin\Documents\Projects\Quadcopter\Software\Quadcopter Ver3.0\.metadata\.plugins\org.eclipse.core.resources\.projects\RemoteSystemsTempFiles\.markers (The system cannot find the path specified)
+	at java.io.FileOutputStream.open0(Native Method)
+	at java.io.FileOutputStream.open(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at java.io.FileOutputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.localstore.SafeFileOutputStream.<init>(SafeFileOutputStream.java:51)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSave(SaveManager.java:1657)
+	at org.eclipse.core.internal.resources.SaveManager.visitAndSave(SaveManager.java:1739)
+	at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1199)
+	at org.eclipse.core.internal.resources.Workspace.save(Workspace.java:2283)
+	at org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor$4.run(IDEWorkbenchAdvisor.java:456)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:119)

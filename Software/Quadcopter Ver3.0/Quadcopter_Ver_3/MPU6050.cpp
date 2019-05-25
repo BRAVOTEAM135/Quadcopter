@@ -13,17 +13,14 @@
 /* ============================================
 I2Cdev device library code is placed under the MIT license
 Copyright (c) 2012 Jeff Rowberg
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,21 +33,13 @@ THE SOFTWARE.
 
 #include "MPU6050.h"
 
-/** Default constructor, uses default I2C address.
- * @see MPU6050_DEFAULT_ADDRESS
- */
-MPU6050::MPU6050() {
-    devAddr = MPU6050_DEFAULT_ADDRESS;
-}
-
 /** Specific address constructor.
- * @param address I2C address
+ * @param address I2C address, uses default I2C address if none is specified
  * @see MPU6050_DEFAULT_ADDRESS
  * @see MPU6050_ADDRESS_AD0_LOW
  * @see MPU6050_ADDRESS_AD0_HIGH
  */
-MPU6050::MPU6050(uint8_t address) {
-    devAddr = address;
+MPU6050::MPU6050(uint8_t address):devAddr(address) {
 }
 
 /** Power on and prepare for general usage.
@@ -61,10 +50,10 @@ MPU6050::MPU6050(uint8_t address) {
  * the default internal clock source.
  */
 void MPU6050::initialize() {
-    MPU6050::setClockSource(MPU6050_CLOCK_PLL_XGYRO);
-    MPU6050::setFullScaleGyroRange(MPU6050_GYRO_FS_250);
-    MPU6050::setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
-    MPU6050::setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
+    setClockSource(MPU6050_CLOCK_PLL_XGYRO);
+    setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
+    setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
+    setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
 }
 
 /** Verify the I2C connection.
@@ -3037,7 +3026,7 @@ bool MPU6050::writeMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t b
     setMemoryBank(bank);
     setMemoryStartAddress(address);
     uint8_t chunkSize;
-    uint8_t *verifyBuffer;
+    uint8_t *verifyBuffer=0;
     uint8_t *progBuffer=0;
     uint16_t i;
     uint8_t j;

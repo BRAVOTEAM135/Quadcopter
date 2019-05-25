@@ -155,7 +155,7 @@ void Radio::init_channels(){
 			return AUX1_pulse_width;
 	}
 
-/* Scaled */
+/* ----- Scaled ----- */
 // Scaled 0 to 100 for THRO, ALIE, ELEV and RUDD scaled -100 to 100, GEAR and AUX1 scaled 0 to 1
 // Assuming uniform pulse width 1000-2000ms
 // Trim can be handle on the Radio controller
@@ -165,19 +165,19 @@ void Radio::init_channels(){
 		float val = THRO_pulse_width * 0.5; // Convert ticks to ms
 
 		// Scale to 0 - 100
-		val = (val - 1000) / 10;
+		//val = (val - 1000) / 10;
 
-		// Ensure val cannot be less than 0
-		if (val <= 0){
-		return 	0;
+
+		// Ensure val cannot be less than 1000
+		if (val <= 1000){
+		return 	1000;
 		}
-		// Ensure val cannot be greater than 100
-		else if (val >= 100){
-			return 100;
+		// Ensure val cannot be greater than 2000
+		else if (val >= 2000){
+			return 2000;
 		}
 		else
 			return val;
-
 	}
 
 	// -100 - 100
@@ -185,61 +185,97 @@ void Radio::init_channels(){
 		float val = ALIE_pulse_width * 0.5;
 
 		// Note 10% deadband around centre
+		// Centre seen at 1493.5
 		// Direction: Left (-tve)
-		if (val > 1510 && val < 2000){
-			val = (1510 - val) / 4.9;
+		if (val > 1510 && val < 1900){
+			val = (1510 - val) / 400.00;
 			return val;
 		}
 
-		// Directoin: Right (+tve)
-		else if (val < 1490 && val > 1000){
-			val = (1490 - val) / 4.9;
+		// Direction: Right (+tve)
+		else if (val < 1490 && val > 1100){
+			val = (1490 - val) / 400.00;
 			return val;
 		}
-		else
 
-		return 	0;
+		else if (val < 1100){
+			// 1490 - 1000 / 4.9
+			return 1.00;
+		}
+
+
+		else if (val > 1900){
+			// (1500 - val) / 4.9
+			return -1.00;
+		}
+		return 	0.00;
+
+
 	}
 
 	// -100 - 100
 	float Radio::ELEV(){
 		float val = ELEV_pulse_width * 0.5;
 
+ 	 	// Centre seen at 1488
 		// Direction: Forward (+tve)
-		if (val > 1510 && val < 2000){
-			val = (val - 1510) / 4.9;
+		if (val > 1515 && val < 1900){
+			val = (val - 1515) / 385.00;
 			return val;
 		}
 
 		// Direction: Backward (-tve)
-		else if (val < 1490 && val > 1000){
-			val = (val - 1490) / 4.9;
+		else if (val < 1485 && val > 1100){
+			val = (val - 1485) / 385.00;
 			return val;
 		}
-		else
+		else if (val < 1100){
+			// 1490 - 1000 / 4.9
+			return -1.00;
+		}
 
-		return 	0;
+		else if (val > 1900){
+			// (1500 - val) / 4.9
+			return 1.00;
+		}
 
+		else {
+		val = 0.00;
+		return 	val;
+		}
 	}
 
 	//-100 - 100
 	float Radio::RUDD(){
 		float val = RUDD_pulse_width * 0.5;
 
+		// Centre around 1487
 		// Direction: Left (-tve)
-		if (val > 1510 && val < 2000){
-			val = (1510 - val) / 4.9;
+		if (val > 1515 && val < 1900){
+			val = (1515 - val) / 385.00;
 			return val;
 		}
 
 		// Directoin: Right (+tve
-		else if (val < 1490 && val > 1000){
-			val = (1490 - val) / 4.9;
+		else if (val < 1485 && val > 1100){
+			val = (1485 - val) / 385.00;
 			return val;
 		}
+
+		else if (val < 1100){
+			// 1490 - 1000 / 4.9
+			return 1.00;
+		}
+
+
+		else if (val > 1900){
+			// (1500 - val) / 4.9
+			return -1.00;
+		}
+
 		else
 
-		return 	0;
+		return 	0.00;
 	}
 
 	// 0 to 1
