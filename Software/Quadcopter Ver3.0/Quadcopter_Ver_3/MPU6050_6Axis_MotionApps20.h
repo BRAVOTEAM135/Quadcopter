@@ -407,7 +407,8 @@ uint8_t MPU6050::dmpInitialize() {
             setDLPFMode(MPU6050_DLPF_BW_42);
 
             DEBUG_PRINTLN(F("Setting gyro sensitivity to +/- 2000 deg/sec..."));
-            setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
+            // setFullScaleGyroRange(MPU6050_GYRO_FS_2000); // This is the original
+            setFullScaleGyroRange(MPU6050_GYRO_FS_250); //KR Added
 
             DEBUG_PRINTLN(F("Setting DMP programm start address"));
             //write start address MSB into register

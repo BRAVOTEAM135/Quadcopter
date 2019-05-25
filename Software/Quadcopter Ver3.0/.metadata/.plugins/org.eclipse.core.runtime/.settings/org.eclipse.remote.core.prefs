@@ -1,7 +1,7 @@
 connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/arduinoBoardName=optiboot32
 connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/arduinoPackageName=Optiboot
 connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/arduinoPlatformName=avr
-connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/arduinoPortName=COM7
+connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/arduinoPortName=COM3
 connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/menu_cpu=atmega328p
 connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/menu_mhz=16MHz
 connections/org.eclipse.cdt.arduino.core.connectionType/Nano+Optiboot/programmer=avrisp

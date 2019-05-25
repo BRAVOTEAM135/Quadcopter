@@ -41,17 +41,19 @@
 #include "LEDs.h"
 #include "Analog_Read.h"
 
-#define MAIN_DEBUG 1
-#define TUNE 1 // Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3
+#define MAIN_DEBUG 1 //Enables debugging of the main.1 will print to serial port.
+#define TUNE 0 // Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3.
+// also jumper off for tuning jumper on for normal operation
 
 
 //----- TASKS -----
-volatile unsigned long task_0_count = 0; // Heart beat on pin 13
-volatile unsigned long task_1_count = 0; // Serial
-volatile unsigned long task_2_count = 0; // Main Control loop
-volatile unsigned long task_3_count = 0; // GPIO
-	volatile unsigned long task_3a_count = 0; // Blink LED
-volatile unsigned long task_4_count = 0;
+// Configure all the task counts and initialize them to 0
+volatile unsigned long task_0_count = 0; // Heart beat Task on pin 13
+volatile unsigned long task_1_count = 0; // Serial Task
+volatile unsigned long task_2_count = 0; // Main Control loop Task
+volatile unsigned long task_3_count = 0; // GPIO Task
+	volatile unsigned long task_3a_count = 0; // Blink LED Task
+volatile unsigned long task_4_count = 0; // Safety Task
 
 bool Error = 0;
 
@@ -69,10 +71,12 @@ volatile static uint8_t cut_off_flag = 0;
 Radio TX;
 
 // ----- SENSOR -----
+// Returns the angle in degrees (degs)
 float IMU_yaw_angle;
 float IMU_roll_angle;
 float IMU_pitch_angle;
 
+// Return the rotational rate in degrees per second (degs/sec)
 float gyro_yaw_rate;
 float gyro_roll_rate;
 float gyro_pitch_rate;
@@ -88,6 +92,7 @@ float gain = 0; //value used to tune the PID
 
 // ----- PID ----
 // Initialise class for each PID loop so that they are unique entities
+// These are the 6 PID Loops required
 PID RateRoll;
 PID RatePitch;
 PID RateYaw;
@@ -99,17 +104,17 @@ PID PosYaw;
 // ----- PID Gains -----
 // NOTE: Rate input +/-1000dps
 // These will be defines/const once the default gain values are know
-float ROLL_RATE_Kp = 0.030;
-float ROLL_RATE_Ki = 0;
-float ROLL_RATE_Kd = 0.008;
+float ROLL_RATE_Kp = 0;//0.030;
+float ROLL_RATE_Ki = 0;//0.075;
+float ROLL_RATE_Kd = 0;//0.008;
 
-float PITCH_RATE_Kp = 0.036;
-float PITCH_RATE_Ki = 0.075;
-float PITCH_RATE_Kd = 0.028;
+float PITCH_RATE_Kp = 0;//0.036;
+float PITCH_RATE_Ki = 0;//0.075;
+float PITCH_RATE_Kd = 0;//0.008; //0.028;
 
-float YAW_RATE_Kp = 0;
-float YAW_RATE_Ki = 0;
-float YAW_RATE_Kd = 0;
+float YAW_RATE_Kp = 0; //From YT video this should be 4
+float YAW_RATE_Ki = 0; // From YT video this shoulld be 0.02
+float YAW_RATE_Kd = 0; // nothing here as enough drag from motors
 
 
 float ROLL_POS_Kp = 0;
@@ -124,7 +129,7 @@ float YAW_POS_Kp = 0;
 float YAW_POS_Ki = 0;
 float YAW_POS_Kd = 0;
 
-// PID Variables
+// PID Variables - These are the outputs from the PID calculations
 float P_Roll_Rate;
 float I_Roll_Rate;
 float D_Roll_Rate;
@@ -185,6 +190,7 @@ void setup() {
 	// Sensor
 	if (MAIN_DEBUG) Serial.print("Initialising Sensor...");
 	init_sensor();
+
 	if (MAIN_DEBUG) Serial.println("OK");
 
 	//Radio
@@ -220,6 +226,7 @@ void setup() {
 		init_analog_read();
 		if (MAIN_DEBUG) Serial.println("OK");
 	}
+
 
 	//interrupts(); // Enable interrupts once setup complete
 	}
@@ -327,38 +334,38 @@ void loop() {
 
 
 			// ----- Sensor Debug -----
-/*
+
 			// ANGLE
 			Serial.print("y-agl: ");
-			//Serial.print(angleYPR[0]); // Yaw
+			//Serial.print(angleYPR[0]); // Yaw Global Variable
 			Serial.print(IMU_yaw_angle,2); // Yaw
 			Serial.print("\t");
 
 			Serial.print("r-agl: ");
-			//Serial.print(angleYPR[1]); // Roll
+			//Serial.print(angleYPR[1]); // Roll Global Variable
 			Serial.print(IMU_roll_angle,2); // Roll
 			Serial.print("\t");
 
 			Serial.print("p-agl: ");
-			//Serial.print(angleYPR[2]); // Pitch
+			//Serial.print(angleYPR[2]); // Pitch Global Variable
 			Serial.print(IMU_pitch_angle,2);
 			Serial.print("\t");
 
 			// RATE
 			Serial.print("y_rte: ");
-			//Serial.print(gyroYPR[2]); //Yaw
+			//Serial.print(gyroYPR[2]); //Yaw Global Variable
 			Serial.print(gyro_yaw_rate,2);
 			Serial.print("\t");
 
 			Serial.print("r_rte: ");
-			//Serial.print(gyroYPR[1]); // Roll
+			//Serial.print(gyroYPR[1]); // Roll Global Variable
 			Serial.print(gyro_roll_rate,2);
 			Serial.print("\t");
 
 			Serial.print("p_rte: ");
-			//Serial.print(gyroYPR[0]); // Pitch
+			//Serial.print(gyroYPR[0]); // Pitch Global Variable
 			Serial.print(gyro_pitch_rate,2);
-*/
+
 
 
 			// ----- Radio Debug -----
@@ -380,9 +387,21 @@ void loop() {
 */
 
 			// ----- Gain Debug -----
-
+/*
 			Serial.print(gain,3);
+*/
 
+			// ----- Motors Debug -----
+			/*
+			Serial.print(M1_Val);
+			Serial.print("\t");
+			Serial.print(M2_Val);
+			Serial.print("\t");
+			Serial.print(M3_Val);
+			Serial.print("\t");
+			Serial.print(M4_Val);
+			Serial.print("\t");
+			*/
 		// Note: always end the print with a new line
 		Serial.println();
 
@@ -412,7 +431,7 @@ void loop() {
 			local_thro_demand = TX.THRO();
 			local_roll_demand = TX.ALIE() * 10;
 			local_pitch_demand = TX.ELEV() * 10; // Multiply by 10 for rate (acro) -1000 -> 1000 dps
-			local_yaw_demand = TX.RUDD() * 10;
+			local_yaw_demand = TX.RUDD();
 			local_aux1_demand = TX.AUX1();
 			local_gear_demand = TX.GEAR();
 
@@ -452,9 +471,10 @@ void loop() {
 			PID_Pitch_Rate = (P_Pitch_Rate * PITCH_RATE_Kp) + (I_Pitch_Rate * PITCH_RATE_Ki) + (D_Pitch_Rate * PITCH_RATE_Kd);
 
 			// Yaw
-			P_Yaw_Rate = RateYaw.p_pid(0, gyro_yaw_rate);
-			I_Yaw_Rate = RateYaw.i_pid(0, gyro_yaw_rate);
-			D_Yaw_Rate = RateYaw.d_pid(0, gyro_yaw_rate);
+			P_Yaw_Rate = RateYaw.p_pid(0.000, gyro_yaw_rate);
+			I_Yaw_Rate = RateYaw.i_pid(0.000, gyro_yaw_rate);
+			D_Yaw_Rate = RateYaw.d_pid(0.000, gyro_yaw_rate);
+
 			PID_Yaw_Rate = (P_Yaw_Rate * YAW_RATE_Kp) + (I_Yaw_Rate * YAW_RATE_Ki) + (D_Yaw_Rate * YAW_RATE_Kd);
 
 
@@ -480,28 +500,35 @@ void loop() {
 
 			// ----- MIXER -----
 			// If Thro demand above a sensible threshold begin control
-			if(local_thro_demand > 20){
+			if(local_thro_demand > 15){
 				// ----- Motor Mix -----
 				//Note: this is for X configuration motor mix
 
 				write_motor_1(local_thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate); // Yellow
-				// M1_Val = thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate;
+				M1_Val = local_thro_demand + PID_Pitch_Rate + PID_Roll_Rate - PID_Yaw_Rate;
 
 				write_motor_2(local_thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate); // RED
-				// M2_Val = thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate;
+				M2_Val = local_thro_demand + PID_Pitch_Rate - PID_Roll_Rate + PID_Yaw_Rate;
 
 				write_motor_3(local_thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate); // Green
-				// M3_Val = thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate;
+				M3_Val = local_thro_demand - PID_Pitch_Rate + PID_Roll_Rate + PID_Yaw_Rate;
 
 				write_motor_4(local_thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate); // Blue
-				// M4_Val = thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate;
+				M4_Val = local_thro_demand - PID_Pitch_Rate - PID_Roll_Rate - PID_Yaw_Rate;
 
 			}
 			else	//Below the throttle Threshold command all motors to the same speed.
 					write_motor_1(local_thro_demand);
+					M1_Val = local_thro_demand;
+
 					write_motor_2(local_thro_demand);
+					M2_Val = local_thro_demand;
+
 					write_motor_3(local_thro_demand);
+					M3_Val = local_thro_demand;
+
 					write_motor_4(local_thro_demand);
+					M4_Val = local_thro_demand;
 		}
 
 
@@ -591,10 +618,10 @@ void loop() {
 		//gain = smoothing() / 9000;
 
 		// Gain Range 0.000 -> 1.000
-		//gain = smoothing() / 900;
+		gain = smoothing() / 900;
 
 		// Gain Range 0.000 -> 0.250
-		gain = smoothing() / 3600;
+		//gain = smoothing() / 3600;
 
 		// Gain Range 0.000 -> 0.500
 		 //gain = smoothing() / 1800;

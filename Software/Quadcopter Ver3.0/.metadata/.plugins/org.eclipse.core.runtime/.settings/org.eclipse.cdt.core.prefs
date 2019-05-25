@@ -18,6 +18,15 @@ config/MPU6050_Calibration/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/
 config/MPU6050_Calibration/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.id=MPU6050_Calibration\#org.eclipse.cdt.arduino.core.provider/Uno
 config/MPU6050_Calibration/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
 config/MPU6050_Calibration/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.version=
+config/MPU_Example2/cdt.toolChain.id=MPU_Example2\#
+config/MPU_Example2/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/MPU_Example2/cdt.toolChain.version=
+config/MPU_Example2/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.id=MPU_Example2\#org.eclipse.cdt.arduino.core.provider/Nano Optiboot
+config/MPU_Example2/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/MPU_Example2/org.eclipse.cdt.arduino.core.provider/Nano\ Optiboot/cdt.toolChain.version=
+config/MPU_Example2/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.id=MPU_Example2\#org.eclipse.cdt.arduino.core.provider/Uno
+config/MPU_Example2/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
+config/MPU_Example2/org.eclipse.cdt.arduino.core.provider/Uno/cdt.toolChain.version=
 config/New_Radio_Test/cdt.toolChain.id=New_Radio_Test\#
 config/New_Radio_Test/cdt.toolChain.type=org.eclipse.cdt.arduino.core.toolChainProvider
 config/New_Radio_Test/cdt.toolChain.version=

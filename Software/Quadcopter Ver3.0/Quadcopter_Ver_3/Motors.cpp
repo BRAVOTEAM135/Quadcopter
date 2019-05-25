@@ -41,15 +41,15 @@
 /*
  * _BV same as shifting 1 by the number of places
  * Timer 0 (8 Bit) Pre-scaler values
- * Frequency = System Clock (16MHz) / Pre-scaler / #bits (8 bits)
+ * Frequency = System Clock (16MHz) / Pre-scaler / #bits (256 bits)
  */
  
 /* Timer 0 (8 bit) Pre-scaler Values */ 
-const int T0_PS1		=    _BV(CS00);              // 31.37 khz
-const int T0_PS8		=    _BV(CS01);              // 5.92 khz
-const int T0_PS64		=    _BV(CS01) | _BV(CS00);  // 490.19 hz
-const int T0_PS256		=    _BV(CS02);              // 122.55 hz
-const int  T0_PS1024	=    _BV(CS02) | _BV(CS00);  // 30.64 hz
+const int T0_PS1		=    _BV(CS00);              // 31.25 khz
+const int T0_PS8		=    _BV(CS01);              // 3.90 khz
+const int T0_PS64		=    _BV(CS01) | _BV(CS00);  // 488.28 hz
+const int T0_PS256		=    _BV(CS02);              // 122.07 hz
+const int  T0_PS1024	=    _BV(CS02) | _BV(CS00);  // 30.51 hz
 
 //TImer 2 (8 Bit) Pre-scaler Values
 const int  T2_PS1		=   _BV(CS20);

@@ -35,7 +35,7 @@ uint8_t fifoBuffer[64]; // FIFO storage buffer
 Quaternion q;           // [w, x, y, z]         quaternion container
 VectorFloat gravity;    // [x, y, z]            gravity vector
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
-int16_t gx, gy, gz;
+int16_t gx, gy, gz;		// Gyro Rate variables
 
 // Global variable initialisation
 float angleYPR[3];
@@ -70,7 +70,13 @@ void init_sensor(){
 
 	// load and configure the DMP
 	if (SENSOR_DEBUG == 1) Serial.println(F("Initializing DMP..."));
-	devStatus = mpu.dmpInitialize();
+	devStatus = mpu.dmpInitialize(); // This is in the original code - but has no declaration??
+    mpu.initialize(); // This is what initializes the registers
+
+	if (SENSOR_DEBUG) Serial.print("Gyro Range: ");
+	if (SENSOR_DEBUG) Serial.println(mpu.getFullScaleGyroRange());
+	if (SENSOR_DEBUG) Serial.print("Accel Range: ");
+	if (SENSOR_DEBUG) Serial.println(mpu.getFullScaleAccelRange());
 
 	// supply your own gyro offsets here, scaled for min sensitivity
 	// Run the MPU6050 Calibration program to get these values
@@ -87,6 +93,12 @@ void init_sensor(){
 		// turn on the DMP, now that it's ready
 		if (SENSOR_DEBUG == 1) Serial.println(F("Enabling DMP..."));
 		mpu.setDMPEnabled(true);
+
+		if (SENSOR_DEBUG) Serial.print("Gyro Range: ");
+		if (SENSOR_DEBUG) Serial.println(mpu.getFullScaleGyroRange());
+		if (SENSOR_DEBUG) Serial.print("Accel Range: ");
+		if (SENSOR_DEBUG) Serial.println(mpu.getFullScaleAccelRange());
+
 
 		// enable Arduino interrupt detection
 		if (SENSOR_DEBUG == 1) Serial.println(F("Enabling interrupt detection (Arduino PCINT8 A0  )..."));
@@ -163,7 +175,6 @@ void get_sensor() {
 			mpu.dmpGetQuaternion(&q, fifoBuffer);
 			mpu.dmpGetGravity(&gravity, &q);
 			mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-			mpu.getRotation(&gx, &gy, &gz);
 
 			// Write values to the global variables for use in the main and other functions
 			// Euler Angle
@@ -171,10 +182,12 @@ void get_sensor() {
 			angleYPR[1] = ypr[1] * 180/M_PI * -1;
 			angleYPR[2] = ypr[2] * 180/M_PI;
 
+
+			mpu.getRotation(&gx, &gy, &gz);
 			// Raw Gyro Value, Rate of rotation Deg/Sec or dps or Degrees per second
-			gyroYPR[0] = gx;
-			gyroYPR[1] = gy;
-			gyroYPR[2] = gz;
+			gyroYPR[0] = gx / 131.0; // Divide by 131 as this is 16bit 65536 / Full Scale (500) = 131 scales to dpss
+			gyroYPR[1] = gy / 131.0;
+			gyroYPR[2] = gz / 131.0;
 		}
 	}
 }
