@@ -41,18 +41,19 @@
 #include "LEDs.h"
 #include "Analog_Read.h"
 
-#define MAIN_DEBUG 1 	//Enables debugging of the main.1 will print to serial port.
-#define TUNE 0 			// Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3.
+// ===== CONFIG/SETTINGS ====
+#define MAIN_DEBUG  	//Comment out to remvoe debugging
+#define TUNE 1 			// Set to 1 if tunning 0 if not tunning. Note: Tunning will disable GPIO1-3.
 						// also jumper off for tuning jumper on for normal operation
 
 
- #define SENSOR_DEBUG_PRINT // Uncomment what is needed. This is purley for debug
-// #define RADIO_DEBUG_PRINT
-// #define GAIN_DEBUG_PRINT
+// #define SENSOR_DEBUG_PRINT // Uncomment what is needed. This is purley for debug
+ //#define RADIO_DEBUG_PRINT
+ #define GAIN_DEBUG_PRINT
 // #define MOTORS_DEBUG_PRINT
 
 
-//----- TASKS -----
+//===== TASKS =====
 // Configure all the task counts and initialize them to 0
 // See initT1() - currently count will increment every 1ms
 volatile unsigned long task_0_count = 0; // Heart beat Task on pin 13
@@ -65,7 +66,7 @@ volatile unsigned long task_5_count = 0; // Sensor Settling time
 
 bool Error = 0;
 
-// ----- RADIO -----
+// ===== RADIO =====
 static float local_thro_demand;
 static float local_roll_demand;
 static float local_pitch_demand;
@@ -75,10 +76,14 @@ static bool local_gear_demand;
 
 volatile static uint8_t cut_off_flag = 0;
 
+// ===== Radio =====
 // Initialise the Radio as an object called TX short for transmitter
 Radio TX;
+#define PITCH_RADIO_SF 30	// dps
+#define ROLL_RADIO_SF 30	// dps
+#define YAW_RADIO_SF 150	// dps
 
-// ----- SENSOR -----
+// ===== SENSOR =====
 // Returns the angle in degrees (degs)
 float IMU_yaw_angle;
 float IMU_roll_angle;
@@ -89,7 +94,7 @@ float gyro_yaw_rate;
 float gyro_roll_rate;
 float gyro_pitch_rate;
 
-// ----- Analog Input -----
+// ===== Analog Input =====
 // High when a value is ready to be read
 volatile int readFlag;
 
@@ -98,7 +103,7 @@ volatile int analogVal;
 
 float gain = 0; //value used to tune the PID
 
-// ----- PID ----
+// ===== PID =====
 // Initialise class for each PID loop so that they are unique entities
 // These are the 6 PID Loops required
 PID RateRoll;
@@ -176,11 +181,11 @@ float D_Yaw_Pos;
 float PID_Yaw_Pos;
 
 
-// Motor
-float M1_Val = 0;
-float M2_Val = 0;
-float M3_Val = 0;
-float M4_Val = 0;
+// ==== Motor =====
+float M1_Val = 1000; // Motor inputs are scaled to match the 1000-2000us from the radio.
+float M2_Val = 1000;
+float M3_Val = 1000;
+float M4_Val = 1000;
 
 
 
@@ -195,44 +200,85 @@ void setup() {
 	Serial.println("-----*-----");
 
 	//----- Initialize Hardware ----
-	// Sensor
-	if (MAIN_DEBUG) Serial.print("Initialising Sensor...");
+	// Sensor -----
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising Sensor...");
+#endif
+
 	init_sensor();
 
-	if (MAIN_DEBUG) Serial.println("OK");
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
 
-	//Radio
-	if (MAIN_DEBUG) Serial.print("Initialising Radio...");
+	//Radio -----
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising Radio...");
+#endif
+
 	TX.init_channels();
-	if (MAIN_DEBUG) Serial.println("OK");
 
-	// Motors
-	if (MAIN_DEBUG) Serial.print("Initialising Motors...");
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
+
+	// Motors -----
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising Motors...");
+#endif
+
 	init_motors();
 	config_motors();
-	if (MAIN_DEBUG) Serial.println("OK");
 
-	// Timer
-	if (MAIN_DEBUG) Serial.print("Initialising Timer 1...");
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
+
+	// Timer -----
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising Timer 1...");
+#endif
+
 	init_t1();
-	if (MAIN_DEBUG) Serial.println("OK");
 
-	// Mixer
-	if (MAIN_DEBUG) Serial.print("Initialising Mixer...");
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
+
+	// Mixer -----
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising Mixer...");
+#endif
+
 	config_mixer(CROSS);
-	if (MAIN_DEBUG) Serial.println("OK");
 
-	// LEDs
-	if (MAIN_DEBUG) Serial.print("Initialising LEDs...");
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
+
+	// LEDs -----
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising LEDs...");
+#endif
+
 	if(TUNE == 0) init_a_leds(); //If we are tunning disable Analog Pins as Output
 	init_d_leds();
-	if (MAIN_DEBUG) Serial.println("OK");
 
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
 	if(TUNE == 1){
-		// Analog Read
-		if (MAIN_DEBUG) Serial.print("Initialising Analog Read...");
+
+	// Analog Read ------
+#ifdef MAIN_DEBUG
+		Serial.print("Initialising Analog Read...");
+#endif
+
 		init_analog_read();
-		if (MAIN_DEBUG) Serial.println("OK");
+
+#ifdef MAIN_DEBUG
+		Serial.println("OK");
+#endif
 	}
 
 
@@ -247,12 +293,16 @@ void setup() {
 
 void loop() {
 
-	// ----- INITIALIZATION ----
+	// ===== INITIALIZATION =====
 	//Initialize the watchdog. Will only happen once
-	if (MAIN_DEBUG) Serial.print("Initialising Watchdog...");
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising Watchdog...");
+#endif
 	init_watchdog();
 	reset_watchdog();
-	if (MAIN_DEBUG) Serial.println("OK");
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
 
 	// clear all LEDs
 	clear_led(GPIO0);
@@ -265,7 +315,7 @@ void loop() {
 
 	reset_watchdog(); // Reset the watchdog
 
-// ----- Motor Calibration -----
+// ===== Motor Calibration =====
 /*
 	 * To Calibrate
 	 * 1. Connect USB cable
@@ -294,11 +344,16 @@ void loop() {
 	clear_led(GPIO0);
 	clear_led(GPIO2);
 
-	// ----- SENSOR STABLISATION ----
+	// ===== SENSOR STABLISATION =====
 	// Gives the sensors a chance to stablize. Take 10s to do this
-	if (MAIN_DEBUG) Serial.print("Initialising IMU takes 12s...");
+#ifdef MAIN_DEBUG
+	Serial.print("Initialising IMU takes 12s...");
+#endif
+
 	set_led(GPIO0);
 	set_led(GPIO1);
+
+	// Show on the LEDs a count down to show system doing something
 	while (task_5_count <= 12000) {
 		get_sensor();
 		reset_watchdog(); // Reset the watchdog
@@ -336,22 +391,32 @@ void loop() {
 	clear_led(GPIO2);
 	clear_led(GPIO3);
 	clear_led(LED_PIN);
-	if (MAIN_DEBUG) Serial.println("OK");
-
-	// ----- THROTTLE SAFETY -----
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
+	// ===== THROTTLE SAFETY =====
 	// Safety: Ensure software does not start until the motors are in a safe position
 	static uint8_t init_thro = 1; // Local to serve as the first reading from the radio
 
-	if (MAIN_DEBUG) Serial.println("Throttle Safety...");
+#ifdef MAIN_DEBUG
+	Serial.println("Throttle Safety...");
+#endif
 
 	while(init_thro > 1000){
 		set_led(LED_PIN); // Light LED to show nothing happening
 
 		init_thro = TX.THRO(); // Store read value locally
-		if (MAIN_DEBUG) Serial.println(init_thro);
+
+#ifdef MAIN_DEBUG
+		Serial.println(init_thro);
+#endif
+
 		reset_watchdog(); // Reset the watchdog
 	}
-	if (MAIN_DEBUG) Serial.println("OK");
+
+#ifdef MAIN_DEBUG
+	Serial.println("OK");
+#endif
 
 	// clear all LEDs
 	clear_led(GPIO3);
@@ -424,7 +489,7 @@ void loop() {
 
 #ifdef RADIO_DEBUG_PRINT
 			// ----- Radio Debug -----
-
+/*
 			Serial.print(TX.THRO());
 			Serial.print("\t");
 			Serial.print(TX.ALIE());
@@ -432,6 +497,21 @@ void loop() {
 			Serial.print(TX.ELEV());
 			Serial.print("\t");
 			Serial.print(TX.RUDD());
+			Serial.print("\t");
+			Serial.print(TX.GEAR());
+			Serial.print("\t");
+			Serial.print(TX.AUX1());
+			Serial.print("\t");
+			Serial.print(TX.TH_CUT());
+			Serial.println();
+*/
+			Serial.print(local_thro_demand);
+			Serial.print("\t");
+			Serial.print(local_roll_demand);
+			Serial.print("\t");
+			Serial.print(local_pitch_demand);
+			Serial.print("\t");
+			Serial.print(local_yaw_demand);
 			Serial.print("\t");
 			Serial.print(TX.GEAR());
 			Serial.print("\t");
@@ -482,9 +562,9 @@ void loop() {
 			// ----- RADIO -----
 			// Take a local copy of the latest value read from Radio
 			local_thro_demand = TX.THRO();	// Min = 1071, Max = 1943 - Units: us
-			local_roll_demand = TX.ALIE(); 	// Left = -1, Right = 1
-			local_pitch_demand = TX.ELEV();	// Up/Forward = 1, Down/Backward = -1
-			local_yaw_demand = TX.RUDD();	// Left = -1, Right = 1
+			local_roll_demand = TX.ALIE() * ROLL_RADIO_SF; 	// Raw: Left = -1, Right = 1
+			local_pitch_demand = TX.ELEV() * PITCH_RADIO_SF;	// Raw: Up/Forward = 1, Down/Backward = -1
+			local_yaw_demand = TX.RUDD() * YAW_RADIO_SF;	// Raw: Left = -1, Right = 1
 			local_aux1_demand = TX.AUX1();	// Off = 0, On = 1
 			local_gear_demand = TX.GEAR();	// Off = 0, On = 1
 
@@ -507,25 +587,29 @@ void loop() {
 
 
 			 // ----- TUNNING -----
-			if (TUNE == 1) { YAW_RATE_Kp = gain; }
+#ifdef TUNE
+			PITCH_RATE_Kp = gain;
+#endif
 
 			//----- PID -----
 			// -----------------------
 			// ----- Rate : Acro -----
 			// -----------------------
-			// Roll
-			P_Roll_Rate = RateRoll.p_pid(local_roll_demand, gyro_roll_rate); // gyroYPR - Global Variable
-			I_Roll_Rate = RateRoll.i_pid(local_roll_demand, gyro_roll_rate);
+			// Roll ----
+			P_Roll_Rate = RateRoll.p_pid(local_roll_demand, gyro_roll_rate); // local_roll_demand - From the Sticks see ROLL_RADIO_SF +/-30 dps
+			I_Roll_Rate = RateRoll.i_pid(local_roll_demand, gyro_roll_rate); // gyro_roll_rate - this is from the imu dps
 			D_Roll_Rate = RateRoll.d_pid(local_roll_demand, gyro_roll_rate);
+
 			PID_Roll_Rate = (P_Roll_Rate * ROLL_RATE_Kp) + (I_Roll_Rate * ROLL_RATE_Ki) + (D_Roll_Rate * ROLL_RATE_Kd);
 
-			// Pitch
+			// Pitch ----
 			P_Pitch_Rate = RatePitch.p_pid(local_pitch_demand, gyro_pitch_rate);
 			I_Pitch_Rate = RatePitch.i_pid(local_pitch_demand, gyro_pitch_rate);
 			D_Pitch_Rate = RatePitch.d_pid(local_pitch_demand, gyro_pitch_rate);
+
 			PID_Pitch_Rate = (P_Pitch_Rate * PITCH_RATE_Kp) + (I_Pitch_Rate * PITCH_RATE_Ki) + (D_Pitch_Rate * PITCH_RATE_Kd);
 
-			// Yaw
+			// Yaw -----
 			P_Yaw_Rate = RateYaw.p_pid(0.000, gyro_yaw_rate);
 			I_Yaw_Rate = RateYaw.i_pid(0.000, gyro_yaw_rate);
 			D_Yaw_Rate = RateYaw.d_pid(0.000, gyro_yaw_rate);
@@ -538,12 +622,14 @@ void loop() {
 			P_Roll_Pos = PosRoll.p_pid(0,0);
 			I_Roll_Pos = PosRoll.i_pid(0,0);
 			D_Roll_Pos = PosRoll.d_pid(0,0);
+
 			PID_Roll_Pos = (P_Roll_Pos * ROLL_POS_Kp) + (I_Roll_Pos * ROLL_POS_Ki) + (D_Roll_Pos * ROLL_POS_Kd);
 
 			// Pitch
 			P_Pitch_Pos = PosPitch.p_pid(0,0);
 			I_Pitch_Pos = PosPitch.i_pid(0,0);
 			D_Pitch_Pos = PosPitch.d_pid(0,0);
+
 			PID_Pitch_Pos = (P_Pitch_Pos * PITCH_POS_Kp) + (I_Pitch_Pos * PITCH_POS_Ki) + (D_Pitch_Pos * PITCH_POS_Kd);
 
 			// Yaw
@@ -555,7 +641,7 @@ void loop() {
 
 			// ----- MIXER -----
 			// If Thro demand above a sensible threshold begin control
-			if(local_thro_demand > 15){
+			if(local_thro_demand > 1150){
 				// ----- Motor Mix -----
 				//Note: this is for X configuration motor mix
 
@@ -630,10 +716,10 @@ void loop() {
 
 				set_led(GPIO3);
 
-				write_motor_1(0);
-				write_motor_2(0);
-				write_motor_3(0);
-				write_motor_4(0);
+				write_motor_1(1000);
+				write_motor_2(1000);
+				write_motor_3(1000);
+				write_motor_4(1000);
 
 				cut_off_flag = 1; // Raise flag to say cut off occured
 			}
@@ -642,7 +728,7 @@ void loop() {
 			else {
 				//Ensure that after cut off the throttle needs to return to 0 before starting again
 				if (cut_off_flag == 1) { //has cut off occured
-					if (local_thro_demand == 0) { // has throttle zeroed
+					if (local_thro_demand <= 1075) { // has throttle zeroed
 						cut_off_flag = 0;
 					}
 					// Throttle in an unsafe position
@@ -673,10 +759,10 @@ void loop() {
 		//gain = smoothing() / 9000;
 
 		// Gain Range 0.000 -> 1.000
-		gain = smoothing() / 900;
+		//gain = smoothing() / 900;
 
 		// Gain Range 0.000 -> 0.250
-		//gain = smoothing() / 3600;
+		gain = smoothing() / 3600;
 
 		// Gain Range 0.000 -> 0.500
 		 //gain = smoothing() / 1800;

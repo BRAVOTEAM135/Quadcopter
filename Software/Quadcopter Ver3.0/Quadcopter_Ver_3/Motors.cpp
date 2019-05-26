@@ -66,6 +66,9 @@ const int  T2_PS1024	=   _BV(CS22) | _BV(CS21) | _BV(CS20);
 
 /*----- Local Function -----*/
 // Converts Percentage to Raw 0-255 value that is required
+//
+/*
+ * Obselete as replaced by radio2motor
 float perc2raw(int perc) {
 	float raw = 0;
 	raw = ((perc * 1.03) + 135.00); // Raw min = 135, Raw max = 238;
@@ -73,6 +76,21 @@ float perc2raw(int perc) {
 
 	return raw;
 	}
+*/
+
+// input radio will be 1000-2000us which is from the throttle of the radi
+float radio2motor(int radio){
+	/*
+	 *
+	 * Motor min = 135, Motor max = 238
+	 * 2000 - radio = x
+	 * x * (238-135) = y
+	 * z = 238 - y
+	*/
+	float motor = 0;
+	motor = 238 - ((2000 - radio)*0.103);
+	return motor;
+}
 
 /*----- Global Functions -----*/
 // Initialise the pin for output and configure the timers for desired output aprox 500hz signal
@@ -138,32 +156,29 @@ void config_motors(){
 // Function to write a percentage value to each motor
 void write_motor_1(int M1){
 	//PWM1 = M1;
-	if(M1 < 0) M1 = 0;		// Lower Limit for Motor 0%
-	if(M1 > 100) M1 = 100;	// Upper Limit for Motor 100%
-	PWM1 = perc2raw(M1);
+	if(M1 < 1000) M1 = 1000;	// Lower Limit for Motor 0%
+	if(M1 > 2000) M1 = 2000;	// Upper Limit for Motor 100%
+	PWM1 = radio2motor(M1);
 	}
 	
 void write_motor_2(int M2){
 	//PWM2 = M2;
-	if(M2 < 0) M2 = 0;		// Lower Limit for Motor 0%
-	if(M2 > 100) M2 = 100;	// Upper Limit for Motor 100%
-	PWM2 = (perc2raw(M2));
+	if(M2 < 1000) M2 = 1000;	// Lower Limit for Motor 0%
+	if(M2 > 2000) M2 = 2000;	// Upper Limit for Motor 100%
+	PWM2 = (radio2motor(M2));
 	}
 	
 void write_motor_3(int M3){
 	//PWM3 = M3;
-	if(M3 < 0) M3 = 0;		// Lower Limit for Motor 0%
-	if(M3 > 100) M3 = 100;	// Upper Limit for Motor 100%
-	PWM3 = perc2raw(M3);
+	if(M3 < 1000) M3 = 1000;	// Lower Limit for Motor 0%
+	if(M3 > 2000) M3 = 2000;	// Upper Limit for Motor 100%
+	PWM3 = radio2motor(M3);
 	}
 	
 void write_motor_4(int M4){
 	//PWM4 = M4;
-	if(M4 < 0) M4 = 0;		// Lower Limit for Motor 0%
-	if(M4 > 100) M4 = 100;	// Upper Limit for Motor 100%
-	PWM4 = perc2raw(M4);
+	if(M4 < 1000) M4 = 1000;	// Lower Limit for Motor 0%
+	if(M4 > 2000) M4 = 2000;	// Upper Limit for Motor 100%
+	PWM4 = radio2motor(M4);
 	}
-
-
-
 /* END OF FILE */
