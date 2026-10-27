@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.cdt.arduino.core.launchConfigurationType">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/Test"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="4"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.launchbar.core.originalName" value="Test"/>
+<stringAttribute key="org.eclipse.launchbar.core.providerClass" value="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationProvider"/>
+</launchConfiguration>

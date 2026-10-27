@@ -1,0 +1,19 @@
+# 	Title:
+#	Date Edit:
+#	Editor:
+
+#	-------------------------------------------------------------
+#	Type		|	Definition									|
+#	-------------------------------------------------------------
+#	LITERAL1	|	Literal constants (i.e. , Macros)			|
+#	LITERAL2	|	Literal constants (i.e. , Macros)			|
+#	KEYWORD1	|	Classes, data types, and C++ Keywords		|
+#	KEYWORD2	|	Methods and Functions						|
+#	KEYWORD3	|	Structures									|
+#	-----------------------------------------------------------
+
+Temp	KEYWORD1
+openTemp	KEYWORD2
+readTemp	KEYWORD2
+writeTemp	KEYWORD2
+closeTemp	KEYWORD2

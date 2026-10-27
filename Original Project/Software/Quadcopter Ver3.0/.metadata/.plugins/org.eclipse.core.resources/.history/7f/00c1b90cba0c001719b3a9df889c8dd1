@@ -1,0 +1,70 @@
+/*
+ * Radio.h
+ *
+ *  Created on: 12 Feb 2017
+ *      Author: Kevin
+ */
+
+#ifndef RADIO_H_
+#define RADIO_H_
+#include <Arduino.h>
+
+class Radio {
+
+public:
+	Radio(); //Constructor
+	void init_channels();
+	uint16_t read_channel();
+
+	// Functions that handle the read of the channels
+	uint16_t read_THRO();	// PCINT18	PIN2	PD2
+	uint16_t read_ALIE();	// PCINT20	PIN4	PD4
+	uint16_t read_ELEV();	// PCINT23	PIN7	PD7
+	uint16_t read_RUDD();	// PCINT0	PIN8	PB0
+	uint16_t read_GEAR();	// PCINT1	PIN9	PB1
+	uint16_t read_AUX1();	// PCINT2	PIN10	PB2
+
+
+
+
+private:
+
+	// Holds the previous measured value
+	volatile uint16_t last_channel_value_THRO; // THRO
+	volatile uint16_t last_channel_value_ALIE; // ALIE
+	volatile uint16_t last_channel_value_ELEV; // ELEV
+	volatile uint16_t last_channel_value_RUDD; // RUDD
+	volatile uint16_t last_channel_value_GEAR; // GEAR
+	volatile uint16_t last_channel_value_AUX1; // AUX1
+
+
+	// Stores the rise time
+	volatile uint16_t rise_time_THRO; // THRO
+	volatile uint16_t rise_time_ALIE; // ALIE
+	volatile uint16_t rise_time_ELEV; // ELEV
+	volatile uint16_t rise_time_RUDD; // RUDD
+	volatile uint16_t rise_time_GEAR; // GEAR
+	volatile uint16_t rise_time_AUX1; // AUX1
+
+	// Stores the fall time
+	volatile uint16_t fall_time_THRO; // THRO
+	volatile uint16_t fall_time_ALIE; // ALIE
+	volatile uint16_t fall_time_ELEV; // ELEV
+	volatile uint16_t fall_time_RUDD; // RUDD
+	volatile uint16_t fall_time_GEAR; // GEAR
+	volatile uint16_t fall_time_AUX1; // AUX1
+
+	//Stores the measured pulse width
+	volatile uint16_t THRO_pulse_width;
+	volatile uint16_t ALIE_pulse_width;
+	volatile uint16_t ELEV_pulse_width;
+	volatile uint16_t RUDD_pulse_width;
+	volatile uint16_t GEAR_pulse_width;
+	volatile uint16_t AUX1_pulse_width;
+
+
+
+
+};
+
+#endif /* RADIO_H_ */

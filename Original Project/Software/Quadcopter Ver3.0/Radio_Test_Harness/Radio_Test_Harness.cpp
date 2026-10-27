@@ -1,0 +1,45 @@
+#include <Arduino.h>
+#include "New_Radio.h"
+#include "T1.h"
+
+
+
+extern volatile uint16_t THRO_pulse_width;
+extern volatile uint16_t ALIE_pulse_width;
+extern volatile uint16_t ELEV_pulse_width;
+extern volatile uint16_t RUDD_pulse_width;
+extern volatile uint16_t GEAR_pulse_width;
+extern volatile uint16_t AUX1_pulse_width;
+
+
+void setup(){
+
+init_t1();
+init_channels();
+Serial.begin(115200);
+
+}
+
+void loop(){
+
+Serial.print(THRO_pulse_width);
+Serial.print("\t");
+Serial.print(ALIE_pulse_width);
+Serial.print("\t");
+Serial.print(ELEV_pulse_width);
+Serial.print("\t");
+Serial.print(RUDD_pulse_width);
+Serial.print("\t");
+Serial.print(GEAR_pulse_width);
+Serial.print("\t");
+Serial.print(AUX1_pulse_width);
+
+Serial.println("");
+
+delay_t1(100);
+
+}
+
+
+
+

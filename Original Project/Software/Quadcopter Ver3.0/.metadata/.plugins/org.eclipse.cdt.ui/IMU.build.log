@@ -1,0 +1,143 @@
+"C:/Users/Kevin/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR   -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/standard" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/libraries/Wire/src" "../../IMU.cpp" -o "project/IMU.cpp.o"
+"C:/Users/Kevin/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR   -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/cores/arduino" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/variants/standard" -I"C:/Users/Kevin/.arduinocdt/packages/arduino/hardware/avr/1.6.15/libraries/Wire/src" "../../MPU6050.cpp" -o "project/MPU6050.cpp.o"
+In file included from ../../MPU6050.cpp:37:0:
+../../MPU6050.h:861:33: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetAccel(VectorInt16 *v, const uint8_t* packet=0);
+                                 ^
+../../MPU6050.h:861:21: error: 'uint8_t MPU6050::dmpGetAccel(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetAccel(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:860:21: error: with 'uint8_t MPU6050::dmpGetAccel(int16_t*, const uint8_t*)'
+             uint8_t dmpGetAccel(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:864:38: error: 'Quaternion' has not been declared
+             uint8_t dmpGetQuaternion(Quaternion *q, const uint8_t* packet=0);
+                                      ^
+../../MPU6050.h:864:21: error: 'uint8_t MPU6050::dmpGetQuaternion(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetQuaternion(Quaternion *q, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:863:21: error: with 'uint8_t MPU6050::dmpGetQuaternion(int16_t*, const uint8_t*)'
+             uint8_t dmpGetQuaternion(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:867:43: error: 'Quaternion' has not been declared
+             uint8_t dmpGet6AxisQuaternion(Quaternion *q, const uint8_t* packet=0);
+                                           ^
+../../MPU6050.h:867:21: error: 'uint8_t MPU6050::dmpGet6AxisQuaternion(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGet6AxisQuaternion(Quaternion *q, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:866:21: error: with 'uint8_t MPU6050::dmpGet6AxisQuaternion(int16_t*, const uint8_t*)'
+             uint8_t dmpGet6AxisQuaternion(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:870:46: error: 'Quaternion' has not been declared
+             uint8_t dmpGetRelativeQuaternion(Quaternion *data, const uint8_t* packet=0);
+                                              ^
+../../MPU6050.h:870:21: error: 'uint8_t MPU6050::dmpGetRelativeQuaternion(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetRelativeQuaternion(Quaternion *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:869:21: error: with 'uint8_t MPU6050::dmpGetRelativeQuaternion(int16_t*, const uint8_t*)'
+             uint8_t dmpGetRelativeQuaternion(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:873:32: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetGyro(VectorInt16 *v, const uint8_t* packet=0);
+                                ^
+../../MPU6050.h:873:21: error: 'uint8_t MPU6050::dmpGetGyro(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetGyro(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:872:21: error: with 'uint8_t MPU6050::dmpGetGyro(int16_t*, const uint8_t*)'
+             uint8_t dmpGetGyro(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:877:39: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetLinearAccel(VectorInt16 *v, const uint8_t* packet=0);
+                                       ^
+../../MPU6050.h:877:21: error: 'uint8_t MPU6050::dmpGetLinearAccel(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetLinearAccel(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:876:21: error: with 'uint8_t MPU6050::dmpGetLinearAccel(int16_t*, const uint8_t*)'
+             uint8_t dmpGetLinearAccel(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:878:39: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity);
+                                       ^
+../../MPU6050.h:878:55: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity);
+                                                       ^
+../../MPU6050.h:878:74: error: 'VectorFloat' has not been declared
+             uint8_t dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity);
+                                                                          ^
+../../MPU6050.h:881:46: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetLinearAccelInWorld(VectorInt16 *v, const uint8_t* packet=0);
+                                              ^
+../../MPU6050.h:881:21: error: 'uint8_t MPU6050::dmpGetLinearAccelInWorld(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetLinearAccelInWorld(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:880:21: error: with 'uint8_t MPU6050::dmpGetLinearAccelInWorld(int16_t*, const uint8_t*)'
+             uint8_t dmpGetLinearAccelInWorld(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:882:46: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Quaternion *q);
+                                              ^
+../../MPU6050.h:882:62: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Quaternion *q);
+                                                              ^
+../../MPU6050.h:882:82: error: 'Quaternion' has not been declared
+             uint8_t dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Quaternion *q);
+                                                                                  ^
+../../MPU6050.h:885:46: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetGyroAndAccelSensor(VectorInt16 *g, VectorInt16 *a, const uint8_t* packet=0);
+                                              ^
+../../MPU6050.h:885:62: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetGyroAndAccelSensor(VectorInt16 *g, VectorInt16 *a, const uint8_t* packet=0);
+                                                              ^
+../../MPU6050.h:888:38: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetGyroSensor(VectorInt16 *v, const uint8_t* packet=0);
+                                      ^
+../../MPU6050.h:888:21: error: 'uint8_t MPU6050::dmpGetGyroSensor(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetGyroSensor(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:887:21: error: with 'uint8_t MPU6050::dmpGetGyroSensor(int16_t*, const uint8_t*)'
+             uint8_t dmpGetGyroSensor(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:893:35: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetGravity(VectorInt16 *v, const uint8_t* packet=0);
+                                   ^
+../../MPU6050.h:893:21: error: 'uint8_t MPU6050::dmpGetGravity(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetGravity(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:892:21: error: with 'uint8_t MPU6050::dmpGetGravity(int16_t*, const uint8_t*)'
+             uint8_t dmpGetGravity(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:894:35: error: 'VectorFloat' has not been declared
+             uint8_t dmpGetGravity(VectorFloat *v, Quaternion *q);
+                                   ^
+../../MPU6050.h:894:51: error: 'Quaternion' has not been declared
+             uint8_t dmpGetGravity(VectorFloat *v, Quaternion *q);
+                                                   ^
+../../MPU6050.h:897:44: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetUnquantizedAccel(VectorInt16 *v, const uint8_t* packet=0);
+                                            ^
+../../MPU6050.h:897:21: error: 'uint8_t MPU6050::dmpGetUnquantizedAccel(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetUnquantizedAccel(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:896:21: error: with 'uint8_t MPU6050::dmpGetUnquantizedAccel(int16_t*, const uint8_t*)'
+             uint8_t dmpGetUnquantizedAccel(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:900:42: error: 'VectorInt16' has not been declared
+             uint8_t dmpGetQuantizedAccel(VectorInt16 *v, const uint8_t* packet=0);
+                                          ^
+../../MPU6050.h:900:21: error: 'uint8_t MPU6050::dmpGetQuantizedAccel(int*, const uint8_t*)' cannot be overloaded
+             uint8_t dmpGetQuantizedAccel(VectorInt16 *v, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:899:21: error: with 'uint8_t MPU6050::dmpGetQuantizedAccel(int16_t*, const uint8_t*)'
+             uint8_t dmpGetQuantizedAccel(int16_t *data, const uint8_t* packet=0);
+                     ^
+../../MPU6050.h:904:46: error: 'Quaternion' has not been declared
+             uint8_t dmpGetEuler(float *data, Quaternion *q);
+                                              ^
+../../MPU6050.h:905:53: error: 'Quaternion' has not been declared
+             uint8_t dmpGetYawPitchRoll(float *data, Quaternion *q, VectorFloat *gravity);
+                                                     ^
+../../MPU6050.h:905:68: error: 'VectorFloat' has not been declared
+             uint8_t dmpGetYawPitchRoll(float *data, Quaternion *q, VectorFloat *gravity);
+                                                                    ^
+makefile:87: recipe for target 'project/MPU6050.cpp.o' failed
+make: *** [project/MPU6050.cpp.o] Error 1
