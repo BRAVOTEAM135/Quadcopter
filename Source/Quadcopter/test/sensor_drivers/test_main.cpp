@@ -1,79 +1,6 @@
-#include <stdint.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include "i2cBus.h"
-#include "GY80.h"
-#include "MPU6050.h"
-#include "imu.h"
-#include <math.h>
+#include "sensor_fixture.h"
 
-volatile uint8_t TWCR, TWSR, TWBR, TWDR;
-volatile uint16_t tests_run = 0;
-volatile uint16_t failed_line = 0;
-
-__attribute__((noinline)) void test_done() {
-    asm volatile("nop");
-}
-
-void check(bool ok, uint16_t line) {
-    ++tests_run;
-    if (!ok) {
-        failed_line = line;
-        test_done();
-        for (;;) {}
-    }
-}
-#define CHECK(condition) check((condition), __LINE__)
-
-i2cBus bus;
-uint32_t nowUs = 0;
-
-void interrupt(uint8_t status, uint8_t value = 0) {
-    TWSR = status;
-    TWDR = value;
-    test_twi_interrupt();
-}
-
-void finishStop() {
-    CHECK(TWCR & (1 << TWSTO));
-    TWCR &= ~(1 << TWSTO); // Model hardware completing STOP.
-    bus.service(nowUs);
-}
-
-void registerPrefix(uint8_t address, uint8_t reg) {
-    CHECK(TWCR & (1 << TWSTA));
-    interrupt(0x08);
-    CHECK(TWDR == static_cast<uint8_t>(address << 1));
-    interrupt(0x18);
-    CHECK(TWDR == reg);
-    interrupt(0x28);
-}
-
-void completeRead(uint8_t address, uint8_t reg, const uint8_t* data, uint8_t length) {
-    registerPrefix(address, reg);
-    CHECK(TWCR & (1 << TWSTA));
-    interrupt(0x10);
-    CHECK(TWDR == static_cast<uint8_t>((address << 1) | 1));
-    interrupt(0x40);
-    for (uint8_t i = 0; i < length; ++i) {
-        CHECK(bool(TWCR & (1 << TWEA)) == (i + 1 < length));
-        interrupt(i + 1 == length ? 0x58 : 0x50, data[i]);
-    }
-    finishStop();
-}
-
-void completeWrite(uint8_t address, uint8_t reg, uint8_t value) {
-    registerPrefix(address, reg);
-    CHECK(TWDR == value);
-    interrupt(0x28);
-    finishStop();
-}
-
-bool near(float actual, float expected, float tolerance = 0.001f) {
-    float difference = actual - expected;
-    return difference > -tolerance && difference < tolerance;
-}
-
+/// Check transport sequencing, ownership and timeout recovery.
 void testBus() {
     bus.init();
     uint8_t data[3] = {};
@@ -141,357 +68,345 @@ void testBus() {
     nowUs = 0;
 }
 
-void initMpu(MPU6050& imu, uint8_t address, bool startInitialization = true) {
-    if (startInitialization) CHECK(imu.begin(nowUs));
-    CHECK(!imu.requestSample(nowUs));
-    imu.service(nowUs);
-    CHECK(!(TWCR & (1 << TWSTA)));
-    nowUs += 100000;
-    imu.service(nowUs);
-    const uint8_t identity[] = {0x68};
-    completeRead(address, 0x75, identity, 1);
-    imu.service(nowUs);
-    completeWrite(address, 0x6B, 0x80);
-    imu.service(nowUs);
-    nowUs += 100000;
-    imu.service(nowUs);
-    completeWrite(address, 0x6B, 0x01);
-    imu.service(nowUs);
-    nowUs += 100000;
-    imu.service(nowUs);
-    const uint8_t regs[] = {0x6C, 0x1A, 0x19, 0x1B, 0x1C, 0x38};
-    const uint8_t vals[] = {0x00, 0x03, 0x04, 0x00, 0x00, 0x01};
-    for (uint8_t i = 0; i < sizeof(regs); ++i) {
-        completeWrite(address, regs[i], vals[i]);
-        imu.service(nowUs);
-    }
-    CHECK(imu.ready() && !imu.busy() && imu.error() == SensorError::None);
-}
+/// Check owner-specific cancellation and safe bus closure.
+void testBusCloseAndCancel() {
+    bus.close();
+    bus.close();
+    uint8_t data[3] = {};
+    i2cBus::Result result;
+    CHECK(!bus.startProbe(0x53, nowUs));
+    CHECK(!bus.readRegisters(0x68, 0x3B, data, 3, nowUs));
+    CHECK(!bus.writeRegister(0x68, 0x6B, 1, nowUs));
+    interrupt(0x50, 0xAA); // A late handler cannot re-enable closed hardware.
+    bus.service(nowUs);
+    CHECK(TWCR == 0 && !bus.takeResult(result));
 
-void testMpu() {
     bus.init();
-    MPU6050 imu(bus, 0x69);
-    initMpu(imu, 0x69);
-    ImuSample sample;
-    const uint8_t data[] = {
-        1, 0x40, 0, 0xC0, 0, 0, 0, // +/-1 g.
-        0x01, 0x54, // Temperature raw 340.
-        0, 0x83, 0xFF, 0x7D, 0x80, 0 // +/-1 degree/s, -32768.
-    };
-    uint32_t timestamp = nowUs;
-    CHECK(imu.requestSample(nowUs));
-    CHECK(!imu.requestSample(nowUs));
-    completeRead(0x69, 0x3A, data, sizeof(data));
-    imu.service(nowUs);
-    CHECK(!imu.requestSample(nowUs)); // Unread output is preserved.
-    CHECK(imu.takeSample(sample));
-    CHECK(!imu.takeSample(sample));
-    CHECK(sample.timestampUs == timestamp);
-    CHECK(near(sample.accelerationMps2.x, 9.80665f));
-    CHECK(near(sample.accelerationMps2.y, -9.80665f));
-    CHECK(near(sample.angularVelocityRadS.x, 0.01745329252f));
-    CHECK(near(sample.angularVelocityRadS.y, -0.01745329252f));
-    CHECK(near(sample.angularVelocityRadS.z, -4.3658068f));
-    CHECK(near(imu.temperatureC(), 37.53f));
-    uint8_t stale[15] = {};
-    CHECK(imu.requestSample(nowUs));
-    completeRead(0x69, 0x3A, stale, sizeof(stale));
-    imu.service(nowUs);
-    CHECK(!imu.takeSample(sample) && imu.ready());
+    CHECK(bus.readRegisters(0x68, 0x3B, data, 3, nowUs, data));
+    registerPrefix(0x68, 0x3B);
+    interrupt(0x10);
+    interrupt(0x40);
+    interrupt(0x50, 0x11);
+    CHECK(data[0] == 0x11);
+    CHECK(!bus.cancel(&result)); // Another owner cannot cancel this transfer.
+    CHECK(bus.cancel(data));
+    CHECK(!(TWCR & (1 << TWIE)));
+    interrupt(0x50, 0xAA);
+    CHECK(data[1] == 0); // No ISR writes to a cancelled buffer.
+    CHECK(!bus.startProbe(0x53, nowUs));
+    finishStop();
+    CHECK(!bus.takeResult(result, data));
+    CHECK(bus.startProbe(0x53, nowUs));
+    CHECK(!bus.cancel(nullptr)); // Register cancellation cannot steal a probe.
+    interrupt(0x18);
+    finishStop();
+    CHECK(bus.takeProbeResult(result));
 
-    CHECK(imu.requestSample(nowUs));
+    // Cancellation also releases an unread completed result.
+    const uint8_t value[] = {0x68};
+    CHECK(bus.readRegisters(0x68, 0x75, data, 1, nowUs, data));
+    completeRead(0x68, 0x75, value, 1);
+    CHECK(bus.cancel(data));
+    CHECK(!bus.takeResult(result, data));
+
+    // A stuck cancellation STOP times out across clock wrap, freeing the bus.
+    nowUs = 0xFFFFFF00UL;
+    CHECK(bus.readRegisters(0x68, 0x75, data, 1, nowUs, data));
+    CHECK(bus.cancel(data));
     nowUs += 5000;
     bus.service(nowUs);
-    imu.service(nowUs);
-    CHECK(imu.error() == SensorError::Timeout && imu.ready());
-    CHECK(imu.requestSample(nowUs)); // Recover by issuing another sample.
-    completeRead(0x69, 0x3A, data, sizeof(data));
-    imu.service(nowUs);
-    CHECK(imu.takeSample(sample) && imu.error() == SensorError::None);
-
-    CHECK(imu.begin(nowUs));
-    nowUs += 100000;
-    imu.service(nowUs);
-    const uint8_t wrong[] = {0x70};
-    completeRead(0x69, 0x75, wrong, 1);
-    imu.service(nowUs);
-    CHECK(!imu.ready() && !imu.busy() && imu.error() == SensorError::WrongDevice);
+    CHECK(bus.readRegisters(0x68, 0x75, data, 1, nowUs, data));
+    bus.close(); // Abort with no further buffer access or results.
+    interrupt(0x58, 0xAA);
+    CHECK(data[0] == 0x68 && TWCR == 0);
+    CHECK(!bus.takeResult(result, data));
+    nowUs = 0;
 }
 
-// Bosch datasheet's calibration and uncompensated measurement example.
-const uint8_t calibration[] = {
-    0x01, 0x98, 0xFF, 0xB8, 0xC7, 0xD1, 0x7F, 0xE5,
-    0x7F, 0xF5, 0x5A, 0x71, 0x18, 0x2E, 0, 4,
-    0x80, 0, 0xDD, 0xF9, 0x0B, 0x34
-};
-
-void initGy80(GY80& imu, bool auxiliaries = true, bool startInitialization = true,
-              bool compassOnly = false) {
-    if (startInitialization) CHECK(imu.begin(nowUs, auxiliaries, auxiliaries && !compassOnly));
-    nowUs += 100000;
-    imu.service(nowUs);
-    const uint8_t accelId[] = {0xE5}, gyroId[] = {0xD3};
-    const uint8_t magId[] = {'H', '4', '3'}, baroId[] = {0x55};
-    completeRead(0x53, 0x00, accelId, 1);
-    imu.service(nowUs);
-    completeRead(0x69, 0x0F, gyroId, 1);
-    imu.service(nowUs);
-    if (auxiliaries) {
-        completeRead(0x1E, 0x0A, magId, 3);
-        imu.service(nowUs);
-        if (compassOnly) {
-            imu.service(nowUs);
-            imu.service(nowUs);
-        } else {
-            completeRead(0x77, 0xD0, baroId, 1);
-            imu.service(nowUs);
-            completeRead(0x77, 0xAA, calibration, sizeof(calibration));
-            imu.service(nowUs);
-        }
-    } else {
-        // Skipping disabled devices should generate no bus transactions.
-        imu.service(nowUs);
-        imu.service(nowUs);
-        imu.service(nowUs);
-    }
-    const uint8_t addresses[] = {0x53, 0x53, 0x53, 0x53, 0x69, 0x69, 0x69, 0x1E, 0x1E, 0x1E,
-                                 0x53, 0x53, 0x69, 0x69, 0x69, 0x69};
-    const uint8_t regs[] = {0x2D, 0x31, 0x2C, 0x2D, 0x20, 0x23, 0x20, 0x00, 0x01, 0x02,
-                           0x38, 0x2E, 0x21, 0x22, 0x24, 0x2E};
-    const uint8_t values[] = {0x00, 0x08, 0x0B, 0x08, 0x00, 0x80, 0x6F, 0x78, 0x20, 0x00,
-                             0, 0, 0, 0, 0, 0};
-    for (uint8_t i = 0; i < sizeof(regs); ++i) {
-        if (!auxiliaries && i >= 7 && i <= 9) {
-            imu.service(nowUs);
-            continue;
-        }
-        completeWrite(addresses[i], regs[i], values[i]);
-        imu.service(nowUs);
-    }
-    CHECK(!imu.ready());
-    nowUs += 299999;
-    imu.service(nowUs);
-    CHECK(!imu.ready());
-    ++nowUs;
-    imu.service(nowUs);
-    CHECK(imu.ready() && !imu.busy() && imu.error() == SensorError::None);
-}
-
-template <typename Sensor>
-void sampleGy80(Sensor& imu) {
-    const uint8_t ready[] = {0x80};
-    const uint8_t accel[] = {0, 1, 0, 0xFF, 0, 0}; // +/-256 counts.
-    const uint8_t gyro[] = {8, 0xE8, 3, 0x18, 0xFC, 0, 0}; // +/-1000 counts.
-    CHECK(imu.requestSample(nowUs));
-    completeRead(0x53, 0x30, ready, 1);
-    imu.service(nowUs);
-    completeRead(0x53, 0x32, accel, sizeof(accel));
-    imu.service(nowUs);
-    completeRead(0x69, 0xA7, gyro, sizeof(gyro));
-    imu.service(nowUs);
-    ImuSample sample;
-    CHECK(imu.takeSample(sample));
+/// Check read/status, signed scaling, stale samples, timeout recovery and reopening.
+void testAcceleration() {
+    bus.init();
+    resetSensors();
+    sensors.accelAddress = 0x1D;
+    ADXL345 sensor(bus, 0x1D);
+    AccelerationSample sample = {{11, 22, 33}, 1234};
+    CHECK(!sensor.getStatus().ready && !sensor.getStatus().busy);
+    CHECK(sensor.init(nowUs));
+    CHECK(!sensor.init(nowUs));
+    CHECK(!sensor.read(sample, nowUs));
+    CHECK(sample.timestampUs == 1234 && sample.accelerationMps2.x == 11);
+    waitReady(sensor, sample);
+    sensors.ax = 256;
+    sensors.ay = -256;
+    sensors.az = 0;
+    waitSample(sensor, sample);
     CHECK(near(sample.accelerationMps2.x, 9.80665f));
     CHECK(near(sample.accelerationMps2.y, -9.80665f));
+    sensors.accelFresh = false;
+    uint32_t saved = sample.timestampUs;
+    for (uint8_t i = 0; i < 8; ++i) {
+        CHECK(!sensor.read(sample, nowUs));
+        respondToSensor();
+        nowUs += 100;
+    }
+    CHECK(sample.timestampUs == saved);
+    for (uint8_t i = 0; i < 4 && sensor.getStatus().busy; ++i) {
+        sensor.read(sample, nowUs);
+        respondToSensor();
+    }
+    sensors.hold = true;
+    sensor.read(sample, nowUs);
+    CHECK(sensor.getStatus().busy);
+    uint8_t control = TWCR;
+    nowUs += 5000;
+    CHECK(sensor.getStatus().busy && TWCR == control); // Status never services timeouts.
+    CHECK(!sensor.read(sample, nowUs));
+    CHECK(sensor.getStatus().error == DriverError::Timeout && !sensor.getStatus().busy);
+    sensors.hold = false;
+    sensors.accelFresh = true;
+    waitSample(sensor, sample);
+    CHECK(sensor.getStatus().error == DriverError::None);
+    sensor.read(sample, nowUs);
+    sensor.close();
+    sensor.close();
+    CHECK(!sensor.getStatus().ready && !sensor.getStatus().busy);
+    CHECK(!sensor.read(sample, nowUs));
+    respondToSensor();
+    CHECK(sensor.init(nowUs));
+    waitReady(sensor, sample);
+    waitSample(sensor, sample);
+    sensor.close();
+    bus.close();
+}
+
+/// Check gyro scale, settling, stale rejection and an alternate I2C address.
+void testGyroscope() {
+    bus.init();
+    resetSensors();
+    sensors.gyroAddress = 0x68;
+    L3G4200D sensor(bus, 0x68);
+    GyroscopeSample sample = {};
+    CHECK(sensor.init(nowUs));
+    waitReady(sensor, sample);
+    sensors.gx = 1000;
+    sensors.gy = -1000;
+    waitSample(sensor, sample);
     CHECK(near(sample.angularVelocityRadS.x, 0.1527163f));
     CHECK(near(sample.angularVelocityRadS.y, -0.1527163f));
+    sensors.gyroFresh = false;
+    for (uint8_t i = 0; i < 8; ++i) {
+        CHECK(!sensor.read(sample, nowUs));
+        respondToSensor();
+        nowUs += 100;
+    }
+    sensor.close();
+    bus.close();
 }
 
-void testGy80() {
+/// Check compass axis order, locked/overflow data and device identity rejection.
+void testCompass() {
     bus.init();
-    GY80 imu(bus);
-    initGy80(imu);
-    sampleGy80(imu);
-    const uint8_t ready[] = {1};
-    // Wire order is X/Z/Y, returned order must be X/Y/Z.
-    const uint8_t mag[] = {0x04, 0x42, 0xFB, 0xBE, 0, 0};
-    CHECK(imu.requestMagneticField(nowUs));
-    completeRead(0x1E, 0x09, ready, 1);
-    imu.service(nowUs);
-    completeRead(0x1E, 0x03, mag, sizeof(mag));
-    imu.service(nowUs);
-    MagneticSample magnetic;
-    CHECK(imu.takeMagneticField(magnetic));
-    CHECK(near(magnetic.fieldMicrotesla.x, 100));
-    CHECK(near(magnetic.fieldMicrotesla.y, 0));
-    CHECK(near(magnetic.fieldMicrotesla.z, -100));
-
-    CHECK(imu.requestMagneticField(nowUs));
-    const uint8_t locked[] = {3};
-    completeRead(0x1E, 0x09, locked, 1);
-    imu.service(nowUs);
-    completeRead(0x1E, 0x03, mag, sizeof(mag));
-    imu.service(nowUs);
-    CHECK(!imu.takeMagneticField(magnetic)); // Drain old partial data only.
-
-    CHECK(imu.requestPressure(nowUs));
-    imu.service(nowUs);
-    completeWrite(0x77, 0xF4, 0x2E);
-    imu.service(nowUs);
-    CHECK(imu.busy());
-    sampleGy80(imu); // Motion remains available during temperature conversion.
-    nowUs += 4500;
-    imu.service(nowUs);
-    const uint8_t temperature[] = {0x6C, 0xFA}; // 27898.
-    completeRead(0x77, 0xF6, temperature, 2);
-    imu.service(nowUs);
-    completeWrite(0x77, 0xF4, 0x34);
-    imu.service(nowUs);
-    nowUs += 4500;
-    imu.service(nowUs);
-    const uint8_t pressure[] = {0x5D, 0x23, 0}; // 23843 at OSS=0.
-    completeRead(0x77, 0xF6, pressure, 3);
-    imu.service(nowUs);
-    PressureSample measured;
-    CHECK(imu.takePressure(measured));
-    CHECK(measured.pressurePa == 69964);
-    CHECK(near(measured.temperatureC, 15));
-    CHECK(!imu.busy());
-
-    CHECK(imu.requestMagneticField(nowUs));
-    completeRead(0x1E, 0x09, ready, 1);
-    imu.service(nowUs);
-    const uint8_t overflow[] = {0xF0, 0, 0, 0, 0, 0};
-    completeRead(0x1E, 0x03, overflow, sizeof(overflow));
-    imu.service(nowUs);
-    CHECK(!imu.takeMagneticField(magnetic) && imu.error() == SensorError::InvalidData);
-
-    const uint8_t stale[] = {0};
-    CHECK(imu.requestSample(nowUs));
-    completeRead(0x53, 0x30, stale, 1);
-    imu.service(nowUs);
-    ImuSample sample;
-    CHECK(!imu.takeSample(sample) && !imu.busy());
-
-    CHECK(imu.requestSample(nowUs));
-    interrupt(0x20);
-    finishStop();
-    imu.service(nowUs);
-    CHECK(imu.error() == SensorError::Nack && !imu.busy());
-    sampleGy80(imu); // Sample requests recover after transfer errors.
+    resetSensors();
+    HMC5883L sensor(bus);
+    MagneticSample sample = {};
+    CHECK(sensor.init(nowUs));
+    waitReady(sensor, sample);
+    sensors.mx = 1090;
+    sensors.my = 0;
+    sensors.mz = -1090;
+    waitSample(sensor, sample);
+    CHECK(near(sample.fieldMicrotesla.x, 100) && near(sample.fieldMicrotesla.z, -100));
+    uint32_t saved = sample.timestampUs;
+    sensors.magneticLocked = true;
+    for (uint8_t i = 0; i < 10; ++i) {
+        CHECK(!sensor.read(sample, nowUs));
+        respondToSensor();
+        nowUs += 100;
+    }
+    CHECK(sample.timestampUs == saved);
+    sensors.magneticLocked = false;
+    sensors.magneticOverflow = true;
+    for (uint8_t i = 0; i < 10; ++i) {
+        sensor.read(sample, nowUs);
+        respondToSensor();
+        nowUs += 100;
+        if (sensor.getStatus().error == DriverError::InvalidData) {
+            break;
+        }
+    }
+    CHECK(sensor.getStatus().error == DriverError::InvalidData);
+    sensor.close();
+    respondToSensor();
+    CHECK(sensor.init(nowUs));
+    sensors.wrongIdentity = true;
+    for (uint16_t i = 0; i < 2000; ++i) {
+        sensor.read(sample, nowUs);
+        respondToSensor();
+        nowUs += 100;
+        if (sensor.getStatus().error != DriverError::None) {
+            break;
+        }
+    }
+    CHECK(!sensor.getStatus().ready && sensor.getStatus().error == DriverError::WrongDevice);
+    sensor.close();
+    bus.close();
 }
 
-void testDisabledAuxiliaries() {
+/// Check motion/temperature arrive together and a failed read can be retried.
+void testMpu() {
     bus.init();
-    GY80 imu(bus);
-    initGy80(imu, false);
-    CHECK(!imu.requestPressure(nowUs));
-    CHECK(!imu.requestMagneticField(nowUs));
-    sampleGy80(imu);
-}
-
-void testInitFailures() {
-    bus.init();
-    GY80 imu(bus);
-    CHECK(imu.begin(nowUs));
-    nowUs += 100000;
-    imu.service(nowUs);
-    const uint8_t wrongId[] = {0};
-    completeRead(0x53, 0x00, wrongId, 1);
-    imu.service(nowUs);
-    CHECK(!imu.ready() && !imu.busy() && imu.error() == SensorError::WrongDevice);
-
-    CHECK(imu.begin(nowUs));
-    nowUs += 100000;
-    imu.service(nowUs);
-    const uint8_t accelId[] = {0xE5}, gyroId[] = {0xD3};
-    const uint8_t magId[] = {'H', '4', '3'}, baroId[] = {0x55};
-    completeRead(0x53, 0x00, accelId, 1);
-    imu.service(nowUs);
-    completeRead(0x69, 0x0F, gyroId, 1);
-    imu.service(nowUs);
-    completeRead(0x1E, 0x0A, magId, 3);
-    imu.service(nowUs);
-    completeRead(0x77, 0xD0, baroId, 1);
-    imu.service(nowUs);
-    const uint8_t invalidCalibration[22] = {};
-    completeRead(0x77, 0xAA, invalidCalibration, sizeof(invalidCalibration));
-    imu.service(nowUs);
-    CHECK(!imu.ready() && !imu.busy() && imu.error() == SensorError::InvalidData);
-
-    CHECK(imu.begin(nowUs));
-    nowUs += 100000;
-    imu.service(nowUs);
-    interrupt(0x20);
-    finishStop();
-    imu.service(nowUs);
-    CHECK(!imu.ready() && !imu.busy() && imu.error() == SensorError::Nack);
-
-    GY80 invalidGyro(bus, 0x53, 0x70);
-    CHECK(!invalidGyro.begin(nowUs) && invalidGyro.error() == SensorError::WrongDevice);
-    MPU6050 invalidMpu(bus, 0x67);
-    CHECK(!invalidMpu.begin(nowUs) && invalidMpu.error() == SensorError::WrongDevice);
-}
-
-void testGy80Interface() {
-    bus.init();
-    GY80 sensor(bus);
-    IMU imu(sensor);
-    CHECK(!imu.ready() && !imu.requestSample(nowUs));
-    CHECK(imu.begin(nowUs));
-    CHECK(!imu.begin(nowUs)); // Initialization already active.
-    // The common interface enables motion + compass, leaving pressure separate.
-    initGy80(sensor, true, false, true);
-    CHECK(imu.ready() && imu.error() == SensorError::None);
-    sampleGy80(imu); // Request/service/take through the common interface.
-
-    // service() has queued the slow compass acquisition after motion finished.
-    const uint8_t magReady[] = {1};
-    completeRead(0x1E, 0x09, magReady, 1);
-    imu.service(nowUs);
-    const uint8_t magData[] = {0x04, 0x42, 0, 0, 0, 0};
-    completeRead(0x1E, 0x03, magData, sizeof(magData));
-    imu.service(nowUs);
-    MagneticSample magnetic;
-    CHECK(imu.hasMagnetometer() && imu.takeMagneticField(magnetic));
-    CHECK(near(magnetic.fieldMicrotesla.x, 100));
-    CHECK(!imu.takeMagneticField(magnetic));
-
-    CHECK(imu.begin(nowUs));
-    nowUs += 100000;
-    imu.service(nowUs);
-    interrupt(0x20);
-    finishStop();
-    imu.service(nowUs);
-    CHECK(!imu.ready() && imu.error() == SensorError::Nack);
-}
-
-void testMpuInterface() {
-    bus.init();
-    MPU6050 sensor(bus);
-    IMU imu(sensor);
-    MagneticSample magnetic;
-    CHECK(!imu.hasMagnetometer() && !imu.takeMagneticField(magnetic));
-    CHECK(!imu.ready() && !imu.requestSample(nowUs));
-    CHECK(imu.begin(nowUs));
-    initMpu(sensor, 0x68, false);
-    CHECK(imu.ready() && imu.error() == SensorError::None);
-    CHECK(imu.requestSample(nowUs));
-    const uint8_t data[] = {1, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0x83, 0, 0, 0, 0};
-    completeRead(0x68, 0x3A, data, sizeof(data));
-    imu.service(nowUs);
-    ImuSample sample;
-    CHECK(imu.takeSample(sample));
-    CHECK(near(sample.accelerationMps2.x, 9.80665f));
+    resetSensors();
+    sensors.mpuAddress = 0x69;
+    MPU6050 sensor(bus, 0x69);
+    ImuSample sample = {};
+    CHECK(sensor.init(nowUs));
+    waitReady(sensor, sample);
+    sensors.mpuAx = 16384;
+    sensors.mpuAy = -16384;
+    sensors.mpuAz = 0;
+    sensors.gx = 131;
+    sensors.gy = -131;
+    waitSample(sensor, sample);
+    CHECK(near(sample.accelerationMps2.x, 9.80665f) &&
+          near(sample.accelerationMps2.y, -9.80665f));
     CHECK(near(sample.angularVelocityRadS.x, 0.01745329252f));
-    CHECK(!imu.takeSample(sample));
-
-    CHECK(imu.requestSample(nowUs));
-    nowUs += 5000;
-    bus.service(nowUs);
-    imu.service(nowUs);
-    CHECK(imu.ready() && imu.error() == SensorError::Timeout);
-    CHECK(!imu.takeSample(sample));
+    CHECK(near(sample.temperatureC, 37.53f));
+    sensors.nackNext = true;
+    for (uint8_t i = 0; i < 5; ++i) {
+        sensor.read(sample, nowUs);
+        respondToSensor();
+        nowUs += 100;
+        if (sensor.getStatus().error != DriverError::None) {
+            break;
+        }
+    }
+    CHECK(sensor.getStatus().error == DriverError::Nack);
+    waitSample(sensor, sample);
+    sensor.close();
+    bus.close();
 }
 
+/// Check nonblocking conversion and Bosch's independent pressure reference result.
+void testPressure() {
+    bus.init();
+    resetSensors();
+    BMP085 sensor(bus);
+    PressureSample sample = {};
+    CHECK(sensor.init(nowUs));
+    waitReady(sensor, sample);
+    waitSample(sensor, sample);
+    CHECK(sample.pressurePa == 69964 && near(sample.temperatureC, 15));
+    sensor.close();
+    respondToSensor();
+    CHECK(sensor.init(nowUs));
+    sensors.invalidCalibration = true;
+    for (uint16_t i = 0; i < 2000; ++i) {
+        sensor.read(sample, nowUs);
+        respondToSensor();
+        nowUs += 100;
+        if (sensor.getStatus().error != DriverError::None) {
+            break;
+        }
+    }
+    CHECK(sensor.getStatus().error == DriverError::InvalidData && !sensor.getStatus().ready);
+    sensor.close();
+    bus.close();
+}
+
+/// Check automatic multi-rate board acquisition, complete motion pairs and disabled chips.
+void testBoard() {
+    bus.init();
+    resetSensors();
+    GY80 board(bus);
+    Gy80Sample sample = {};
+    CHECK(board.init(nowUs));
+    waitReady(board, sample);
+    uint16_t motion = 0, magnetic = 0, pressure = 0;
+    uint32_t end = nowUs + 400000UL;
+    while (static_cast<int32_t>(end - nowUs) > 0) {
+        if (board.read(sample, nowUs)) {
+            if (sample.motionFresh) {
+                ++motion;
+                CHECK(near(sample.motion.accelerationMps2.z, 9.80665f));
+            }
+            if (sample.magneticFresh) {
+                ++magnetic;
+            }
+            if (sample.pressureFresh) {
+                ++pressure;
+                CHECK(sample.pressure.pressurePa == 69964);
+            }
+        }
+        respondToSensor();
+        nowUs += 100;
+    }
+    CHECK(motion >= 65 && motion <= 81);
+    CHECK(magnetic >= 8 && magnetic <= 11);
+    CHECK(pressure >= 3 && pressure <= 5);
+    sensors.gyroFresh = false;
+    sensors.ax = 512;
+    uint32_t savedMotionTime = sample.motion.timestampUs;
+    float savedAcceleration = sample.motion.accelerationMps2.x;
+    for (uint16_t i = 0; i < 700; ++i) {
+        if (board.read(sample, nowUs)) {
+            if (sample.motionFresh) {
+                CHECK(i < 100);
+                savedMotionTime = sample.motion.timestampUs;
+                savedAcceleration = sample.motion.accelerationMps2.x;
+            } else {
+                CHECK(sample.motion.timestampUs == savedMotionTime);
+                CHECK(sample.motion.accelerationMps2.x == savedAcceleration);
+            }
+        }
+        respondToSensor();
+        nowUs += 100;
+    }
+    board.close();
+    board.close();
+    respondToSensor();
+    CHECK(!board.getStatus().ready && !board.getStatus().busy);
+    CHECK(!board.read(sample, nowUs));
+    resetSensors();
+    CHECK(board.init(nowUs, false, false));
+    waitReady(board, sample);
+    waitSample(board, sample);
+    CHECK(sample.motionFresh && !sample.magneticFresh && !sample.pressureFresh);
+    CHECK(sensors.magneticReads == 0 && sensors.pressureReads == 0);
+    board.close();
+    bus.close();
+}
+
+/// Check invalid addresses and initialization across the microsecond clock wrap.
+void testInitAndWrap() {
+    bus.init();
+    resetSensors();
+    ADXL345 bad(bus, 0x70);
+    CHECK(!bad.init(nowUs) && bad.getStatus().error == DriverError::WrongDevice);
+    MPU6050 badMpu(bus, 0x67);
+    CHECK(!badMpu.init(nowUs));
+    nowUs = 0xFFFFFF00UL;
+    ADXL345 sensor(bus);
+    AccelerationSample sample = {};
+    CHECK(sensor.init(nowUs));
+    waitReady(sensor, sample);
+    waitSample(sensor, sample);
+    CHECK(near(sample.accelerationMps2.z, 9.80665f));
+    sensor.close();
+    bus.close();
+}
+
+/// Run transport and public sensor-API checks in the AVR CPU simulator.
 int main() {
     testBus();
+    testBusCloseAndCancel();
+    testAcceleration();
+    testGyroscope();
+    testCompass();
     testMpu();
-    testGy80();
-    testDisabledAuxiliaries();
-    testInitFailures();
-    testGy80Interface();
-    testMpuInterface();
+    testPressure();
+    testBoard();
+    testInitAndWrap();
     test_done();
-    for (;;) {}
+    for (;;) {
+    }
 }

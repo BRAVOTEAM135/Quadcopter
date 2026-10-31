@@ -25,6 +25,7 @@ namespace {
 
     /*----- Module Local Variables -----*/
     volatile uint32_t t1Milliseconds = 0;
+    bool t1Running = false;
 
     /*----- Internal Structures -----*/
     struct T1Snapshot {
@@ -33,8 +34,13 @@ namespace {
     };
 
     /*----- Internal Functions -----*/
+    /// Read timer count and elapsed milliseconds atomically, accounting for a pending compare
+    /// interrupt.
     T1Snapshot read_snapshot() {
-        T1Snapshot snapshot;
+        T1Snapshot snapshot = {};
+        if (!t1Running) {
+            return snapshot;
+        }
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
             // Read the software millisecond counter
             snapshot.milliseconds = t1Milliseconds;
@@ -61,6 +67,7 @@ namespace {
 // Timer1 Compare Match A interrupt
 // Executes every 1ms
 
+/// Advance the software millisecond count on each Timer1 compare interrupt.
 ISR(TIMER1_COMPA_vect) {
 
     t1Milliseconds++;
@@ -70,6 +77,8 @@ ISR(TIMER1_COMPA_vect) {
 
 /*----- Global Functions -----*/
 
+/// Configure and start Timer1 with 0.5 us ticks and a 1 ms interrupt; reset elapsed time to
+/// zero.
 void T1::init() {
 
     // Save current interrupt state
@@ -104,12 +113,32 @@ void T1::init() {
 
     // Configure CTC mode with prescaler of 8
     TCCR1B = (1 << WGM12) | (1 << CS11);
+    t1Running = true;
 
     // Restore previous interrupt state
     SREG = oldSreg;
 }
 
 
+/// Stop Timer1 and its interrupt, disconnect timer outputs and reset the clock to zero.
+void T1::close() {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        TCCR1B = 0; // Stop the timer clock.
+        TIMSK1 = 0; // Disable Timer1 interrupts.
+        TCCR1A = 0; // Disconnect timer outputs.
+        TIFR1 = (1 << OCF1A); // Clear the pending compare flag.
+        TCNT1 = 0;
+        t1Milliseconds = 0;
+        t1Running = false;
+    }
+}
+
+/// Report whether Timer1 is initialized; it has no queued operations or driver errors.
+DriverStatus T1::getStatus() const {
+    return {t1Running, false, DriverError::None};
+}
+
+/// Read elapsed 0.5 us timer ticks using an atomic snapshot; return zero if closed.
 uint32_t T1::get_count() {
 
     T1Snapshot snapshot = read_snapshot();
@@ -123,6 +152,7 @@ uint32_t T1::get_count() {
 }
 
 
+/// Read elapsed whole microseconds using an atomic snapshot; return zero if closed.
 uint32_t T1::get_micros() {
 
     T1Snapshot snapshot = read_snapshot();
@@ -136,7 +166,14 @@ uint32_t T1::get_micros() {
 }
 
 
+/// Wait for the requested milliseconds, blocking the caller; return immediately if the timer is
+/// closed.
 void T1::delay(uint16_t ms) {
+
+    // A stopped clock cannot measure a delay.
+    if (!t1Running) {
+        return;
+    }
 
     // Record starting time
     uint32_t start = get_micros();

@@ -1,54 +1,76 @@
 #include "imu.h"
-#include "GY80.h"
-#include "MPU6050.h"
 
-IMU::IMU(GY80& sensor) : gy80_(&sensor), mpu6050_(nullptr) {}
+#define MOTION_INTERVAL_US 5000UL
 
-IMU::IMU(MPU6050& sensor) : gy80_(nullptr), mpu6050_(&sensor) {}
-
-bool IMU::begin(uint32_t nowUs) {
-    magneticRequestUs_ = nowUs;
-    if (gy80_ != nullptr) {
-        // Enable the compass for heading; pressure remains a separate task.
-        return gy80_->begin(nowUs, true, false);
+/// Begin nonblocking sensor setup and stationary orientation zeroing.
+bool IMU::init(uint32_t nowUs) {
+#ifdef IMU_USE_MPU6050
+    if (!sensor_.init(nowUs)) {
+        return false;
     }
-    return mpu6050_->begin(nowUs);
+    filter_.init(false);
+    motionReading_ = false;
+    motionTimeUs_ = nowUs;
+#else
+    if (!sensor_.init(nowUs, true, false)) {
+        return false;
+    }
+    filter_.init(true);
+#endif
+    return true;
 }
 
-void IMU::service(uint32_t nowUs) {
-    if (gy80_ != nullptr) {
-        gy80_->service(nowUs);
-        // A rejected request simply retries on a later pass; no waiting.
-        if (gy80_->ready() &&
-            static_cast<uint32_t>(nowUs - magneticRequestUs_) >= 40000UL &&
-            gy80_->requestMagneticField(nowUs)) {
-            magneticRequestUs_ = nowUs;
+/// Invalidate internal tracking and stop the selected sensor.
+void IMU::close() {
+    sensor_.close();
+    filter_.close();
+#ifdef IMU_USE_MPU6050
+    motionReading_ = false;
+#endif
+}
+
+/// Inspect sensor activity and include startup averaging in the readiness result.
+DriverStatus IMU::getStatus() const {
+    DriverStatus status = sensor_.getStatus();
+    if (status.ready && !filter_.calibrated()) {
+        status.ready = false;
+        status.busy = true;
+    }
+    return status;
+}
+
+/// Advance hardware and fuse each fresh motion/compass sample exactly once.
+bool IMU::read(ImuReading& reading, uint32_t nowUs) {
+    ImuSample motion;
+    bool freshMotion = false;
+#ifdef IMU_USE_MPU6050
+    DriverStatus status = sensor_.getStatus();
+    bool due = static_cast<uint32_t>(nowUs - motionTimeUs_) >= MOTION_INTERVAL_US;
+    if (!status.ready || motionReading_ || due) {
+        freshMotion = sensor_.read(motion, nowUs);
+        if (status.ready && !motionReading_) {
+            motionTimeUs_ = nowUs;
         }
-    } else {
-        mpu6050_->service(nowUs);
+        DriverStatus next = sensor_.getStatus();
+        motionReading_ = next.ready && next.busy;
     }
-}
-
-bool IMU::ready() const {
-    if (gy80_ != nullptr) return gy80_->ready();
-    return mpu6050_->ready();
-}
-
-SensorError IMU::error() const {
-    if (gy80_ != nullptr) return gy80_->error();
-    return mpu6050_->error();
-}
-
-bool IMU::requestSample(uint32_t nowUs) {
-    if (gy80_ != nullptr) return gy80_->requestSample(nowUs);
-    return mpu6050_->requestSample(nowUs);
-}
-
-bool IMU::takeSample(ImuSample& sample) {
-    if (gy80_ != nullptr) return gy80_->takeSample(sample);
-    return mpu6050_->takeSample(sample);
-}
-
-bool IMU::takeMagneticField(MagneticSample& sample) {
-    return gy80_ != nullptr && gy80_->takeMagneticField(sample);
+#else
+    Gy80Sample board;
+    if (sensor_.read(board, nowUs)) {
+        if (board.magneticFresh) {
+            filter_.updateMagneticField(board.magnetic);
+        }
+        if (board.motionFresh) {
+            motion = board.motion;
+            freshMotion = true;
+        }
+    }
+#endif
+    if (!freshMotion) {
+        return false;
+    }
+    filter_.update(motion);
+    reading.motion = motion;
+    reading.orientation = filter_.orientation();
+    return true;
 }

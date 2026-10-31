@@ -6,18 +6,41 @@
 
 /*----- Initialise Serial -----*/
 
+/// Initialize the Arduino UART at the requested baud rate and enable this driver's read/write
+/// calls.
 void SerialPort::init(uint32_t baudRate) {
 
     Serial.begin(baudRate);
+    initialized_ = true;
 
 }
 
+
+/// Wait for queued serial output to finish, then disable UART; repeated calls are safe.
+void SerialPort::close() {
+    if (initialized_) {
+        Serial.end();
+        initialized_ = false;
+    }
+}
+
+/// Inspect queued output; close() remains responsible for waiting for final transmission.
+DriverStatus SerialPort::getStatus() const {
+    bool queued = initialized_ && Serial.availableForWrite() < SERIAL_TX_BUFFER_SIZE - 1;
+    return {initialized_, queued, DriverError::None};
+}
 
 /*----- Raw Data Transmission -----*/
 
 // Queue raw bytes only when the entire message fits.
 
+/// Queue the entire byte sequence without waiting; false means closed, invalid data or
+/// insufficient TX space.
 bool SerialPort::send(const uint8_t* data, size_t length) {
+
+    if (!initialized_) {
+        return false;
+    }
 
     // Nothing to transmit
     if (length == 0) {
@@ -50,6 +73,8 @@ bool SerialPort::send(const uint8_t* data, size_t length) {
 
 // Transmit text without a newline
 
+/// Queue text without a newline without waiting; false means closed, invalid text or
+/// insufficient TX space.
 bool SerialPort::print(const char* text) {
 
     // Validate pointer
@@ -70,6 +95,8 @@ bool SerialPort::print(const char* text) {
 
 // Transmit a complete line or nothing if insufficient space
 
+/// Queue text followed by CR/LF without waiting; false means closed, invalid text or
+/// insufficient TX space.
 bool SerialPort::println(const char* text) {
 
     // Validate pointer
@@ -109,6 +136,8 @@ bool SerialPort::println(const char* text) {
 
 /*----- Integer Transmission -----*/
 
+/// Queue an integer without a newline without waiting; false means closed or insufficient TX
+/// space.
 bool SerialPort::print(int value) {
 
     char buffer[12];
@@ -123,6 +152,8 @@ bool SerialPort::print(int value) {
 
 /*----- Integer Transmission With Newline -----*/
 
+/// Queue an integer followed by CR/LF without waiting; false means closed or insufficient TX
+/// space.
 bool SerialPort::println(int value) {
 
     char buffer[12];
@@ -137,6 +168,8 @@ bool SerialPort::println(int value) {
 
 /*----- Unsigned 32-bit Integer Transmission -----*/
 
+/// Queue an unsigned 32-bit integer without a newline without waiting; false means closed or
+/// insufficient TX space.
 bool SerialPort::print(uint32_t value) {
 
     char buffer[11];
@@ -151,6 +184,8 @@ bool SerialPort::print(uint32_t value) {
 
 /*----- Unsigned 32-bit Integer With Newline -----*/
 
+/// Queue an unsigned 32-bit integer followed by CR/LF without waiting; false means closed or
+/// insufficient TX space.
 bool SerialPort::println(uint32_t value) {
 
     char buffer[11];
@@ -165,6 +200,8 @@ bool SerialPort::println(uint32_t value) {
 
 /*----- Floating Point Transmission -----*/
 
+/// Queue a floating-point value without a newline without waiting; false means closed or
+/// insufficient TX space.
 bool SerialPort::print(float value, uint8_t decimals) {
 
     char buffer[52];
@@ -184,6 +221,8 @@ bool SerialPort::print(float value, uint8_t decimals) {
 
 /*----- Floating Point With Newline -----*/
 
+/// Queue a floating-point value followed by CR/LF without waiting; false means closed or
+/// insufficient TX space.
 bool SerialPort::println(float value, uint8_t decimals) {
 
     char buffer[52];
@@ -205,9 +244,10 @@ bool SerialPort::println(float value, uint8_t decimals) {
 
 // Return number of bytes available to read
 
+/// Return the number of received bytes waiting to be read; return zero if closed.
 int SerialPort::available() {
 
-    return Serial.available();
+    return initialized_ ? Serial.available() : 0;
 
 }
 
@@ -217,9 +257,11 @@ int SerialPort::available() {
 // Read one byte without waiting
 // Returns -1 if no byte is available
 
+/// Read one received byte without waiting; return -1 if no byte is available or the driver is
+/// closed.
 int SerialPort::read() {
 
-    return Serial.read();
+    return initialized_ ? Serial.read() : -1;
 
 }
 

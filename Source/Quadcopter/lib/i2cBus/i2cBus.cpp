@@ -9,7 +9,7 @@
  *
  * This driver gives the TWI hardware one instruction at a time. Hardware clocks
  * the bits on SDA/SCL; software handles the next step when an interrupt arrives.
- * The program can run its scheduler between those interrupts.
+ * The program can run other tasks between those interrupts.
  *
  * There are three parts to a transaction:
  *   start...() / readRegisters() / writeRegister(): save the request, send START.
@@ -54,7 +54,7 @@ namespace {
     // Idle -> Busy -> Stopping -> Complete -> Idle
     //                 service() checks STOP   take...() collects the result
     // Timeouts and lost arbitration can go directly from Busy to Complete.
-    enum class State : uint8_t { Idle, Busy, Stopping, Complete };
+    enum class State : uint8_t { Closed, Idle, Busy, Stopping, Cancelling, Complete };
     enum class Operation : uint8_t { Probe, Read, Write };
     // Register includes the initial write-address/register-number portion.
     // Value means the write value is in flight. Reading includes the repeated
@@ -65,7 +65,7 @@ namespace {
     // volatile makes the compiler perform the memory accesses rather than
     // assuming the value cannot change unexpectedly. It does not by itself
     // make an update safe against interruption; ATOMIC_BLOCK handles that below.
-    volatile State state = State::Idle;
+    volatile State state = State::Closed;
     volatile Operation operation = Operation::Probe;
     volatile Phase phase = Phase::Register;
     volatile i2cBus::Result transferResult = i2cBus::Result::BusError;
@@ -86,6 +86,8 @@ namespace {
     // TWEN keeps TWI enabled; TWIE requests an interrupt at the next event.
     // TWINT is unusual: writing 1 CLEARS its flag and releases the hardware
     // to continue. All TWDR updates must therefore happen before this call.
+    /// Release TWI to perform its next byte step; acknowledge selects ACK or NACK for
+    /// reception.
     void resume(bool acknowledge = false) {
         TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWIE) |
                (acknowledge ? (1 << TWEA) : 0);
@@ -94,6 +96,7 @@ namespace {
     // Remember the outcome and request STOP. This does not wait for STOP to
     // finish. Leave the transaction Stopping for service() to check later.
     // Omitting TWIE disables TWI interrupts during this final step.
+    /// Record the transfer result and request STOP without waiting for STOP completion.
     void stop(i2cBus::Result result) {
         transferResult = result;
         state = State::Stopping;
@@ -103,6 +106,8 @@ namespace {
     // Shared setup for all three public request functions. Different operations
     // use different parameters: a probe needs only an address, a read needs a
     // receive buffer, and a write needs one value.
+    /// Validate and publish a transfer request atomically, then send START; return false if
+    /// busy, closed or invalid.
     bool start(Operation requestedOperation, uint8_t deviceAddress,
                uint8_t reg, uint8_t value, uint8_t* data, uint8_t length,
                uint32_t nowUs, const void* owner) {
@@ -138,6 +143,8 @@ namespace {
     }
 }
 
+/// Configure and enable TWI at 100 kHz; call only when no transfer or unread result is
+/// outstanding.
 void i2cBus::init() {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         TWCR = 0; // Disable TWI while configuring it.
@@ -152,11 +159,71 @@ void i2cBus::init() {
     }
 }
 
+/// Request an address-acknowledgement probe; true means accepted, not acknowledged yet.
 bool i2cBus::startProbe(uint8_t deviceAddress, uint32_t nowUs) {
     // Unused register/value/buffer arguments are zero/null for a probe.
     return start(Operation::Probe, deviceAddress, 0, 0, nullptr, 0, nowUs, nullptr);
 }
 
+/// Disable TWI and its interrupts, abort all transfers and discard results; close sensor
+/// drivers first.
+void i2cBus::close() {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        TWCR = 0; // Disable the peripheral and its interrupt before releasing buffers.
+        state = State::Closed;
+        readBuffer = nullptr;
+        transactionOwner = nullptr;
+        readLength = 0;
+        readIndex = 0;
+    }
+}
+
+/// Cancel the matching owner's transfer and stop writes to its receive buffer; true means
+/// cancelled. Continue service() to finish STOP or its timeout.
+bool i2cBus::cancel(const void* owner) {
+    bool cancelled = false;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        if (state != State::Closed && state != State::Idle &&
+            state != State::Cancelling && operation != Operation::Probe &&
+            transactionOwner == owner) {
+            // Disable byte interrupts immediately. A finished transfer needs
+            // no STOP; an active transfer releases the bus asynchronously.
+            if (state == State::Complete) {
+                state = State::Idle;
+            } else {
+                state = State::Cancelling;
+                TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN);
+            }
+            readBuffer = nullptr;
+            transactionOwner = nullptr;
+            readLength = 0;
+            readIndex = 0;
+            cancelled = true;
+        }
+    }
+    return cancelled;
+}
+
+/// Take an atomic status snapshot without advancing or consuming a transaction.
+DriverStatus i2cBus::getStatus() const {
+    DriverStatus status = {false, false, DriverError::None};
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        status.ready = state != State::Closed;
+        status.busy = state != State::Closed && state != State::Idle;
+        if (state == State::Complete) {
+            switch (transferResult) {
+                case Result::Ack: break;
+                case Result::Nack: status.error = DriverError::Nack; break;
+                case Result::Timeout: status.error = DriverError::Timeout; break;
+                default: status.error = DriverError::BusError; break;
+            }
+        }
+    }
+    return status;
+}
+
+/// Start a 1..32-byte register read; true means accepted. Keep the receive buffer valid until
+/// collection or cancellation.
 bool i2cBus::readRegisters(uint8_t deviceAddress, uint8_t reg,
                            uint8_t* data, uint8_t length, uint32_t nowUs,
                            const void* owner) {
@@ -167,34 +234,39 @@ bool i2cBus::readRegisters(uint8_t deviceAddress, uint8_t reg,
     return start(Operation::Read, deviceAddress, reg, 0, data, length, nowUs, owner);
 }
 
+/// Start a single-byte register write; true means accepted. The value is copied, so no transmit
+/// buffer is needed.
 bool i2cBus::writeRegister(uint8_t deviceAddress, uint8_t reg,
                            uint8_t value, uint32_t nowUs, const void* owner) {
     return start(Operation::Write, deviceAddress, reg, value, nullptr, 0, nowUs, owner);
 }
 
+/// Check STOP completion, cancellation and the 5 ms timeout without waiting for hardware.
 void i2cBus::service(uint32_t nowUs) {
     // This runs in loop(), not in the ISR. Keep the block short: it only checks
     // state and registers; it never waits for hardware to finish.
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         // Hardware clears TWSTO after STOP. STOP does not produce the usual
         // completion interrupt, which is why this check lives in service().
-        if (state == State::Stopping && (TWCR & (1 << TWSTO)) == 0) {
-            state = State::Complete;
+        if ((state == State::Stopping || state == State::Cancelling) &&
+            (TWCR & (1 << TWSTO)) == 0) {
+            state = state == State::Cancelling ? State::Idle : State::Complete;
         }
         // Unsigned subtraction still measures elapsed time across the 32-bit
         // clock's wraparound. Do not time out an already completed result.
-        if ((state == State::Busy || state == State::Stopping) &&
+        if ((state == State::Busy || state == State::Stopping || state == State::Cancelling) &&
             static_cast<uint32_t>(nowUs - transactionStartUs) >= I2C_TIMEOUT_US) {
             // Abort by resetting the TWI peripheral. This releases its control
             // of the pins; it cannot force a faulty sensor to release SDA/SCL.
             TWCR = 0;
             TWCR = (1 << TWEN);
             transferResult = Result::Timeout;
-            state = State::Complete;
+            state = state == State::Cancelling ? State::Idle : State::Complete;
         }
     }
 }
 
+/// Collect a completed probe once and release the bus; false means no probe result is ready.
 bool i2cBus::takeProbeResult(ProbeResult& result) {
     bool available = false;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -207,6 +279,8 @@ bool i2cBus::takeProbeResult(ProbeResult& result) {
     return available;
 }
 
+/// Collect a finished register transfer for the same owner and release the bus; false means
+/// unfinished or wrong owner.
 bool i2cBus::takeResult(Result& result, const void* owner) {
     bool available = false;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -227,7 +301,16 @@ bool i2cBus::takeResult(Result& result, const void* owner) {
 // HARDWARE EVENT HANDLER
 // Entered automatically when TWI completes a START, an address, or a data byte.
 // Each case arranges the next small step and returns; no waiting or printing.
+/// Handle one TWI hardware event and arrange the next transfer step without waiting.
 ISR(TWI_vect) {
+    if (state == State::Closed) {
+        TWCR = 0;
+        return;
+    }
+    if (state == State::Cancelling) {
+        // Leave STOP in progress; no cancelled byte may touch the old buffer.
+        return;
+    }
     if (state != State::Busy) {
         // No active transfer should need an interrupt. Clear the flag and
         // disable further TWI interrupts, leaving the peripheral enabled.

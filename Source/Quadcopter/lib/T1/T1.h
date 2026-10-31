@@ -15,21 +15,31 @@
  #define T1_H_
 
 #include <stdint.h>
+#include "driverStatus.h"
 
 class T1 {
 public:
+    /// Create the software object without starting hardware; call init() during setup.
     T1() = default;
   
-    // Initialise Timer1
+    /// Configure and start Timer1 with 0.5 us ticks and a 1 ms interrupt; reset elapsed time to
+    /// zero.
     void init();
+
+    /// Stop Timer1 and its interrupt, disconnect timer outputs and reset the clock to zero.
+    void close();
+
+    /// Return whether the clock is running; reading status does not change time.
+    DriverStatus getStatus() const;
     
-    // Get elapsed timer ticks (0.5us per tick)
+    /// Read elapsed 0.5 us timer ticks using an atomic snapshot; return zero if closed.
     uint32_t get_count();
     
-    // Get elapsed time in whole microseconds
+    /// Read elapsed whole microseconds using an atomic snapshot; return zero if closed.
     uint32_t get_micros();
     
-    // Blocking delay in milliseconds
+    /// Wait for the requested milliseconds, blocking the caller; return immediately if the
+    /// timer is closed.
     void delay(uint16_t ms); 
 
 }; 

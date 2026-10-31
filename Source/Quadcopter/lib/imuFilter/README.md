@@ -1,4 +1,4 @@
-﻿# imuFilter
+# imuFilter
 
 `ImuFilter` estimates roll, pitch and yaw relative to the stationary starting
 pose. It combines accelerometer, gyroscope and optional magnetometer samples
@@ -6,9 +6,11 @@ without accessing hardware, timers or serial output.
 
 ## Startup zero
 
-Call `imuFilter.begin(imu.hasMagnetometer())` once in setup. Keep supplying
-samples while the board stays still for about two seconds after sensor
-initialization. This averaging period never blocks the scheduler.
+The application calls `imu.init()` in setup and `imu.read()` on every loop
+pass. IMU starts the filter and supplies samples internally. Keep the board still
+for about two seconds after sensor initialization. This averaging period never
+blocks the other tasks. When using the filter independently, call
+`filter.init(true)` for compass input or `filter.init(false)` for gyro-only yaw.
 
 The filter averages 400 motion samples for stationary gyro bias and gravity.
 With a compass enabled it also requires at least 20 fresh magnetic samples.
@@ -20,30 +22,29 @@ The filter subtracts estimated gyro bias internally. Raw IMU samples remain
 unchanged, and acceleration still includes gravity. Zeroing does not remove
 random noise or calibrate accelerometer scale factors.
 
-## Scheduler use
+## Application use
 
-The existing scheduler already performs these calls in this order:
+`lib/imu/imu.cpp` feeds new compass and motion samples to the filter once.
+The application receives a snapshot through the normal driver read:
 
 ```cpp
-MagneticSample magnetic;
-if (imu.takeMagneticField(magnetic)) {
-    imuFilter.updateMagneticField(magnetic);
-}
-ImuSample sample;
-if (imu.takeSample(sample)) {
-    imuFilter.update(sample);
-}
-const ImuOrientation& angles = imuFilter.orientation();
+imu.read(reading, nowUs); // Every loop pass, including during initialization.
+const ImuOrientation& angles = reading.orientation;
 if (angles.valid) {
     // angles.rollDeg(), angles.pitchDeg(), angles.yawDeg()
-    // Or angles.rollRad, angles.pitchRad, angles.yawRad for control calculations.
+    // Also check timestampUs before using stored readings for control.
 }
 ```
 
-Serial prints `roll,pitch,yaw` in degrees after zeroing completes. `orientation()`
-returns a reference to the stored result; it does not read sensors or run fusion.
-Call `reset()` explicitly to choose a new zero. It restarts averaging and retains
-any supplied compass calibration.
+Serial prints `roll,pitch,yaw` in degrees after zeroing completes. The filter
+`orientation()` getter does not start hardware transfers. Call `imu.reset()` to choose
+a new zero; it retains any supplied compass calibration. The filter itself has
+no hardware, serial or timer dependencies and can still be used independently.
+
+The filter follows the same `init()` / `close()` convention as the drivers.
+`close()` clears tracking and invalidates angles while retaining supplied
+magnetic calibration. Updates are rejected until `init()`; `reset()` does not
+reopen a closed filter.
 
 ## How it works
 
@@ -76,7 +77,7 @@ Startup averaging cannot measure hard-iron offsets or soft-iron distortion.
 Those require rotating the board and deriving calibration from measurements.
 Default compass correction is identity; `magneticCalibrated()` is false.
 Supply externally measured `MagneticCalibration` values through
-`setMagneticCalibration()` before startup averaging when available:
+`imu.setMagneticCalibration()` before startup averaging when available:
 
 ```text
 correctedField = matrix * (rawField - offsetMicrotesla)

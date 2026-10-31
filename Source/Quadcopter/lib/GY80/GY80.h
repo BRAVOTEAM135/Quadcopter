@@ -1,75 +1,67 @@
 #ifndef GY80_H
 #define GY80_H
 
-#include "i2cBus.h"
-#include "imuTypes.h"
+#include "ADXL345.h"
+#include "L3G4200D.h"
+#include "HMC5883L.h"
+#include "BMP085.h"
 
-// Original GY-80: ADXL345 + L3G4200D + HMC5883L + BMP085.
+// The whole board: 200 Hz motion, 25 Hz compass and 10 Hz pressure.
 class GY80 {
 public:
+    /// Store the bus and chip addresses; hardware starts only in init().
     explicit GY80(i2cBus& bus, uint8_t accelerometerAddress = 0x53,
                   uint8_t gyroscopeAddress = 0x69);
-    GY80(const GY80&) = delete;
-    GY80& operator=(const GY80&) = delete;
-
-    // Checks identities and configures the enabled devices asynchronously.
-    // Disable optional devices to use just the accelerometer/gyroscope.
-    bool begin(uint32_t nowUs, bool compass = true, bool barometer = true);
-    void service(uint32_t nowUs);
-    bool ready() const { return state_ == State::Ready; }
-    bool busy() const;
-    SensorError error() const { return error_; }
-
-    // Motion: 200 Hz, +/-2 g, +/-250 degrees/s. Only fresh data is published.
-    bool requestSample(uint32_t nowUs);
-    bool takeSample(ImuSample& sample);
-    // Compass: 75 Hz, +/-1.3 gauss, axes returned in X/Y/Z order.
-    bool requestMagneticField(uint32_t nowUs);
-    bool takeMagneticField(MagneticSample& sample);
-    // BMP085: OSS=0. Conversion waits release the bus and allow motion reads.
-    bool requestPressure(uint32_t nowUs);
-    bool takePressure(PressureSample& sample);
+    /// Start enabled chips without waiting; true means initialization was accepted.
+    bool init(uint32_t nowUs, bool compass = true, bool barometer = true);
+    /// Advance all board activity without waiting. True returns updated measurements;
+    /// fresh flags identify which changed. False leaves sample unchanged.
+    bool read(Gy80Sample& sample, uint32_t nowUs);
+    /// Inspect initialization, activity and the latest error without changing state.
+    DriverStatus getStatus() const;
+    /// Close every chip and clear board readings; leave the shared bus open.
+    void close();
 
 private:
-    enum class State : uint8_t { Stopped, PowerWait, Initializing, Settling, Ready, Failed };
-    enum class Job : uint8_t {
-        None, AccelStatus, AccelData, GyroData, MagStatus, MagData,
-        TempCommand, TempData, PressureCommand, PressureData
+    GY80(const GY80&) = delete;
+    GY80& operator=(const GY80&) = delete;
+    enum class State : uint8_t {
+        Stopped,
+        InitAcceleration,
+        InitGyroscope,
+        InitCompass,
+        InitPressure,
+        Ready
     };
-    enum class PressureState : uint8_t {
-        Idle, StartTemperature, WaitTemperature, ReadTemperature,
-        StartPressure, WaitPressure, ReadPressure
-    };
-
+    enum class Motion : uint8_t { Idle, Acceleration, Gyroscope };
     i2cBus& bus_;
-    const uint8_t accelAddress_;
-    const uint8_t gyroAddress_;
+    ADXL345 accelerometer_;
+    L3G4200D gyroscope_;
+    HMC5883L compass_;
+    BMP085 barometer_;
     State state_ = State::Stopped;
-    Job job_ = Job::None;
-    PressureState pressureState_ = PressureState::Idle;
-    SensorError error_ = SensorError::None;
-    bool compass_ = true;
-    bool barometer_ = true;
-    bool pending_ = false;
-    bool sampleAvailable_ = false;
-    bool magneticAvailable_ = false;
-    bool pressureAvailable_ = false;
-    bool magneticFresh_ = false;
-    uint8_t initStep_ = 0;
-    uint8_t buffer_[22] = {};
-    uint16_t calibration_[11] = {};
-    uint16_t rawTemperature_ = 0;
-    uint32_t waitStartUs_ = 0;
-    uint32_t pressureWaitUs_ = 0;
-    ImuSample sample_ = {};
-    MagneticSample magnetic_ = {};
-    PressureSample pressure_ = {};
+    Motion motion_ = Motion::Idle;
+    DriverError error_ = DriverError::None;
+    bool compassEnabled_ = false;
+    bool barometerEnabled_ = false;
+    bool compassReading_ = false;
+    bool pressureReading_ = false;
+    uint32_t motionTimeUs_ = 0;
+    uint32_t compassTimeUs_ = 0;
+    uint32_t pressureTimeUs_ = 0;
+    Gy80Sample latest_ = {};
+    AccelerationSample pendingAcceleration_ = {};
 
+    /// Progress one chip's initialization; move on only after it is ready.
     void serviceInit(uint32_t nowUs);
-    void startJob(uint32_t nowUs);
-    void finishJob(uint32_t nowUs);
-    void fail(SensorError error);
-    bool compensatePressure(uint32_t rawPressure);
+    /// Stop all chips and retain an initialization failure for getStatus().
+    void failInitialization(DriverError error);
+    /// Acquire a fresh acceleration/gyro pair when due, one small step per pass.
+    void readMotion(uint32_t nowUs);
+    /// Advance or start a compass read between motion acquisitions.
+    void readCompass(uint32_t nowUs);
+    /// Advance or start a pressure cycle while leaving conversion waits nonblocking.
+    void readPressure(uint32_t nowUs);
 };
 
 #endif

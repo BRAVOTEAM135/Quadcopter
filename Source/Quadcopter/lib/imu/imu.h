@@ -1,56 +1,52 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include "imuTypes.h"
+#include "i2cBus.h"
+#include "imuFilter.h"
+#ifdef IMU_USE_MPU6050
+#include "MPU6050.h"
+#else
+#include "GY80.h"
+#endif
 
-// The application supplies one of these drivers. Their full definitions are
-// needed in imu.cpp; this header only needs their names for references/pointers.
-class GY80;
-class MPU6050;
+struct ImuReading {
+    ImuSample motion;
+    ImuOrientation orientation;
+};
 
-// Common accelerometer/gyroscope interface. The sensor driver still owns its
-// transfer state; this wrapper adds no waits or additional acquisition stages.
-// Measurements keep the driver's units and axes. imuFilter handles stationary
-// gyro bias and orientation; this wrapper does not correct the raw samples.
+// Call init() once, then read() on every loop pass. No hardware wait occurs.
 class IMU {
 public:
-    // The constructor matching the supplied driver's type is chosen by C++.
-    // Keep that driver alive for as long as this IMU object is used.
-    explicit IMU(GY80& sensor);
-    explicit IMU(MPU6050& sensor);
-    IMU(const IMU&) = delete;
-    IMU& operator=(const IMU&) = delete;
+    /// Store the shared bus; hardware starts only in init().
+    explicit IMU(i2cBus& bus) : sensor_(bus) {}
+    /// Start the selected sensor and stationary startup zero; initialize the bus first.
+    bool init(uint32_t nowUs);
+    /// Advance acquisition and filtering; true returns a new motion/angle snapshot.
+    /// Angles remain invalid during startup zeroing. False leaves reading unchanged.
+    bool read(ImuReading& reading, uint32_t nowUs);
+    /// Ready means hardware and startup averaging are complete; check angle validity/age too.
+    DriverStatus getStatus() const;
+    /// Stop acquisition and filtering; leave the shared bus open and chips powered.
+    void close();
 
-    // Start initialization once during setup, using the Timer1 timestamp.
-    // true means accepted; ready() becomes true after initialization finishes.
-    bool begin(uint32_t nowUs);
-
-    // Advance the sensor driver every scheduler pass. The shared I2C bus must
-    // also be serviced by the application/scheduler.
-    void service(uint32_t nowUs);
-    bool ready() const;
-    SensorError error() const;
-
-    // Request from the periodic task. false means not ready, busy, or a previous
-    // sample is unread. This never waits for a measurement.
-    bool requestSample(uint32_t nowUs);
-
-    // Copy a new sample once: acceleration in m/s^2, angular velocity in rad/s,
-    // timestamp in microseconds. false means no completed sample is available.
-    bool takeSample(ImuSample& sample);
-
-    // GY80 supplies a compass; MPU6050 alone does not. Compass acquisition is
-    // serviced automatically at 25 Hz, separately from 200 Hz motion requests.
-    bool hasMagnetometer() const { return gy80_ != nullptr; }
-    bool takeMagneticField(MagneticSample& sample);
+    /// Restart stationary zeroing if open, retaining supplied compass calibration.
+    void reset() { filter_.reset(); }
+    /// Validate/store external compass correction and restart zeroing if open.
+    bool setMagneticCalibration(const MagneticCalibration& calibration) {
+        return filter_.setMagneticCalibration(calibration);
+    }
 
 private:
-    // Exactly one pointer is set by the constructor; the other is nullptr.
-    // These are references to existing objects, not two allocated drivers.
-    // const prevents changing the selected driver during an acquisition.
-    GY80* const gy80_;
-    MPU6050* const mpu6050_;
-    uint32_t magneticRequestUs_ = 0;
+    IMU(const IMU&) = delete;
+    IMU& operator=(const IMU&) = delete;
+#ifdef IMU_USE_MPU6050
+    MPU6050 sensor_;
+    bool motionReading_ = false;
+    uint32_t motionTimeUs_ = 0;
+#else
+    GY80 sensor_;
+#endif
+    ImuFilter filter_;
 };
 
 #endif

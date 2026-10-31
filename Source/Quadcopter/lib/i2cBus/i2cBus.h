@@ -2,6 +2,7 @@
 #define I2CBUS_H
 
 #include <stdint.h>
+#include "driverStatus.h"
 
 class i2cBus {
 
@@ -32,19 +33,29 @@ public:
     // Use the same microsecond clock for requests and service(), e.g. micros().
     // Call these functions from normal program code, not another ISR.
 
-    // Configure the ATmega328P's hardware I2C peripheral, called TWI, for 100 kHz.
-    // Initialize only when no transaction is outstanding.
+    /// Configure and enable TWI at 100 kHz; call only when no transfer or unread result is
+    /// outstanding.
     void init();
 
-    // Ask "does anything acknowledge this address?" No register data is sent.
+    /// Disable TWI and its interrupts, abort all transfers and discard results; close sensor
+    /// drivers first.
+    void close();
+
+    /// Inspect whether the bus is open, reserved by a transfer/result, or reporting an error.
+    DriverStatus getStatus() const;
+
+    /// Cancel the matching owner's transfer and stop writes to its receive buffer; true means
+    /// cancelled. Continue service() to finish STOP or its timeout.
+    bool cancel(const void* owner);
+
+    /// Request an address-acknowledgement probe; true means accepted, not acknowledged yet.
     bool startProbe(uint8_t address, uint32_t nowUs);
 
-    // Check STOP completion and the 5 ms timeout. Byte transfers themselves
-    // progress through hardware interrupts; service() never waits for a byte.
+    /// Check STOP completion, cancellation and the 5 ms timeout without waiting for hardware.
     void service(uint32_t nowUs);
 
-    // false: no finished probe yet. true: result was copied out and the bus
-    // is available for another request. Each result can be collected once.
+    /// Collect a completed probe once and release the bus; false means no probe result is
+    /// ready.
     bool takeProbeResult(ProbeResult& result);
 
     // Only ONE transaction may be outstanding on this hardware bus. A finished
@@ -58,18 +69,19 @@ public:
     // owner is an optional identity label, not a data buffer. Sensor drivers
     // pass this so each driver can collect only its own result. The pointer is
     // compared, never dereferenced. Simple callers can omit it (nullptr).
+    /// Start a 1..32-byte register read; true means accepted. Keep the receive buffer valid
+    /// until collection or cancellation.
     bool readRegisters(uint8_t address, uint8_t reg, uint8_t* data,
                        uint8_t length, uint32_t nowUs,
                        const void* owner = nullptr);
 
-    // Write one byte to one sensor register. value is copied when accepted,
-    // so the caller does not need to keep a transmit buffer alive.
+    /// Start a single-byte register write; true means accepted. The value is copied, so no
+    /// transmit buffer is needed.
     bool writeRegister(uint8_t address, uint8_t reg, uint8_t value,
                        uint32_t nowUs, const void* owner = nullptr);
 
-    // Collect a register read/write result using the SAME owner as the request.
-    // false means not finished or owner mismatch. true releases the driver for
-    // the next request. Probe results use takeProbeResult() instead.
+    /// Collect a finished register transfer for the same owner and release the bus; false means
+    /// unfinished or wrong owner.
     bool takeResult(Result& result, const void* owner = nullptr);
 
 };
