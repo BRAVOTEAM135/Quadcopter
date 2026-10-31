@@ -4,6 +4,7 @@
 #include "T1.h"
 #include "i2cBus.h"
 #include "imu.h"
+#include "escPwm.h"
 
 // Task periods in microseconds.
 #define CONTROL_INTERVAL_US   5000UL    // 200 Hz
@@ -17,18 +18,25 @@ T1 t1;
 i2cBus bus;
 IMU imu(bus);
 ImuReading imuReading = {};
+escPwm esc; // Four ESC command outputs: motor 1=D3, 2=D5, 3=D6, 4=D11.
 
 // Previous task run times in microseconds.
 static uint32_t controlTime = 0;
 static uint32_t heartbeatTime = 0;
 static uint32_t serialTime = 0;
 
-/// Initialize UART, timer, LED and IMU once at startup.
+/// Initialize UART, timers, LED, ESC outputs and IMU once at startup.
 void setup() {
     serialPort.init(115200);
-    t1.init();
+    t1.init(); // Timer1 supplies the clock used by the IMU and task scheduling.
     led.init();
     led.ledOff();
+    // Prepare Timer0/Timer2, then send the initial minimum-throttle pulses.
+    // init() alone holds the pins low; config() begins repeating 1000 us pulses.
+    // These calls return immediately. config() does not confirm ESC readiness.
+    // Use t1 for timing: esc.init() takes over Arduino's Timer0 clock hardware.
+    esc.init();   // Configure PWM hardware with the outputs held low.
+    esc.config(); // Begin ESC arming with 1000 us pulses on all four outputs.
 
     bus.init();
     imu.init(t1.get_micros());
@@ -63,6 +71,14 @@ void loop() {
         // 2. Read receiver demands.       (Not implemented yet.)
         // 3. Calculate PID corrections.   (Not implemented yet.)
         // 4. Mix and write motor outputs. (Not implemented yet.)
+        //    Each motorNUs will be a mixed throttle pulse width of 1000..2000 us.
+        //    Enable writes after ESC startup and the arming/control logic is ready.
+        //    Each write changes just that motor; hardware repeats its last value
+        //    between task runs. No PWM service call is needed in loop().
+         esc.write_motor_1(1900);
+         esc.write_motor_2(1900);
+         esc.write_motor_3(1900);
+         esc.write_motor_4(1900);
     }
 
     // ----- Heartbeat: two short flashes each second -----

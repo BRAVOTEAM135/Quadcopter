@@ -29,6 +29,7 @@ includes = [
     ROOT / "lib/T1",
     ROOT / "lib/ledBlink",
     ROOT / "lib/serialPort",
+    ROOT / "lib/escPwm",
 ]
 compiler = TOOLCHAIN / ("avr-g++" + SUFFIX)
 debugger = TOOLCHAIN / ("avr-gdb" + SUFFIX)
@@ -81,7 +82,7 @@ run_suite("drivers", ["test/sensor_drivers/test_main.cpp", "lib/i2cBus/i2cBus.cp
 run_suite("filter", ["test/sensor_drivers/test_filter.cpp", "lib/imuFilter/imuFilter.cpp"])
 run_suite("peripherals", ["test/sensor_drivers/test_peripherals.cpp", "lib/i2cBus/i2cBus.cpp",
                           "lib/T1/T1.cpp", "lib/ledBlink/ledBlink.cpp",
-                          "lib/serialPort/serialPort.cpp"])
+                          "lib/serialPort/serialPort.cpp", "lib/escPwm/escPwm.cpp"])
 for name, driver, defines in [("imu-gy80", "GY80", ()),
                               ("imu-mpu6050", "MPU6050", ("IMU_USE_MPU6050",))]:
     components = [] if driver == "MPU6050" else ["lib/ADXL345/ADXL345.cpp",

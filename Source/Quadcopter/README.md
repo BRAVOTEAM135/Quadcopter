@@ -30,7 +30,7 @@ DriverStatus status = accelerometer.getStatus();
 ```
 
 Constructors only connect software objects. Initialize the shared bus first.
-All drivers also expose `getStatus()`. UART and LED retain their output commands;
+Measurement drivers also expose `getStatus()`. UART and LED retain their output commands;
 Timer1 retains its clock functions. The bus retains its register-transfer
 primitives for the chip drivers. The filter is a separate calculation library.
 
@@ -63,6 +63,18 @@ IMU retains `reset()` and `setMagneticCalibration()` for explicit configuration.
 | `lib/imuFilter` | Bias averaging and orientation calculations |
 | `lib/i2cBus` | Interrupt-driven bytes, ownership and timeout handling |
 | `lib/driverStatus` | Shared status and error types |
+| `lib/escPwm` | Four ESC PWM outputs on D3, D5, D6 and D11 using Timer0/Timer2 |
+
+## Motor outputs
+
+`escPwm` exposes `init()`, `config()`, `write_motor_1()` through `write_motor_4()`,
+an optional four-channel `write()`, and `close()`. Setup prepares PWM with outputs
+low, then calls config to begin ESC arming with 1000 us pulses on all channels.
+The control task has commented individual writes ready for the mixer. Config
+does not wait for or confirm ESC readiness. Pulse widths are clamped to
+1000..2000 us, with 8 us resolution and an approximately 490 Hz repetition rate.
+Timer1 remains the project clock. Arduino's Timer0 clock functions are unavailable
+while the motor driver owns Timer0. See [motor driver details](lib/escPwm/README.md).
 
 ## Select hardware
 
